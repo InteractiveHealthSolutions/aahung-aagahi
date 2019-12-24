@@ -35,8 +35,8 @@ import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllLightWeightLocations, getParticipantByRegexValue, getParticipantsByLocation, getParticipantsByName } from '../service/GetService';
-import CustomRadioButton from "../widget/CustomRadioButton";
 import { getEntityUrlByName } from "../util/AahungUtil.js";
+import CustomRadioButton from "../widget/CustomRadioButton";
 
 class ParticipantSearch extends React.Component {
 
@@ -47,7 +47,7 @@ class ParticipantSearch extends React.Component {
         super(props);
         this.state = {
             participant: {
-                columnDefs: [{ headerName: "ID", field: "participantId", sortable: true},
+                columnDefs: [{ headerName: "ID", field: "participantId", sortable: true },
                 { headerName: "Name", field: "name", sortable: true },
                 { headerName: "Identifier", field: "identifier", sortable: true },
                 { headerName: "Gender", field: "gender", sortable: true },
@@ -65,7 +65,7 @@ class ParticipantSearch extends React.Component {
             disableLocation: true,
             hasData: false,
             searchValue: ""
-            
+
         };
         this.errors = {};
     }
@@ -83,15 +83,15 @@ class ParticipantSearch extends React.Component {
             let locations = await getAllLightWeightLocations();
             if (locations != null && locations.length > 0) {
                 let array = [];
-                locations.forEach(function(obj) {
-                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
+                locations.forEach(function (obj) {
+                    array.push({ "id": obj.locationId, "value": obj.locationName, "uuid": obj.uuid, "shortName": obj.shortName, "label": obj.locationName, "locationName": obj.locationName });
                 })
                 this.setState({
                     allLocations: array
                 })
             }
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
         }
     }
@@ -102,18 +102,18 @@ class ParticipantSearch extends React.Component {
             hasData: false
         })
 
-        if(name === "participant") {
+        if (name === "participant") {
             this.setState({
-                disableParticipant : false,
-                disableLocation : true,
+                disableParticipant: false,
+                disableLocation: true,
                 selected_location: '' // widgetId and state name
             })
         }
-        else if(name === "location") {
+        else if (name === "location") {
 
             this.setState({
-                disableParticipant : true,
-                disableLocation : false,
+                disableParticipant: true,
+                disableLocation: false,
                 participant_name: '' // widgetId and state name
             })
         }
@@ -130,25 +130,25 @@ class ParticipantSearch extends React.Component {
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
         let self = this;
-        selectedRows.forEach(function(selectedRow) {
+        selectedRows.forEach(function (selectedRow) {
             var urlEntity = getEntityUrlByName(selectedRow.participantType.toLowerCase())[0];
             self.props.history.push({
                 pathname: urlEntity.url,
                 state: { edit: true, participantId: selectedRow.participantId }
-              });
+            });
         });
     }
 
     onChange = e => {
         this.setState(
-          {
-            searchValue: e.target.value
-          },
-          () => {
-            this.gridApi.setQuickFilter(this.state.searchValue);
-          }
+            {
+                searchValue: e.target.value
+            },
+            () => {
+                this.gridApi.setQuickFilter(this.state.searchValue);
+            }
         );
-      };
+    };
 
     searchData = async () => {
         try {
@@ -161,21 +161,21 @@ class ParticipantSearch extends React.Component {
                 isValid = false;
             }
 
-            if(isValid) {
+            if (isValid) {
                 this.setState({
                     hasData: false
                 })
-                if(!this.state.disableLocation) {
+                if (!this.state.disableLocation) {
                     fetchedParticipants = await getParticipantsByLocation(this.state.selected_location.uuid);
                     this.constructParticipantList(fetchedParticipants);
                 }
-                else if(!this.state.disableParticipant) {
+                else if (!this.state.disableParticipant) {
                     // by participant ID, returns a single participant object (if contains spaces, it is a case of searching by name )
-                    if(this.state.participant_name.length >= 8 && this.state.participant_name.length <= 10 && !(/\s/.test(this.state.participant_name))) {
+                    if (this.state.participant_name.length >= 8 && this.state.participant_name.length <= 10 && !(/\s/.test(this.state.participant_name))) {
                         fetchedParticipants = await getParticipantByRegexValue(this.state.participant_name);
                         this.constructParticipantList(fetchedParticipants);
                     }
-                    else{
+                    else {
                         // by participant name, returns a list
                         fetchedParticipants = await getParticipantsByName(this.state.participant_name);
                         this.constructParticipantList(fetchedParticipants);
@@ -189,7 +189,7 @@ class ParticipantSearch extends React.Component {
                 this.gridOptions.api.setColumnDefs();
             }
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
         }
     }
@@ -197,17 +197,17 @@ class ParticipantSearch extends React.Component {
     constructParticipantList(fetchedParticipants) {
         let array = [];
         if (fetchedParticipants != null && fetchedParticipants.length > 0) {
-            fetchedParticipants.forEach(function(obj) {
-                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "participantType": obj.participantType, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
-                
+            fetchedParticipants.forEach(function (obj) {
+                array.push({ "participantId": obj.id, "name": obj.fullName, "identifier": obj.identifier, "gender": obj.gender, "dob": obj.dob, "participantType": obj.participantType, "location": obj.locationName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy });
+
             })
         }
 
         console.log("printing constructed array >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         console.log(array);
-        var participant = {...this.state.participant}
+        var participant = { ...this.state.participant }
         participant.rowData = array;
-        this.setState({participant});
+        this.setState({ participant });
         this.setState({
             hasData: true
         })
@@ -220,56 +220,56 @@ class ParticipantSearch extends React.Component {
             [name]: e
         });
     }
-    
+
     render() {
 
         const participantTableDisplay = this.state.hasData ? "block" : "none";
 
         return (
             <div>
-            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Participant Search</b></h5></MDBCardHeader>
+                <MDBCardHeader style={{ backgroundColor: "#025277", color: "white" }}><h5><b>Participant Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
-                        <div id="filters" className="searchParams">
-                            <MDBRow>
-                                <MDBCol md="3">
-                                    <h6>Search By (Participant ID, Name, Location)</h6>
-                                </MDBCol>
-                                <MDBCol md="7">
+                    <div id="filters" className="searchParams">
+                        <MDBRow>
+                            <MDBCol md="3">
+                                <h6>Search By (Participant ID, Name, Location)</h6>
+                            </MDBCol>
+                            <MDBCol md="7">
                                 <div className="searchFilterDiv">
-                                    <CustomRadioButton id="participant" name="filter" value={this.state.participant} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "participant")}/>
-                                    <Input className="searchFilter" id="participant_name" placeholder="Participant Name or ID" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} disabled={this.state.disableParticipant}/>
-                                    <CustomRadioButton id="location" name="filter" value={this.state.location} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
-                                    <Select id="selected_location" name="selected_location" className="secondSearchFilter" value={this.state.selected_location} onChange={(e) => this.handleChange(e, "selected_location")} options={this.state.allLocations} isDisabled={this.state.disableLocation}/>
+                                    <CustomRadioButton id="participant" name="filter" value={this.state.participant} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "participant")} />
+                                    <Input className="searchFilter" id="participant_name" placeholder="Participant Name or ID" value={this.state.participant_name} onChange={(e) => { this.inputChange(e, "participant_name") }} disabled={this.state.disableParticipant} />
+                                    <CustomRadioButton id="location" name="filter" value={this.state.location} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")} />
+                                    <Select id="selected_location" name="selected_location" className="secondSearchFilter" value={this.state.selected_location} onChange={(e) => this.handleChange(e, "selected_location")} options={this.state.allLocations} isDisabled={this.state.disableLocation} />
                                 </div>
-                                </MDBCol>
-                                <MDBCol md="1">
-                                    <MDBBadge pill color="orange">
-                                        <MDBIcon id="searchBtn" icon="search" size="2x" style={{cursor: "pointer"}} onClick= {this.searchData}/>
-                                    </MDBBadge>
-                                </MDBCol>
-                            </MDBRow>
+                            </MDBCol>
+                            <MDBCol md="1">
+                                <MDBBadge pill color="orange">
+                                    <MDBIcon id="searchBtn" icon="search" size="2x" style={{ cursor: "pointer" }} onClick={this.searchData} />
+                                </MDBBadge>
+                            </MDBCol>
+                        </MDBRow>
+                    </div>
+
+                    <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
+                        <div style={{ marginBottom: "1em", display: participantTableDisplay }}>
+                            <h4 style={{ display: "inline-block", float: "left" }}>Participants </h4>
+                            <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{ maxWidth: "15em", marginLeft: "83%" }} />
                         </div>
-                        
-                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
-                        <div style={{marginBottom: "1em", display: participantTableDisplay}}>
-                            <h4 style={{display:"inline-block", float:"left"}}>Participants </h4>
-                            <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{maxWidth: "15em",marginLeft: "83%"}}/>
-                        </div>
-                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: participantTableDisplay} }>
-                            
-                            <AgGridReact style={{width: '1150px'}}
-                                onGridReady={ params => this.gridApi = params.api }
+                        <div className="ag-theme-balham" style={{ height: '400px', width: '1250px', display: participantTableDisplay }}>
+
+                            <AgGridReact style={{ width: '1150px' }}
+                                onGridReady={params => this.gridApi = params.api}
                                 columnDefs={this.state.participant.columnDefs}
                                 rowData={this.state.participant.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onSelectionChanged={this.onSelectionChanged.bind(this)}
                                 pagination={true}
-                                paginationPageSize= "10"
-                                enableColResize= {true}>
+                                paginationPageSize="10"
+                                enableColResize={true}>
                             </AgGridReact>
                         </div>
-                        </Animated>
+                    </Animated>
                 </MDBCardBody>
             </div>
         );

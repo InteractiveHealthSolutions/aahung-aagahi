@@ -21,22 +21,17 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
+import React from "react";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import SocialMediaDetail from "../comms/SocialMediaDetail";
-import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
 import CommsTrainingDetails from "../comms/CommsTrainingDetails";
-import RadioAppearance from "../comms/RadioAppearance";
+import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
 import MobileCinemaDetails from "../comms/MobileCinemaDetails";
-import DonorRegistration from "../common/DonorRegistration";
-import ProjectDetails from "../common/ProjectDetails";
-import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
-import { MemoryRouter } from "react-router-dom";
-import { Prompt } from "react-router";
+import RadioAppearance from "../comms/RadioAppearance";
+import SocialMediaDetail from "../comms/SocialMediaDetail";
+import "../index.css";
 // import { Modal } from "antd";
 
 const navWidthCollapsed = 64;
@@ -117,14 +112,14 @@ class CommsMainPage extends React.Component {
         expanded: false
     };
 
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
+    //   state = {
+    //     sideNavLeft: false,
+    //     sideNavRight: false
+    //   }
 
 
 
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -133,30 +128,30 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
-
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
 
 
-componentDidMount() {
-    // alert("Comms: Component did mount called!");
-    // this.cancelCheck = this.cancelCheck.bind(this);
-    window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    
-    // if no rights, redirect to main menu
-    // alert("You do not have rights to view this page");
-    // this.props.history.push("/mainMenu");
-}
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-componentWillUnmount() {
-    // alert("Comms: ComponentWillUnMount called!");
-    window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-}
+
+    componentDidMount() {
+        // alert("Comms: Component did mount called!");
+        // this.cancelCheck = this.cancelCheck.bind(this);
+        window.addEventListener('beforeunload', this.beforeunload.bind(this));
+
+        // if no rights, redirect to main menu
+        // alert("You do not have rights to view this page");
+        // this.props.history.push("/mainMenu");
+    }
+
+    componentWillUnmount() {
+        // alert("Comms: ComponentWillUnMount called!");
+        window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
 beforeunload(e) {
     // if (this.props.dataUnsaved) {
@@ -283,48 +278,40 @@ render() {
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
 
         </div> */}
-        <MDBView>
-        <div className="sideSrhmHeaderDiv">
-            {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-        
-            <MDBMask overlay="purple-strong" className="flex-column text-white">
-            
-                        {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
-            </MDBMask>
-        </div>
-        </MDBView>
+                            <MDBView>
+                                <div className="sideSrhmHeaderDiv">
+                                    {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
 
-            <div >
-            
-                <Switch>
-                
-                    <Route path='/socialMediaDetails' component={SocialMediaDetail} />
-                    <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
-                    <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
-                    <Route path='/radioAppearance' component={RadioAppearance} />
-                    <Route path='/mobileCinemaDetails' component={MobileCinemaDetails} />
-                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
+                                    <MDBMask overlay="purple-strong" className="flex-column text-white">
+
+                                        {/* <br/> */}
+                                        <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>COMMS</p>
+                                    </MDBMask>
+                                </div>
+                            </MDBView>
+
+                            <div >
+
+                                <Switch>
+
+                                    <Route path='/socialMediaDetails' component={SocialMediaDetail} />
+                                    <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
+                                    <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
+                                    <Route path='/radioAppearance' component={RadioAppearance} />
+                                    <Route path='/mobileCinemaDetails' component={MobileCinemaDetails} />
+                                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
                     <Route path='/participantDetails' component={ParticipantDetails}/> */}
-                </Switch>
-                
-            </div>
-        
-    </Main>
-    
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
-}
+                                </Switch>
 
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
+                            </div>
+
+                        </Main>
+
+                    </div>
+                </MemoryRouter>
+            </div>
+        );
+    }
+}
 
 export default CommsMainPage;

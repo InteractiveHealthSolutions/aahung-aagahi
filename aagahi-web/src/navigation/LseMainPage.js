@@ -19,34 +19,34 @@
  * @modify date 2019-07-30 12:08:12
  * @desc [description]
  */
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Switch, MemoryRouter } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
-import "../lsecss.css";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
+import "../index.css";
+import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
+import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
+import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
-import SchoolDetails from "../lse/SchoolDetails";
-import SchoolUpdate from "../lse/SchoolUpdate";
-import TrainingDetails from "../lse/TrainingDetails";
+import ParentSessions from "../lse/ParentSessions";
 import ParticipantDetails from "../lse/ParticipantDetail";
+import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
 import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
-import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
+import SchoolClosing from "../lse/SchoolClosing";
+import SchoolDetails from "../lse/SchoolDetails";
+import SchoolUpdate from "../lse/SchoolUpdate";
+import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
 import SecondaryMonitoringNew from "../lse/SecondaryMonitoringNew";
 import SecondaryMonitoringRunning from "../lse/SecondaryMonitoringRunning";
-import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
-import StepDownTraining from "../lse/StepDownTraining";
 import SrhrPolicy from "../lse/SrhrPolicy";
-import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
-import ParentSessions from "../lse/ParentSessions";
-import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
 import StakeholderMeeting from "../lse/StakeholderMeeting";
-import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
-import SchoolClosing from "../lse/SchoolClosing";
+import StepDownTraining from "../lse/StepDownTraining";
+import TrainingDetails from "../lse/TrainingDetails";
+import "../lsecss.css";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 350;
@@ -142,15 +142,16 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
-
+    componentDidMount() {
+        window.addEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
 componentDidMount() {
     // alert("LSE: Component did mount called!");
@@ -474,13 +475,5 @@ render() {
     );
   }
 }
-
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
 
 export default LseMainPage;

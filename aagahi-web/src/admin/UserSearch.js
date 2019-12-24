@@ -132,12 +132,12 @@ class UserSearch extends React.Component {
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
         let self = this;
-        selectedRows.forEach(function(selectedRow) {
+        selectedRows.forEach(function (selectedRow) {
             var urlEntity = getEntityUrlByName("user")[0];
             self.props.history.push({
                 pathname: urlEntity.url,
                 state: { edit: true, userId: selectedRow.userId }
-              });
+            });
         });
     }
 
@@ -163,7 +163,7 @@ class UserSearch extends React.Component {
                 isValid = false;
             }
 
-            if(isValid) {
+            if (isValid) {
                 this.setState({
                     hasData: false
                 })
@@ -212,7 +212,6 @@ class UserSearch extends React.Component {
                     return role.roleName;
                 }).join(', ');
                 array.push({ "userId": obj.id, "name": obj.fullName, "username": obj.username, "roles": rolesString, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy });
-
             })
         }
 
@@ -232,7 +231,7 @@ class UserSearch extends React.Component {
         });
     }
 
-    onClick = () =>  {
+    onClick = () => {
         this.props.history.push('/addUser');
     }
 
@@ -242,7 +241,7 @@ class UserSearch extends React.Component {
 
         return (
             <div>
-                <MDBCardHeader style={{ backgroundColor: "#025277", color: "white" }}><div className="searchFilterDiv"><h5 style={{marginTop: "0.5%"}}><b>User Search</b></h5> <MDBBtn rounded outline size="sm" onClick={this.onClick} id="addUserButton" >Add User<MDBIcon icon="plus-circle" className="ml-2" /></MDBBtn></div></MDBCardHeader>
+                <MDBCardHeader style={{ backgroundColor: "#025277", color: "white" }}><div className="searchFilterDiv"><h5 style={{ marginTop: "0.5%" }}><b>User Search</b></h5> <MDBBtn rounded outline size="sm" onClick={this.onClick} id="addUserButton" >Add User<MDBIcon icon="plus-circle" className="ml-2" /></MDBBtn></div></MDBCardHeader>
                 <MDBCardBody>
                     <div id="filters" className="searchParams">
                         <MDBRow>
@@ -258,10 +257,10 @@ class UserSearch extends React.Component {
                                 </div>
                             </MDBCol>
                             <MDBCol md="3">
-                                <MDBBadge pill color="orange" id="searchUserBadge" style={{paddingTop: "2em !important"}}>
+                                <MDBBadge pill color="orange" id="searchUserBadge" style={{ paddingTop: "2em !important" }}>
                                     <MDBIcon id="searchBtn" icon="search" size="2x" style={{ cursor: "pointer" }} onClick={this.searchData} />
                                 </MDBBadge>
-                                
+
 
                             </MDBCol>
                         </MDBRow>

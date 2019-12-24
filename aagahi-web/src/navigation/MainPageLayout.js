@@ -19,19 +19,17 @@
  * @modify date 2019-07-30 12:10:12
  * @desc [description]
  */
+import { MDBBtn, MDBCollapse, MDBContainer, MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBFooter, MDBIcon, MDBMask, MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBNavItem, MDBView } from 'mdbreact';
 import React from 'react';
-import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter } from 'mdbreact';
-import { Label } from 'reactstrap';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
+import RequirePrivilege from '../access/RequirePrivilege';
 import aahunglogo from "../img/aahung-logo.svg";
-import skills from "../img/skills.svg";
 import communication from "../img/communication.svg";
-import dashboard from "../img/dashboard.svg";
 import document from "../img/document.svg";
 import admin from "../img/management.svg";
+import skills from "../img/skills.svg";
 import srhm from "../img/srhm.svg";
 import '../index.css';
-import RequirePrivilege from '../access/RequirePrivilege';
 
 class MainPageLayout extends React.Component {
     constructor(props) {
@@ -51,11 +49,11 @@ class MainPageLayout extends React.Component {
     }
 
     componentDidMount() {
-        
+
     }
 
     render() {
-        
+
         return (
             <div >
                 <Router>
@@ -83,14 +81,14 @@ class MainPageLayout extends React.Component {
                                         <MDBNavItem>
                                             <MDBDropdown>
                                                 <MDBDropdownToggle nav caret>
-                                                <MDBIcon icon="user" />
+                                                    <MDBIcon icon="user" />
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">
                                                     <MDBDropdownItem >Hi, <b>{sessionStorage.getItem('username')}</b></MDBDropdownItem>
                                                     <RequirePrivilege
                                                         privilegeName="View Administration Section"
                                                         yes={() => (
-                                                        <MDBDropdownItem href="/addUser">Add User</MDBDropdownItem>
+                                                            <MDBDropdownItem href="/addUser">Add User</MDBDropdownItem>
                                                         )}
                                                     />
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
@@ -103,93 +101,91 @@ class MainPageLayout extends React.Component {
                         </MDBNavbar>
 
                         {/* <MDBContainer> */}
-                            {/* <MDBRow> */}
-                        
+                        {/* <MDBRow> */}
+
                         {/* </MDBRow> */}
                         {/* </MDBContainer> */}
                     </header>
-                    
+
                 </Router>
 
-                <MDBView> 
-                
-                <div class="cover">
-                    {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-                
-                    <MDBMask overlay="purple-strong" className="flex-center flex-column text-white text-center">
-                    
-                                <br/>
-                                <h2><p className="font-weight-bold">Improving Access to Services</p></h2>
-                                <h5><p className="font-weight-bolder">Improving Institutional Provision of Comprehensive SRHR Information and Services Countrywide.</p></h5>
-                                <br />
-                                <MDBBtn rounded outline
-                                    href="https://www.aahung.org/"
-                                    target="_b  lank"
-                                    color="warning">
-                                    <b>Learn More!</b>
-                                </MDBBtn>
-                            </MDBMask>
-                            </div>
+                <MDBView>
+
+                    <div class="cover">
+                        {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
+
+                        <MDBMask overlay="purple-strong" className="flex-center flex-column text-white text-center">
+
+                            <br />
+                            <h2><p className="font-weight-bold">Improving Access to Services</p></h2>
+                            <h5><p className="font-weight-bolder">Improving Institutional Provision of Comprehensive SRHR Information and Services Countrywide.</p></h5>
+                            <br />
+                            <MDBBtn rounded outline
+                                href="https://www.aahung.org/"
+                                target="_b  lank"
+                                color="warning">
+                                <b>Learn More!</b>
+                            </MDBBtn>
+                        </MDBMask>
+                    </div>
                 </MDBView>
 
                 <main>
                     <MDBContainer className="text-center my-5">
-                    <div>
-                    <p className="font-weight-bolder">Select the field you are interested</p>
-                    
-                    <RequirePrivilege
-                    privilegeName="View Administration Section"
-                    yes={() => (
-                        <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Search</p></MDBBtn></Link>
-                    )}
-                    /> 
+                        <div>
+                            <p className="font-weight-bolder">Select the field you are interested</p>
 
-                    {/* <RequirePrivilege
+                            <RequirePrivilege
+                                privilegeName="View Administration Section"
+                                yes={() => (
+                                    <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Search</p></MDBBtn></Link>
+                                )}
+                            />
+
+                            {/* <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
                         <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin</p></MDBBtn></Link>
                     )}
                     /> */}
-                    
-                    <RequirePrivilege
-                    privilegeName="View LSE Section"
-                    yes={() => (
-                        <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">LSE</p></MDBBtn></Link>
-                    )}
-                    />
-                    
-                    <RequirePrivilege
-                    privilegeName="View SRHM Section"
-                    yes={() => (
-                        <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
-                    )}
-                    />
 
-                    <RequirePrivilege
-                    privilegeName="View Comms Section"
-                    yes={() => (
-                        <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
-                    )}
-                    />
-                    
-                    {/* /reportPage */}
-                    <RequirePrivilege
-                    privilegeName="View Reports Section"
-                    yes={() => (
-                        <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
-                    )}
-                    />
+                            <RequirePrivilege
+                                privilegeName="View LSE Section"
+                                yes={() => (
+                                    <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">LSE</p></MDBBtn></Link>
+                                )}
+                            />
 
-                    {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
-                    </div>
+                            <RequirePrivilege
+                                privilegeName="View SRHM Section"
+                                yes={() => (
+                                    <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
+                                )}
+                            />
+
+                            <RequirePrivilege
+                                privilegeName="View Comms Section"
+                                yes={() => (
+                                    <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
+                                )}
+                            />
+
+                            {/* /reportPage */}
+                            <RequirePrivilege
+                                privilegeName="View Reports Section"
+                                yes={() => (
+                                    <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Reports</p></MDBBtn></Link>
+                                )}
+                            />
+
+                            {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
+                        </div>
                     </MDBContainer>
-                        <MDBFooter color="grey lighten-1" >
-                            <div className="footer-copyright text-center py-3" >
-                                &copy; {new Date().getFullYear()} Copyright: <a href="http://ihsinformatics.com"> IHSinformatics.com </a>
-                            </div>
-                        </MDBFooter>
-                        {/* <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis  aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla  pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia  deserunt mollit anim id est laborum.</p> */}
-                    
+                    <MDBFooter color="grey lighten-1" >
+                        <div className="footer-copyright text-center py-3" >
+                            &copy; {new Date().getFullYear()} Copyright: <a href="http://ihsinformatics.com"> IHSinformatics.com </a>
+                        </div>
+                    </MDBFooter>
                 </main>
             </div>
         );
