@@ -25,6 +25,7 @@ import com.ihsinformatics.aahung.model.DataRepository;
 import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.LocationService;
+import com.ihsinformatics.aahung.model.MultiSumService;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -2019,7 +2020,15 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(approximateNumberOfGirls.hideView());
         widgets.add(approximateNumberOfBoys.hideView());
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
+        EditTextWidget numberOfStudents = new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, SIX, true).setMinimumValue(ONE).setInputRange(1, 99999).build();
+        widgets.add(numberOfStudents);
+
+        MultiSumService sumService=  new MultiSumService(numberOfStudents);
+        sumService.addSumWidget(approximateNumberOfBoys);
+        sumService.addSumWidget(approximateNumberOfGirls);
+
+
+
 
         return widgets;
     }
@@ -2410,7 +2419,7 @@ public class DataProvider {
         ToggleWidgetData topicsCoveredToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherSkipper = topicsCoveredToggler.addOption("Other");
-        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
+        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         OtherSkipper.build();
 
         topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());
@@ -2968,7 +2977,7 @@ public class DataProvider {
         ToggleWidgetData cityToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData cityOtherSkipper = cityToggler.addOption("Other");
-        widgets.add(cityOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
+        widgets.add(cityOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CITY_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         cityOtherSkipper.build();
         city.addDependentWidgets(cityToggler.getToggleMap());
 

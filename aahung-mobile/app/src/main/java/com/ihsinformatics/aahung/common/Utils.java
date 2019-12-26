@@ -198,9 +198,12 @@ public class Utils {
 
     public static List<BaseItem> getNonVoidList(List<? extends BaseItem> items) {
         List<BaseItem> nonVoidedItems = new ArrayList<>();
-        for (BaseItem item : items) {
-            if (!item.isVoided())
-                nonVoidedItems.add(item);
+
+        if (items != null) {
+            for (BaseItem item : items) {
+                if (!item.isVoided())
+                    nonVoidedItems.add(item);
+            }
         }
         return nonVoidedItems;
     }

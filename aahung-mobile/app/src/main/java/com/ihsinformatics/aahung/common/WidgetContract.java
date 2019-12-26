@@ -6,33 +6,38 @@ import com.ihsinformatics.aahung.views.Widget;
 
 public interface WidgetContract {
 
-    public interface ItemChangeListener{
+    public interface ItemChangeListener {
         public void onItemChange(String data);
     }
 
-    public interface TextChangeListener{
+    public interface TextChangeListener {
         public void onTextChanged(String item);
     }
 
-    public interface ChangeNotifier{
+    public interface ChangeNotifier {
         public void notifyChanged(String item);
     }
 
-    public interface PhoneListener{
+    public interface PhoneListener {
         public void onLandlineNumber();
+
         public void onNonLandlineNumber();
     }
 
-    public interface DateChangeNotifier{
+    public interface DateChangeNotifier {
         public void onDateChange(String item, DataProvider.DateType dateType);
     }
 
-    public interface OnDataFetchedListener{
+    public interface OnDataFetchedListener {
         public void onDataReceived(String item);
     }
 
     public interface DataUpdaterListener {
         public void onUpdateCompletion(BaseResult baseResult);
+    }
+
+    public interface SumListener {
+        public void onValueChanged(Widget widget, Integer value);
     }
 
 }
