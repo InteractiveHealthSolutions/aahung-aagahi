@@ -337,10 +337,12 @@ class AmplifyChangeParticipantDetail extends React.Component {
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);       // decode like this > parseInt(this.participantId, 36)
             this.participantId = this.participantId.toUpperCase();
-            do {
-                this.participantId = this.participantId.concat('0');
+            if(this.participantId.length < 10) {
+                do {
+                    this.participantId = this.participantId.concat('0');
+                }
+                while (this.participantId.length != 10)
             }
-            while (this.participantId.length != 10)
 
         }
         catch (error) {

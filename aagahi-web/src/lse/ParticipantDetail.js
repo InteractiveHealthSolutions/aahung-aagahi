@@ -316,10 +316,12 @@ class ParticipantDetails extends React.Component {
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
             this.participantId = this.participantId.toUpperCase();
-            do {
-                this.participantId = this.participantId.concat('0');
+            if(this.participantId.length < 10) {
+                do {
+                    this.participantId = this.participantId.concat('0');
+                }
+                while (this.participantId.length != 10)
             }
-            while (this.participantId.length != 10)
         }
         catch (error) {
             console.log(error);
@@ -759,7 +761,6 @@ class ParticipantDetails extends React.Component {
                                                                         <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => { this.inputChange(e, "age") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter age in years"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>

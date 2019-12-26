@@ -352,14 +352,15 @@ class GeneralParticipantDetail extends React.Component {
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
             this.participantId = String(userId) + timestamp;
-
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
             this.participantId = this.participantId.toUpperCase();
-            do {
-                this.participantId = this.participantId.concat('0');
+            if(this.participantId.length < 10) {
+                do {
+                    this.participantId = this.participantId.concat('0');
+                }
+                while (this.participantId.length !== 10)
             }
-            while (this.participantId.length != 10)
 
         }
         catch (error) {
