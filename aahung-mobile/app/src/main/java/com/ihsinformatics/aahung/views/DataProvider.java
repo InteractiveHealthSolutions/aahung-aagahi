@@ -2410,7 +2410,7 @@ public class DataProvider {
         ToggleWidgetData topicsCoveredToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherSkipper = topicsCoveredToggler.addOption("Other");
-        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
+        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         OtherSkipper.build();
 
         topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());
@@ -2968,7 +2968,7 @@ public class DataProvider {
         ToggleWidgetData cityToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData cityOtherSkipper = cityToggler.addOption("Other");
-        widgets.add(cityOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
+        widgets.add(cityOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CITY_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         cityOtherSkipper.build();
         city.addDependentWidgets(cityToggler.getToggleMap());
 
