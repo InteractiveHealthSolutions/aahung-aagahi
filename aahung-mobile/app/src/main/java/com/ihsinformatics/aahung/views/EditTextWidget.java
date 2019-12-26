@@ -17,6 +17,7 @@ import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
+import com.ihsinformatics.aahung.model.MultiSumService;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONArray;
@@ -54,8 +55,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     private String key;
     private BaseAttribute attribute;
     private WidgetEdittextBinding binding;
-    private WidgetContract.TextChangeListener textChangeListener;
-    private WidgetIDListener widgetIDListener;
+
     private List<WidgetEdittextBinding> participantFieldList = new ArrayList<>();
     private Map<Integer, String> participantCounts = new HashMap<>();
     private DateWidget dateWidget;
@@ -63,6 +63,9 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     private boolean isMandatory;
     private boolean isSingleLine = true;
     private boolean isYearsValidationEnabled;
+    private WidgetContract.SumListener sumListener;
+    private WidgetContract.TextChangeListener textChangeListener;
+    private WidgetIDListener widgetIDListener;
 
 
     private EditTextWidget(Builder builder) {
@@ -252,6 +255,10 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             widgetIDListener.onWidgetChange(data, (key != null) ? key : attribute.getAttributeName());
         }
 
+        if (sumListener != null) {
+            sumListener.onValueChanged(this, isEmpty(data) ? 0 : Integer.valueOf(data));
+        }
+
         if (isParticipantFieldsEnabled) {
             retainFieldsData();
             clearViews();
@@ -324,6 +331,10 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     public void setText(String value) {
         binding.editText.setText(value);
         onDataChanged(value);
+    }
+
+    public void setSumListener(WidgetContract.SumListener sumListener) {
+        this.sumListener = sumListener;
     }
 
 
