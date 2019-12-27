@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:22:04
+ * @Last Modified time: 2019-12-26 13:36:34
  */
 
 
@@ -75,6 +75,7 @@ class DistributionCommunicationMaterial extends React.Component {
             partner_components: 'lse',
             city: 'karachi',
             distribution_location: 'conference',
+            topic_covered: [],
             activeTab: '1',
             page2Show: true,
             viewMode: false,
@@ -133,7 +134,7 @@ class DistributionCommunicationMaterial extends React.Component {
             { value: 'aahung_information', label: 'Aahung Information' },
             { value: 'aahung_branding_material', label: 'Aahung Branding Material' },
             { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
+            { value: 'puberty', label: 'Puberty' },
             { value: 'rti', label: 'RTIs' },
             { value: 'ungei', label: 'UNGEI' },
             { value: 'sti', label: 'STIs' },
@@ -316,20 +317,6 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('other', distributionMaterialTypes, 'value') == -1) {
                 this.isMaterialTypeOther = false;
             }
-
-            if (getObject('annual_report', distributionMaterialTypes, 'value') != -1 || getObject('aahung_profile', distributionMaterialTypes, 'value') != -1) {
-                // Autoselect topic_covered = Aahung Information
-                this.setState({
-                    topic_covered: [{ value: 'aahung_information', label: 'Aahung Information' }]
-                })
-                this.isAahungInformation = true;
-            }
-            else if (getObject('annual_report', distributionMaterialTypes, 'value') == -1 && getObject('aahung_profile', distributionMaterialTypes, 'value') == -1) {
-                this.setState({
-                    topic_covered: []
-                })
-                this.isAahungInformation = false;
-            }
         }
 
         if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0) {
@@ -440,6 +427,18 @@ class DistributionCommunicationMaterial extends React.Component {
     }
 
     cancelCheck = () => {
+        // this.setState({
+        //     topic_covered : [
+        //         {
+        //           label: "Aahung Branding Material",
+        //           value: "aahung_branding_material"
+        //         },
+        //         {
+        //           label: "Nikah Nama",
+        //           value: "nikah_nama"
+        //         }
+        //       ]
+        // })
         this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
     }
@@ -757,10 +756,10 @@ class DistributionCommunicationMaterial extends React.Component {
                 jsonData.data.aahung_mugs_count = data.get('aahung_mugs_count');
 
             if (this.isAahungFolder)
-                jsonData.data.aahung_mugs_count = data.get('aahung_folders_count');
+                jsonData.data.aahung_folders_count = data.get('aahung_folders_count');
 
             if (this.isAahungNotebook)
-                jsonData.data.aahung_mugs_count = data.get('aahung_notebooks_count');
+                jsonData.data.aahung_notebooks_count = data.get('aahung_notebooks_count');
 
 
             // generating multiselect for topic covered
@@ -1071,7 +1070,6 @@ class DistributionCommunicationMaterial extends React.Component {
                                             <Card className="main-card mb-6 center-col">
                                                 <CardBody>
 
-                                                    {/* error message div */}
                                                     <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
                                                         <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
                                                     </div>

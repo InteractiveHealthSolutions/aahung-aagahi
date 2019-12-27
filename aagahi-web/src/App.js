@@ -32,6 +32,7 @@ import SrhmMainPage from './navigation/SrhmMainPage';
 import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
 import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
 import AmplifyChangeTrainingDetails from './shrm/AmplifyChangeTrainingDetails';
+import GeneralTrainingDetails from './shrm/GeneralTrainingDetails';
 import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
 import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
 import HealthCareProviderReach from './shrm/HealthCareProviderReach';
@@ -80,6 +81,7 @@ class App extends Component {
           <SessionRoute path='/stepDownTrainingMonitoring' component={StepDownTraining} />
           <SessionRoute path='/trainingDetailForm' component={TrainingDetails} />
           <SessionRoute path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails} />
+          <SessionRoute path='/generalTrainingDetails' component={GeneralTrainingDetails} />
         </Switch>
       </Router>
     );

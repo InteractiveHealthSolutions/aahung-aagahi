@@ -38,45 +38,6 @@ import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
-const programsImplemented = [
-    { label: 'CSA', value: 'csa' },
-    { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' },
-];
-
-const options = [
-    { label: 'Math', value: 'math' },
-    { label: 'Science', value: 'science' },
-    { label: 'English', value: 'def' },
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies' },
-    { label: 'Islamiat', value: 'islamiat' },
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music' },
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const monitors = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const new_activities_options = [
-    { value: 'new_activities', label: 'New activities' },
-    { value: 'additional_probes', label: 'Additional Probes' },
-    { value: 'additional_information', label: 'Additional Information' },
-    { value: 'additional_videos', label: 'Additional videos' },
-];
-
 const first_aid_kit_options = [
     { value: 'band_aids', label: 'Band-aids' },
     { value: 'sterile_gauze_dressings', label: 'Sterile Gauze Dressings' },
@@ -198,10 +159,6 @@ class SrhrPolicy extends React.Component {
 
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
-
-                                    // if(element.key.shortName === "parent_child_update" || element.key.shortName === "certified_counsellor" || element.key.shortName === "first_aid_kit_refill" || element.key.shortName === "mhm_kit" || element.key.shortName === "clean_food_space_access" || element.key.shortName === "defined_student_pickup") {
-                                    //     alert(element.key.shortName);
-                                    // }
                                     radios[i].checked = true;
                                     self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
                                 }

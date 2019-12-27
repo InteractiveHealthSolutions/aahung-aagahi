@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant, updateParticipant } from "../service/PostService";
-import { getObject, resetFormState } from "../util/AahungUtil.js";
+import { getObject, resetFormState, clearCheckedFields } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -635,13 +635,8 @@ class ParticipantDetails extends React.Component {
     * clear fields
     */
     resetForm = (fields) => {
-
         this.state = resetFormState(fields, this.state);
-        var radList = document.getElementsByName('sex');
-        for (var i = 0; i < radList.length; i++) {
-            if (radList[i].checked)
-                radList[i].checked = false;
-        }
+        clearCheckedFields();
         this.setState({
             school_name: '',
             subject_taught_other: '',

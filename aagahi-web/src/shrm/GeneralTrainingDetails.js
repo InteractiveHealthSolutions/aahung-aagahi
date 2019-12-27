@@ -34,6 +34,8 @@ import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import FormNavBar from "../widget/FormNavBar";
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
@@ -612,9 +614,21 @@ class GeneralTrainingDetails extends React.Component {
     render() {
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const setDisable = this.state.viewMode ? "disabled" : "";
+        var formNavVisible = false;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
