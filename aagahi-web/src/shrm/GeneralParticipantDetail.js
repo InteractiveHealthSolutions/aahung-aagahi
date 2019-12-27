@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant, updateParticipant } from "../service/PostService";
-import { getObject } from "../util/AahungUtil.js";
+import { getObject, clearCheckedFields, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -352,14 +352,15 @@ class GeneralParticipantDetail extends React.Component {
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
             this.participantId = String(userId) + timestamp;
-
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
             this.participantId = this.participantId.toUpperCase();
-            do {
-                this.participantId = this.participantId.concat('0');
+            if(this.participantId.length < 10) {
+                do {
+                    this.participantId = this.participantId.concat('0');
+                }
+                while (this.participantId.length !== 10)
             }
-            while (this.participantId.length != 10)
 
         }
         catch (error) {
@@ -745,19 +746,8 @@ class GeneralParticipantDetail extends React.Component {
     */
     resetForm = (fields) => {
 
-        for (let j = 0; j < fields.length; j++) {
-            let stateName = fields[j];
-
-            // for array object
-            if (typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if (typeof this.state[stateName] != 'object') {
-                this.state[stateName] = '';
-            }
-        }
+        this.state = resetFormState(fields, this.state);
+        clearCheckedFields();
 
         this.participantId = '';
         this.setState({
@@ -768,12 +758,6 @@ class GeneralParticipantDetail extends React.Component {
             dob: '',
             age: ''
         });
-
-        var radList = document.getElementsByName('sex');
-        for (var i = 0; i < radList.length; i++) {
-            if (radList[i].checked)
-                radList[i].checked = false;
-        }
 
         this.updateDisplay();
     }

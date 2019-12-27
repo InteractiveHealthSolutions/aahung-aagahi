@@ -34,7 +34,8 @@ export const entityUrl = [
     { id: 26, name: 'one-touch session detail form', url: "/oneTouchSessionDetail" },
     { id: 27, name: 'step down training monitoring form', url: "/stepDownTrainingMonitoring" },
     { id: 28, name: 'training detail form', url: "/trainingDetailForm" },
-    { id: 28, name: 'amplify change training details form', url: "/amplifyChangeTrainingDetails" },
+    { id: 29, name: 'amplify change training details form', url: "/amplifyChangeTrainingDetails" },
+    { id: 30, name: 'general training details form', url: "/generalTrainingDetails" }
 
 ];
 

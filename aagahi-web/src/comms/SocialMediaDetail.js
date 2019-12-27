@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-24 12:24:53
+ * @Last Modified time: 2019-12-26 13:38:41
  */
 
 
@@ -31,7 +31,7 @@ import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, In
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
-import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { getObject, loadFormState, resetFormState, clearCheckedFields } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -674,20 +674,7 @@ class SocialMediaDetail extends React.Component {
     resetForm = (fields) => {
 
         this.state = resetFormState(fields, this.state);
-        var radList = [];
-        radList = Array.from(document.getElementsByName('twitter_post_boosted'));
-        var fbRadios = Array.from(document.getElementsByName('facebook_post_boosted'));
-        var instRadios = Array.from(document.getElementsByName('instagram_post_boosted'));
-        var webRadios = Array.from(document.getElementsByName('web_portal_post_boosted'));
-        var othersRadios = Array.from(document.getElementsByName('other_post_boosted'));
-        Array.prototype.push.apply(radList, fbRadios);
-        Array.prototype.push.apply(radList, instRadios);
-        Array.prototype.push.apply(radList, webRadios);
-        Array.prototype.push.apply(radList, othersRadios);
-        for (var i = 0; i < radList.length; i++) {
-            if (radList[i].checked)
-                radList[i].checked = false;
-        }
+        clearCheckedFields();
         this.updateDisplay();
     }
 

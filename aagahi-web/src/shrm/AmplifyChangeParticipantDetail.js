@@ -34,7 +34,7 @@ import { saveParticipant, updateParticipant } from "../service/PostService";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import {resetFormState} from "../util/AahungUtil";
+import {resetFormState, clearCheckedFields } from "../util/AahungUtil";
 
 class AmplifyChangeParticipantDetail extends React.Component {
 
@@ -337,10 +337,12 @@ class AmplifyChangeParticipantDetail extends React.Component {
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);       // decode like this > parseInt(this.participantId, 36)
             this.participantId = this.participantId.toUpperCase();
-            do {
-                this.participantId = this.participantId.concat('0');
+            if(this.participantId.length < 10) {
+                do {
+                    this.participantId = this.participantId.concat('0');
+                }
+                while (this.participantId.length != 10)
             }
-            while (this.participantId.length != 10)
 
         }
         catch (error) {
@@ -750,11 +752,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
     resetForm = (fields) => {
 
         this.state = resetFormState(fields, this.state);
-        var radList = document.getElementsByName('sex');
-        for (var i = 0; i < radList.length; i++) {
-            if (radList[i].checked)
-                radList[i].checked = false;
-        }
+        clearCheckedFields();
         this.participantId = '';
         this.setState({
             institution_name: '',

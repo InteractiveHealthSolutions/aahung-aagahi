@@ -310,11 +310,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
     cancelCheck = () => {
 
-        var x = document.getElementsByName("mt_csa_prompts");
-        for (let i = 0; i < x.length; x++) {
-            x.checked = false;
-        }
-
         if (this.programType === "csa") {
             this.updateRequiredFields();
             this.resetForm(this.csaRequiredFields);
