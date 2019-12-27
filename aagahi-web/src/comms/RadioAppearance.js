@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:22:27
+ * @Last Modified time: 2019-12-26 13:56:24
  */
 
 
@@ -202,7 +202,7 @@ class RadioAppearance extends React.Component {
         });
 
         if (name === "city") {
-            this.isCityOther = e.target.value === "other" ? true : false;
+            this.isCityOther = e.target.value === "Other" ? true : false;
             // this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");
         }
     }
@@ -467,7 +467,7 @@ class RadioAppearance extends React.Component {
 
     editUpdateDisplay() {
 
-        this.isCityOther = this.state.city === "other" ? true : false;
+        this.isCityOther = this.state.city === "Other" ? true : false;
 
         if (this.state.topic_covered != undefined && this.state.topic_covered != '') {
             if (getObject('other', this.state.topic_covered, 'value') != -1) {
@@ -610,7 +610,7 @@ class RadioAppearance extends React.Component {
                                                                                 <option value="Peshawar">Peshawar</option>
                                                                                 <option value="Hyderabad">Hyderabad</option>
                                                                                 <option value="SBA">SBA</option>
-                                                                                <option value="other">Other</option>
+                                                                                <option value="Other">Other</option>
                                                                             </Input>
                                                                         </FormGroup>
 

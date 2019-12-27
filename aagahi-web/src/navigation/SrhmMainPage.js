@@ -276,15 +276,12 @@ render() {
 
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
-                  
                   <Link className="link formLink" to="/oneTouchSensitizationDetails">
                   <b>One Touch Sensitization Details</b>
                   </Link>
-                  
                   </NavText>
               </NavItem>
 
-              
               <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   

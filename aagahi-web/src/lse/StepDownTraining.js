@@ -194,10 +194,6 @@ class StepDownTraining extends React.Component {
 
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
-
-                                    // if(element.key.shortName === "parent_child_update" || element.key.shortName === "certified_counsellor" || element.key.shortName === "first_aid_kit_refill" || element.key.shortName === "mhm_kit" || element.key.shortName === "clean_food_space_access" || element.key.shortName === "defined_student_pickup") {
-                                    //     alert(element.key.shortName);
-                                    // }
                                     radios[i].checked = true;
                                     self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
                                 }
@@ -1194,7 +1190,6 @@ class StepDownTraining extends React.Component {
         else {
             formNavVisible = false;
         }
-
 
         return (
 
