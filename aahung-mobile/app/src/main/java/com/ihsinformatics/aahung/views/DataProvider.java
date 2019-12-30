@@ -488,7 +488,7 @@ public class DataProvider {
         widgets.add(participantSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.QUANTITY_TAC, "Number of TAC", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView()));
         participantSkipper.build();
 
-        participantSkipper = participantToggler.addOption("NGOs");
+        participantSkipper = participantToggler.addOption("NGO");
         widgets.add(participantSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.QUANTITY_NGO, "Number of NGOs", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView()));
         participantSkipper.build();
 
