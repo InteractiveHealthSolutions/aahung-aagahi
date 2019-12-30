@@ -13,6 +13,10 @@ public interface LoginContract {
         void startMainActivity();
 
         void autopopulateCredentials(String username,String password,boolean isRemember);
+
+        void enableLoginButton();
+
+        void enableSyncButton();
     }
 
 
