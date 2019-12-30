@@ -99,6 +99,9 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                 view.startMainActivity();
             } else
                 view.showToast("incorrect username and password");
+        }else {
+            view.showToast("This user doesn't exist in offline mode. Please sync the App");
+            view.enableLoginButton();
         }
     }
 
@@ -133,6 +136,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
         devicePreferences.invalidateFirstTimeFlag();
         view.dismissLoading();
         view.showToast("sync successfully");
+        view.enableSyncButton();
         if (!isSyncOnly) {
             resetLocations();
             view.startMainActivity();
@@ -143,6 +147,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     public void onMetadataFailure() {
         view.dismissLoading();
         view.showToast("sync failed");
+        view.enableSyncButton();
     }
 
 

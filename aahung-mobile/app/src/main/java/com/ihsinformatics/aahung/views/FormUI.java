@@ -449,6 +449,7 @@ public class FormUI implements ButtonListener {
             ButtonWidget buttonWidget = new ButtonWidget(context, formUI);
             baseLayout.addView(buttonWidget.getView());
             formUI.setButtonWidget(buttonWidget);
+            formListener.onFormLoaded();
         }
 
         public void resetForm() {
@@ -467,6 +468,8 @@ public class FormUI implements ButtonListener {
         public void onCompleted(JSONObject json, String endpoint, String uuid, ButtonWidget buttonWidget);
 
         public void onSaved();
+
+        public void onFormLoaded();
     }
 
 }
