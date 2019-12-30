@@ -127,7 +127,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 		    queryTasks  = new ArrayList<>();
 		    List<FormType> formTypes = formTypeRepository.findAll();
 		    for (FormType formType : formTypes) {
-			queryTasks.add(genereateTaskQueue(formType));
+		    	queryTasks.add(genereateTaskQueue(formType));
 		    }
 		    if (Context.DEBUG_MODE) {
 			run = false;
@@ -368,11 +368,10 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    return false;
 	}
 	// Minimum observations required are present
-	if (SystemResourceUtil.getInstance().getCurrentHistorySize() > minHistorySizeRequired) {
+	if (SystemResourceUtil.getInstance().getCurrentHistorySize() > 3) {
 	    float averageDisk = SystemResourceUtil.getInstance().getAverageDiskAvailabilityPercentage();
 	    float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
 	    float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
-	    System.out.println("averageDisk:" + averageDisk + " averageMemory:" + averageMemory + "averageCpu:" + averageCpu);
 	    return averageDisk >= minDiskSpaceRequired && averageMemory >= minMemorySpaceRequired
 		    && averageCpu >= minCpuRequired;
 	}
@@ -397,7 +396,8 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    		queue.add(alterQuery);
 	    } else 
 		    queue.add(generateCreateTableQuery(formType, tableName));
-	    queue.add(generateUpdateTableQuery(formType, tableName));
+	    if(Boolean.TRUE.equals(ifDataExists(formType)))
+	    	queue.add(generateUpdateTableQuery(formType, tableName));
 	} catch (Exception e) {
 	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
 	}
@@ -487,6 +487,23 @@ public class DatawarehouseRunner implements CommandLineRunner {
 		}
 			
     	return false;
+    }
+    
+ public Boolean ifDataExists(FormType formType){
+	 
+	 	int id = formType.getFormTypeId();
+    	String sqlQuery = "select count(*) from form_data where form_type_id = " + id + ";";
+    	try {
+    		DatawarehouseTask dwTask = new DatawarehouseTask(null, baseService.getEntityManager());
+    		List<Object> result = dwTask.executeSQL(sqlQuery, false);
+    		BigInteger bi = (BigInteger)result.get(0);    		
+    		if(bi.equals(new BigInteger("0")))
+    			return false;
+		} catch (SQLException e) {
+			String.format("Exception occurred while executing query: Message: {}", e.getMessage());
+		}
+			
+    	return true;
     }
 
 }
