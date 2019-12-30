@@ -170,10 +170,13 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void dismissLoading() {
-        if (loadingFragment != null && loadingFragment.isVisible())
-            loadingFragment.dismiss();
-
-
+        if (loadingFragment != null && loadingFragment.isVisible()) {
+            try {
+                loadingFragment.dismiss();
+            } catch (IllegalStateException ignored) {
+                ignored.printStackTrace();
+            }
+        }
     }
 
     @Override

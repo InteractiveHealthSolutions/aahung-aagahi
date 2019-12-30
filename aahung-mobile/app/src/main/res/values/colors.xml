@@ -10,4 +10,5 @@
     <color name="red">#DD0A0A</color>
     <color name="green">#8BC34A</color>
     <color name="themePurpe">#511462</color>
+    <color name="purple_transparent">#39511462</color>
 </resources>

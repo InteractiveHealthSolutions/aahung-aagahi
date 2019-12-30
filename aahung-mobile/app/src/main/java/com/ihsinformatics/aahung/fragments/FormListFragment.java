@@ -81,7 +81,6 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
-
         return binding.getRoot();
     }
 
@@ -108,6 +107,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
                     if (!isFormLoading) {
+                        binding.progressBar.setVisibility(View.VISIBLE);
                         isFormLoading = true;
                         getFragmentManager()
                                 .beginTransaction()
@@ -143,6 +143,11 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     @Override
     public void onFormDestroy() {
         isFormLoading = false;
+    }
+
+    @Override
+    public void onFormLoaded() {
+        binding.progressBar.setVisibility(View.GONE);
     }
 
     @Override

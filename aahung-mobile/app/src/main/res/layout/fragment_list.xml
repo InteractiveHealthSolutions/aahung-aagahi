@@ -9,6 +9,8 @@
         android:padding="@dimen/padding_very_large"
         tools:context=".fragments.FormListFragment">
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,6 +29,12 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical" />
         </LinearLayout>
+        <include
+            android:id="@+id/progressBar"
+            layout="@layout/progress_bar"
+            android:visibility="gone"
+            />
     </FrameLayout>
+
 
 </layout>
