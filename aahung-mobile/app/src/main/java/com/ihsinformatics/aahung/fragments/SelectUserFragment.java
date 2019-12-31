@@ -165,7 +165,12 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
                 users.add(user);
             }
             fragmentInteractionListener.onCompleted(users);
-            SelectUserFragment.this.dismiss();
+
+            try {
+                SelectUserFragment.this.dismiss();
+            } catch (IllegalStateException ignored) {
+                ignored.printStackTrace();
+            }
         } else {
             BaseItem mUser = (BaseItem) v.getTag();
             userRecyclerViewAdapter.addUser(mUser);
