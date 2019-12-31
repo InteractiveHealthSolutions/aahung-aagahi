@@ -60,6 +60,12 @@ public interface MetadataDao {
     @Query("select * from definition where shortName = :shortName")
     Definition getDefinitionByShortName(String shortName);
 
+    @Query("select * from definition where shortName = :shortName and definitionType = :definitionType")
+    Definition getDefinitionByType(String shortName,DefinitionType definitionType);
+
+    @Query("select * from definition_type where def_type_shortName = :shortName")
+    DefinitionType getDefinitionTypeByShortName(String shortName);
+
     @Query("select * from location_attribute_type where shortName = :name")
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
 
@@ -81,4 +87,6 @@ public interface MetadataDao {
 
     @Query("DELETE FROM user_role where user_id = :id")
     void deleteUserRoles(Integer id);
+
+
 }
