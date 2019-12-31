@@ -190,7 +190,12 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void finishDialog() {
-        dismiss();
+
+        try {
+            dismiss();
+        } catch (IllegalStateException ignored) {
+            ignored.printStackTrace();
+        }
     }
 
 
