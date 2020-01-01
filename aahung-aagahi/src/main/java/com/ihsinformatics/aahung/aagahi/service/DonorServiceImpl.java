@@ -12,16 +12,22 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.ValidationException;
+
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Project;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -265,5 +271,77 @@ public class DonorServiceImpl extends BaseService implements DonorService {
     public Project updateProject(Project obj) {
 	obj = (Project) setUpdateAuditAttributes(obj);
 	return projectRepository.save(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Project")
+    @Transactional
+    public void voidProject(Project obj) throws HibernateException {
+	obj = (Project) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	projectRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Project")
+    @Transactional
+    public void unvoidProject(Project obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    updateProject(obj);
+	}
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Donor")
+    @Transactional
+    public void voidDonor(Donor obj) throws HibernateException {
+	obj = (Donor) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	donorRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Donor")
+    @Transactional
+    public void unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    updateDonor(obj);
+	}
     }
 }

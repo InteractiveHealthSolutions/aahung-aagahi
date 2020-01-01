@@ -12,21 +12,27 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.ValidationException;
+
 import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -683,5 +689,41 @@ public class UserServiceImpl extends BaseService implements UserService {
     public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
 	obj = (UserAttributeType) setUpdateAuditAttributes(obj);
 	return userAttributeTypeRepository.save(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidUser(com.
+     * ihsinformatics.aahung.aagahi.model.User)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void User")
+    @Transactional
+    public void voidUser(User obj) throws HibernateException {
+	obj = (User) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	userRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidUser(com.
+     * ihsinformatics.aahung.aagahi.model.User)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void User")
+    @Transactional
+    public void unvoidUser(User obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    updateUser(obj);
+	}
     }
 }

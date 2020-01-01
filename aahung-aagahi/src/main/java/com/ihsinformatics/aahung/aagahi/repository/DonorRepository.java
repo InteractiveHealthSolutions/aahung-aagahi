@@ -15,10 +15,12 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -31,4 +33,8 @@ public interface DonorRepository extends JpaRepository<Donor, Integer> {
     Donor findByShortName(String name);
 
     Donor findByUuid(String uuid);
+    
+    @Query("UPDATE Donor d set d.isVoided = true WHERE d = :donor")
+    @Modifying
+    void softDelete(@Param("donor") Donor donor);
 }
