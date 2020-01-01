@@ -100,11 +100,11 @@ public class DonorControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteDonor() throws Exception {
 	when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
-	doNothing().when(donorService).deleteDonor(ministry);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "donor/{uuid}", ministry.getUuid()));
+	doNothing().when(donorService).voidDonor(ministry);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "donor/{uuid}?reasonVoided=Test123", ministry.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(donorService, times(1)).getDonorByUuid(ministry.getUuid());
-	verify(donorService, times(1)).deleteDonor(ministry);
+	verify(donorService, times(1)).voidDonor(ministry);
 	verifyNoMoreInteractions(donorService);
     }
 
