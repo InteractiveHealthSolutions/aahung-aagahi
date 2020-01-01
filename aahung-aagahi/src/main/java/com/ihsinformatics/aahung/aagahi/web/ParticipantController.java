@@ -117,7 +117,7 @@ public class ParticipantController extends BaseController {
     @ApiOperation(value = "Restore Participant")
     @PatchMapping("/participant/{uuid}")
     public ResponseEntity<?> unvoidParticipant(@PathVariable String uuid) {
-	LOG.info("Request to restore form data: {}", uuid);
+	LOG.info("Request to restore participant: {}", uuid);
 	try {
 		Participant participant = uuid.matches(RegexUtil.UUID) ? service.getParticipantByUuid(uuid)
 				: service.getParticipantById(Integer.parseInt(uuid));

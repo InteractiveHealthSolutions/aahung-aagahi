@@ -12,12 +12,16 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Project;
 
 /**
@@ -127,4 +131,44 @@ public interface DonorService {
     Donor updateDonor(Donor obj);
 
     Project updateProject(Project obj);
+    
+    /**
+     * Void {@link Project} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void voidProject(Project obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Restore the voided {@link Project} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void unvoidProject(Project obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Void {@link Donor} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void voidDonor(Donor obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Restore the voided {@link Project} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException;
 }

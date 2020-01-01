@@ -166,7 +166,7 @@ public class LocationController extends BaseController {
     @ApiOperation(value = "Restore Location")
     @PatchMapping("/location/{uuid}")
     public ResponseEntity<?> unvoidLocation(@PathVariable String uuid) {
-	LOG.info("Request to restore form data: {}", uuid);
+	LOG.info("Request to restore location: {}", uuid);
 	try {
 		Location location = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)
 				: service.getLocationById(Integer.parseInt(uuid));

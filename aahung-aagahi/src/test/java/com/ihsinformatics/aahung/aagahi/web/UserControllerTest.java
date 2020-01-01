@@ -156,11 +156,11 @@ public class UserControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteUser() throws Exception {
 	when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
-	doNothing().when(userService).deleteUser(dumbledore);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
+	doNothing().when(userService).voidUser(dumbledore);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}?reasonVoided=Test123", dumbledore.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
-	verify(userService, times(1)).deleteUser(dumbledore);
+	verify(userService, times(1)).voidUser(dumbledore);
 	verifyNoMoreInteractions(userService);
     }
 

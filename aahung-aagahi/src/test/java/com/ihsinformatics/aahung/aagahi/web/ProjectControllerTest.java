@@ -101,11 +101,11 @@ public class ProjectControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteProject() throws Exception {
 	when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
-	doNothing().when(donorService).deleteProject(triwizardTournament);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
+	doNothing().when(donorService).voidProject(triwizardTournament);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "project/{uuid}?reasonVoided=Test123", triwizardTournament.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(donorService, times(1)).getProjectByUuid(triwizardTournament.getUuid());
-	verify(donorService, times(1)).deleteProject(triwizardTournament);
+	verify(donorService, times(1)).voidProject(triwizardTournament);
 	verifyNoMoreInteractions(donorService);
     }
 
