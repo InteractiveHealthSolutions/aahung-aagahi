@@ -417,6 +417,9 @@ public class DataProvider {
 
     private List<Widget> getTrainingDetailsWidgets() {
         List<Widget> widgets = new ArrayList<>();
+
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -710,6 +713,8 @@ public class DataProvider {
 
     private List<Widget> getStepDownTrainingWidgets() {
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -2021,7 +2026,7 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(approximateNumberOfGirls.hideView());
         widgets.add(approximateNumberOfBoys.hideView());
-        EditTextWidget numberOfStudents = new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, SIX, true).setMinimumValue(ONE).setInputRange(1, 99999).build();
+        EditTextWidget numberOfStudents = new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, SIX, true).setMinimumValue(ONE).setInputRange(1, 999999).build();
         widgets.add(numberOfStudents);
 
         MultiSumService sumService=  new MultiSumService(numberOfStudents);
@@ -2216,8 +2221,8 @@ public class DataProvider {
     private List<Widget> getAmplifyChangeTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
-
 
         UserWidget trainers = new UserWidget(context, Keys.TRAINER, "Trainer", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(trainers);
@@ -2263,6 +2268,8 @@ public class DataProvider {
     private List<Widget> getAmplifyChangeStepDownTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE_FORM, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -2405,6 +2412,8 @@ public class DataProvider {
     private List<Widget> getGeneralTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -2450,6 +2459,8 @@ public class DataProvider {
     private List<Widget> getGeneralStepDownTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -2863,6 +2874,7 @@ public class DataProvider {
 
     private List<Widget> getTrainingDetailsFormCommunicationsWidgets() {
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
@@ -3009,7 +3021,7 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.DISTRIBUTION_LOCATION_NAME, "Name of location", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
 
-        MultiSelectWidget typeOfMaterial = new MultiSelectWidget(context, Keys.TYPE_OF_MATERIAL, LinearLayout.VERTICAL, "Type of Material", getDefinitions(Keys.TYPE_OF_MATERIAL), true);
+        MultiSelectWidget typeOfMaterial = new MultiSelectWidget(context, Keys.TYPE_OF_MATERIAL, LinearLayout.VERTICAL, "Type of Material", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.type_of_material_comm)),Keys.TYPE_OF_MATERIAL), true);
         widgets.add(typeOfMaterial);
 
         ToggleWidgetData typeOfMaterialtToggler = new ToggleWidgetData();
