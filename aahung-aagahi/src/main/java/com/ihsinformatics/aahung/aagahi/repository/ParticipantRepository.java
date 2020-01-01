@@ -15,7 +15,11 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 
@@ -29,4 +33,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     List<Participant> findByLocation(Location location);
 
     Participant findByUuid(String uuid);
+    
+    @Query("UPDATE Participant d set d.isVoided = true WHERE d = :participant")
+    @Modifying
+    void softDelete(@Param("participant") Participant participant);
 }
