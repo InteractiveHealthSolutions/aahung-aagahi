@@ -366,7 +366,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
-	    obj.setReasonVoided(obj.getReasonVoided() + "(Unretired on "
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
 	    updateFormData(obj);
 	}
