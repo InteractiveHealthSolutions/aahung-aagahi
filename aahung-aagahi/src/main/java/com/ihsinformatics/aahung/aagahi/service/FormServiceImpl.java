@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
@@ -40,6 +41,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
+
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -357,6 +359,7 @@ public class FormServiceImpl extends BaseService implements FormService {
      */
     @Override
     @CheckPrivilege(privilege = "Void FormData")
+    @Transactional
     public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
@@ -409,6 +412,7 @@ public class FormServiceImpl extends BaseService implements FormService {
      */
     @Override
     @CheckPrivilege(privilege = "Void FormData")
+    @Transactional
     public void voidFormData(FormData obj) throws HibernateException {
 	obj = (FormData) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
