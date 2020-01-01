@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,6 +54,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
@@ -144,11 +146,36 @@ public class LocationController extends BaseController {
 	}
     }
 
-    @ApiOperation(value = "Delete Location")
+    @ApiOperation(value = "Void Location")
     @DeleteMapping("/location/{uuid}")
-    public ResponseEntity<?> deleteLocation(@PathVariable String uuid) {
-	LOG.info("Request to delete location: {}", uuid);
-	service.deleteLocation(service.getLocationByUuid(uuid), true);
+    public ResponseEntity<?> deleteLocation(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+	LOG.info("Request to delete participant: {}", uuid);
+	try {
+		Location location = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)
+				: service.getLocationById(Integer.parseInt(uuid));
+		if(location == null)
+			return noEntityFoundResponse(uuid);
+		location.setReasonVoided(reasonVoided);
+	    service.voidLocation(location);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
+	}
+	return ResponseEntity.noContent().build();
+    }
+    
+    @ApiOperation(value = "Restore Location")
+    @PatchMapping("/location/{uuid}")
+    public ResponseEntity<?> unvoidLocation(@PathVariable String uuid) {
+	LOG.info("Request to restore form data: {}", uuid);
+	try {
+		Location location = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)
+				: service.getLocationById(Integer.parseInt(uuid));
+		if(location == null)
+			return noEntityFoundResponse(uuid);
+	    service.unvoidLocation(location);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
+	}
 	return ResponseEntity.noContent().build();
     }
 
