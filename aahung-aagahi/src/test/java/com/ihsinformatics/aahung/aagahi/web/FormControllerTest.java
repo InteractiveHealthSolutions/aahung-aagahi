@@ -503,7 +503,7 @@ public class FormControllerTest extends BaseTestData {
     public void shouldVoidFormData() throws Exception {
 	when(formService.getFormDataByUuid(any(String.class))).thenReturn(quidditch95);
 	doNothing().when(formService).voidFormData(quidditch95);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "formdata/{uuid}", quidditch95.getUuid()));
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "formdata/{uuid}?reasonVoided=Test123", quidditch95.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(formService, times(1)).getFormDataByUuid(quidditch95.getUuid());
 	verify(formService, times(1)).voidFormData(quidditch95);
