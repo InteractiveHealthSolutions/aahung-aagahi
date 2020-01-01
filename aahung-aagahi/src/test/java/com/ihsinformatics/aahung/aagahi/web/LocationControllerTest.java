@@ -199,11 +199,11 @@ public class LocationControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteLocation() throws Exception {
 	when(locationService.getLocationByUuid(any(String.class))).thenReturn(diagonalley);
-	doNothing().when(locationService).deleteLocation(diagonalley, true);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}", diagonalley.getUuid()));
+	doNothing().when(locationService).voidLocation(diagonalley);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}?reasonVoided=Test123", diagonalley.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(locationService, times(1)).getLocationByUuid(diagonalley.getUuid());
-	verify(locationService, times(1)).deleteLocation(diagonalley, true);
+	verify(locationService, times(1)).voidLocation(diagonalley);
 	verifyNoMoreInteractions(locationService);
     }
 
