@@ -125,7 +125,7 @@ public class ParticipantControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteParticipant() throws Exception {
 	when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
-	doNothing().when(participantService).deleteParticipant(seeker);
+	doNothing().when(participantService).voidParticipant(seeker);
 	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "participant/{uuid}?reasonVoided=Test123", seeker.getUuid()));
 	actions.andExpect(status().isNoContent());
 	verify(participantService, times(1)).getParticipantByUuid(seeker.getUuid());
