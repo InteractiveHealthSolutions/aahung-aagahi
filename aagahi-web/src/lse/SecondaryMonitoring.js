@@ -22,7 +22,7 @@
 // Contributors: Tahira Niazi
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -31,17 +31,13 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { clearCheckedFields } from "../util/AahungUtil.js";
+import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole, getLocationAttributesByLocation, getDefinitionByDefinitionId } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
+import { clearCheckedFields, getIndicatorCode, loadFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa' },
-    { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' },
-];
+import FormNavBar from "../widget/FormNavBar";
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
@@ -50,7 +46,7 @@ const new_activities_options = [
     { value: 'additional_videos', label: 'Additional videos' },
 ];
 
-class SecondaryMonitoringExit extends React.Component {
+class SecondaryMonitoring extends React.Component {
 
     modal = false;
 
@@ -93,7 +89,6 @@ class SecondaryMonitoringExit extends React.Component {
             modalHeading: ''
         };
 
-
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -125,9 +120,15 @@ class SecondaryMonitoringExit extends React.Component {
         this.isWorkbookBoysDistribute = false;
         this.isOtherResourcesDistribute = false;
 
-        this.score = 0;
-        this.totalScore = 0;
-        this.scoreArray = [];
+        this.fctScore = 0;
+        this.fctTotalScore = 0;
+        this.fctScoreArray = [];
+        this.mgmtScore = 0;
+        this.mgmtTotalScore = 0;
+        this.mgmtScoreArray = [];
+        this.newTier = false;
+        this.runningTier = false;
+        this.exitTier = false;
 
         this.formTypeId = 0;
         this.lsbeRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name",
@@ -136,34 +137,41 @@ class SecondaryMonitoringExit extends React.Component {
             "lsbe_activity_time_allotment", "lsbe_subject_comfort", "lsbe_nonjudmental_tone", "lsbe_impartial_opinions", "lsbe_discussion_probes",
             "lsbe_student_understanding", "lsbe_student_engagement", "lsbe_student_attention", "lsbe_timetable_integration",
             "lsbe_two_teacher_assigned", "lsbe_teacher_mgmt_coordination",
-            "lsbe_mt_count", "lsbe_mt_teacher_coordination", "lsbe_mt_conduct_monitoring", "lsbe_mt_conduct_training",
-            "monitoring_score", "monitoring_score_pct", "lsbe_challenge_1",
-            "lsbe_challenge_2", "lsbe_challenge_3", "lsbe_challenge_4", "lsbe_challenge_5", "lsbe_challenge_6", "lsbe_resources_required",
-            "lsbe_resources_delivered"];
+            "monitoring_score", "monitoring_score_pct", "facilitation_score", "facilitation_score_pct", "management_score",
+            "management_score_pct", "lsbe_challenge_1", "lsbe_challenge_2", "lsbe_challenge_3", "lsbe_challenge_4", "lsbe_challenge_5",
+            "lsbe_challenge_6", "lsbe_resources_required", "lsbe_resources_delivered"];
 
         this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other",
-            "lsbe_beyond_guide",
             "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
             "lsbe_challenge_6_status"];
 
         this.nonRequiredFields = ["wb1_girls_required_count", "wb1_boys_required_count", "wb2_girls_required_count",
             "wb2_boys_required_count", "other_resource_required_count", "other_resource_required_type",
             "wb1_girls_delivered_count", "wb1_boys_delivered_count", "wb2_girls_delivered_count", "wb2_boys_delivered_count",
-            "other_resource_delivered_count", "other_resource_delivered_type"];
+            "other_resource_delivered_count", "other_resource_delivered_type", "lsbe_beyond_guide", "lsbe_mt_count", "lsbe_mt_teacher_coordination",
+            "lsbe_mt_conduct_monitoring", "lsbe_mt_conduct_training"];
+
+        // facilitation fields; created a separate array for facilitation fields w.r.t scoring purpose
+        this.fctFields = ["lsbe_prompts", "lsbe_chapter_objective", "lsbe_teacher_understanding", "lsbe_material_preparation",
+            "lsbe_teacher_preparation", "lsbe_activity_time_allotment", "lsbe_beyond_guide", "lsbe_beyond_guide_new", "lsbe_subject_comfort",
+            "lsbe_nonjudmental_tone", "lsbe_impartial_opinions", "lsbe_discussion_probes", "lsbe_student_understanding",
+            "lsbe_student_engagement", "lsbe_student_attention"];
+
+        // management fields; created a separate array for management fields w.r.t scoring purpose
+        this.mgmtFields = ["lsbe_timetable_integration", "lsbe_two_teacher_assigned", "lsbe_teacher_mgmt_coordination",
+            "lsbe_mt_teacher_coordination", "lsbe_mt_conduct_monitoring", "lsbe_mt_conduct_training"];
 
         this.errors = {};
-
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -173,8 +181,13 @@ class SecondaryMonitoringExit extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_EXIT_FORM_UUID);
-            this.formTypeId = formTypeObj.formTypeId;
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+
+            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
@@ -193,6 +206,61 @@ class SecondaryMonitoringExit extends React.Component {
                     schools: schools
                 })
             }
+
+            if (this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if (this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    this.fetchedForm.data.map(function (element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if (dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for (let i = 0; i < radios.length; i++) {
+                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                    radios[i].checked = true;
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                                }
+                            }
+                        }
+                        else if (dataType === 'definition') { //for final decision mt_eligible
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for (let i = 0; i < radios.length; i++) {
+                                if (radios[i].value === element.value.shortName) {
+                                    radios[i].checked = true;
+                                }
+                            }
+                        }
+                    })
+
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+
+                    let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({
+                loading: false
+            })
+
+            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
+            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
+            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
+            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
+            this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
         }
         catch (error) {
             console.log(error);
@@ -217,6 +285,125 @@ class SecondaryMonitoringExit extends React.Component {
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
         })
+
+        this.isClassSexCoed = false;
+        this.isLevel1 = true;
+        this.isLevel2 = false;
+        this.isClassFrequencyOther = false;
+        this.isBeyondGuide = false;
+        this.isIntegrated = false;
+        this.isChallenge1 = false;
+        this.isChallenge2 = false;
+        this.isChallenge3 = false;
+        this.isChallenge4 = false;
+        this.isChallenge5 = false;
+        this.isChallenge6 = false;
+        this.isSchoolSexGirls = true;
+        this.isSchoolSexBoys = false;
+        this.isWorkbookGirls = false;
+        this.isWorkbookGirls = false;
+        this.isOtherResources = false;
+        this.isResourcesRequired = false;
+
+        this.isResourcesRequiredDistribute = false;
+        this.isWorkbookGirlsDistribute = false;
+        this.isWorkbookBoysDistribute = false;
+        this.isOtherResourcesDistribute = false;
+
+        this.fctScore = 0;
+        this.fctTotalScore = 0;
+        this.fctScoreArray = [];
+        this.mgmtScore = 0;
+        this.mgmtTotalScore = 0;
+        this.mgmtScoreArray = [];
+    }
+
+    editUpdateDisplay() {
+
+        if (this.state.lsbe_level_monitored !== '' && this.state.lsbe_level_monitored !== undefined) {
+            this.isLevel1 = this.state.lsbe_level_monitored === "level_1" ? true : false;
+            this.isLevel2 = this.state.lsbe_level_monitored === "level_2" ? true : false;
+        }
+
+        if (this.state.lsbe_class_frequency !== '' && this.state.lsbe_class_frequency !== undefined) {
+            this.isClassFrequencyOther = this.state.lsbe_class_frequency === "other" ? true : false;
+        }
+
+        if (this.state.school_sex !== '' && this.state.school_sex !== undefined) {
+            this.isSchoolSexGirls = this.state.school_sex === "girls" ? true : false;
+            this.isSchoolSexBoys = this.state.school_sex === "boys" ? true : false;
+
+            this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired;
+            this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
+
+            this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute;
+            this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
+
+            this.setState({ class_sex: this.state.school_sex === "girls" ? 'girls' : 'boys' });
+        }
+
+        if (this.state.lsbe_challenge_1 !== '' && this.state.lsbe_challenge_1 !== undefined)
+            this.isChallenge1 = this.state.lsbe_challenge_1 === "yes" ? true : false;
+        if (this.state.lsbe_challenge_2 !== '' && this.state.lsbe_challenge_2 !== undefined)
+            this.isChallenge2 = this.state.lsbe_challenge_2 === "yes" ? true : false;
+        if (this.state.lsbe_challenge_3 !== '' && this.state.lsbe_challenge_3 !== undefined)
+            this.isChallenge3 = this.state.lsbe_challenge_3 === "yes" ? true : false;
+        if (this.state.lsbe_challenge_4 !== '' && this.state.lsbe_challenge_4 !== undefined)
+            this.isChallenge4 = this.state.lsbe_challenge_4 === "yes" ? true : false;
+        if (this.state.lsbe_challenge_5 !== '' && this.state.lsbe_challenge_5 !== undefined)
+            this.isChallenge5 = this.state.lsbe_challenge_5 === "yes" ? true : false;
+        if (this.state.lsbe_challenge_6 !== '' && this.state.lsbe_challenge_6 !== undefined)
+            this.isChallenge6 = this.state.lsbe_challenge_6 === "yes" ? true : false;
+
+        // for required
+        if (this.state.lsbe_resources_required !== '' && this.state.lsbe_resources_required !== undefined) {
+            this.isResourcesRequired = this.state.lsbe_resources_required === "yes" ? true : false;
+
+            this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired;
+            this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
+
+            if (!this.isResourcesRequired) {
+                this.isWorkbookGirls = false;
+                this.isWorkbookBoys = false;
+                this.isOtherResources = false;
+            }
+        }
+
+        if (this.state.other_resource_required_count !== '' && this.state.other_resource_required_count !== undefined) {
+            this.isOtherResources = this.state.other_resource_required_count > 0 ? true : false;
+            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_required_type");
+        }
+
+        // for disrtibuted
+        if (this.state.lsbe_resources_delivered !== '' && this.state.lsbe_resources_delivered !== undefined) {
+            this.isResourcesRequiredDistribute = this.state.lsbe_resources_delivered === "yes" ? true : false;
+
+            this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute;
+            this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
+
+            if (!this.isResourcesRequiredDistribute) {
+
+                this.isWorkbookGirlsDistribute = false;
+                this.isWorkbookBoysDistribute = false;
+                this.isOtherResourcesDistribute = false;
+
+            }
+        }
+
+        if (this.state.other_resource_delivered_count !== '' && this.state.other_resource_delivered_count !== undefined) {
+            this.isOtherResourcesDistribute = this.state.other_resource_delivered_count > 0 ? true : false;
+            // other_resource_delivered_type
+            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_delivered_type");
+        }
+
+        if (this.state.lsbe_beyond_guide !== '' && this.state.lsbe_beyond_guide !== undefined) {
+            this.isBeyondGuide = this.state.lsbe_beyond_guide === "1" ? true : false;
+            this.isBeyondGuide ? this.lsbeDependantFields.push("lsbe_beyond_guide_new") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "lsbe_beyond_guide_new");
+        }
+
+        if (this.state.lsbe_timetable_integration !== '' && this.state.lsbe_timetable_integration !== undefined) {
+            this.isIntegrated = this.state.lsbe_timetable_integration === "1" ? true : false;
+        }
     }
 
     toggleTab(tab) {
@@ -231,7 +418,6 @@ class SecondaryMonitoringExit extends React.Component {
         e.preventDefault();
         e.returnValue = true;
     }
-
 
     cancelCheck = () => {
 
@@ -282,7 +468,7 @@ class SecondaryMonitoringExit extends React.Component {
 
         if (name === "other_resource_required_count") {
             this.isOtherResources = e.target.value > 0 ? true : false;
-            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_required_type");
+            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_required_type");
         }
 
         // for disrtibuted
@@ -297,23 +483,18 @@ class SecondaryMonitoringExit extends React.Component {
                 this.isWorkbookGirlsDistribute = false;
                 this.isWorkbookBoysDistribute = false;
                 this.isOtherResourcesDistribute = false;
-
             }
         }
 
         if (name === "other_resource_delivered_count") {
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
             // other_resource_delivered_type
-            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_delivered_type");
+            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_delivered_type");
         }
-
-
     }
 
     // for single select
     valueChange = (e, name) => {
-        this.setState({ sex: e.target.value });
-        this.setState({ sex: e.target.value });
         this.setState({
             [name]: e.target.value
         });
@@ -361,109 +542,112 @@ class SecondaryMonitoringExit extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-
-    }
-
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
-        let answered = [];
-        if (this.scoreArray != undefined || this.scoreArray != null) {
-            answered = this.scoreArray.filter(question => question.elementName == fieldName);
-        }
-        if (answered[0] != null) {
-            answered[0].id = indicator;
-            answered[0].elementName = fieldName;
-            this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
-            this.score += parseInt(value);
 
-            for (var i in this.scoreArray) {
-                if (this.scoreArray[i].elementName == fieldName) {
+        let fctField = [];
+        let mgmtField = [];
 
-                    this.scoreArray[i].id = indicator; // they will remain same
-                    this.scoreArray[i].elementName = fieldName; // they will remain same
-                    this.scoreArray[i].value = value;
-                    this.scoreArray[i].score = this.score;
-                    break; //Stop this loop, we found it!
+        fctField = this.fctFields.filter(f => f === fieldName);
+        mgmtField = this.mgmtFields.filter(f => f === fieldName);
+
+        if (fctField.length > 0) {
+
+            let answered = [];
+            if (this.fctScoreArray != undefined || this.fctScoreArray != null) {
+                answered = this.fctScoreArray.filter(question => question.elementName == fieldName);
+            }
+            if (answered[0] != null) {
+                answered[0].id = indicator;
+                answered[0].elementName = fieldName;
+                this.fctScore = this.fctScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                this.fctScore += parseInt(value);
+
+                for (var i in this.fctScoreArray) {
+                    if (this.fctScoreArray[i].elementName == fieldName) {
+                        this.fctScoreArray[i].id = indicator; // they will remain same
+                        this.fctScoreArray[i].elementName = fieldName; // they will remain same
+                        this.fctScoreArray[i].value = value;
+                        this.fctScoreArray[i].score = this.fctScore;
+                        break; //Stop this loop, we found it!
+                    }
                 }
             }
+            else { //push this question along with value and other attributes
+                let newAnswered = {}
+                newAnswered.id = indicator;
+                newAnswered.elementName = fieldName;
+                newAnswered.value = value;
+                this.fctScore += parseInt(value);
+                this.fctTotalScore += indicatorValue;
+                newAnswered.score = this.fctScore;
+                newAnswered.totalScore = this.fctTotalScore;
+                this.fctScoreArray.push(newAnswered);
+            }
+
+            var score = parseInt(this.fctScore);
+            var totalScore = parseInt(this.fctTotalScore);
+            var percent = (score / totalScore) * 100;
+            percent = percent.toFixed(2);
+            this.setState({
+                facilitation_score: this.fctScore,
+                facilitation_score_pct: percent
+            })
         }
-        else { //push this question along with value and other attributes
+        else if (mgmtField.length > 0) {
+            let answered = [];
+            if (this.mgmtScoreArray != undefined || this.mgmtScoreArray != null) {
+                answered = this.mgmtScoreArray.filter(question => question.elementName == fieldName);
+            }
+            if (answered[0] != null) {
+                answered[0].id = indicator;
+                answered[0].elementName = fieldName;
+                this.mgmtScore = this.mgmtScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                this.mgmtScore += parseInt(value);
 
-            let newAnswered = {}
-            newAnswered.id = indicator;
-            newAnswered.elementName = fieldName;
-            newAnswered.value = value;
-            this.score += parseInt(value);
-            this.totalScore += indicatorValue;
-            newAnswered.score = this.score;
-            newAnswered.totalScore = this.totalScore;
-            this.scoreArray.push(newAnswered);
+                for (var i in this.mgmtScoreArray) {
+                    if (this.mgmtScoreArray[i].elementName == fieldName) {
+                        this.mgmtScoreArray[i].id = indicator; // they will remain same
+                        this.mgmtScoreArray[i].elementName = fieldName; // they will remain same
+                        this.mgmtScoreArray[i].value = value;
+                        this.mgmtScoreArray[i].score = this.mgmtScore;
+                        break; //Stop this loop, we found it!
+                    }
+                }
+            }
+            else { //push this question along with value and other attributes
+                let newAnswered = {}
+                newAnswered.id = indicator;
+                newAnswered.elementName = fieldName;
+                newAnswered.value = value;
+                this.mgmtScore += parseInt(value);
+                this.mgmtTotalScore += indicatorValue;
+                newAnswered.score = this.mgmtScore;
+                newAnswered.totalScore = this.mgmtTotalScore;
+                this.mgmtScoreArray.push(newAnswered);
+            }
+
+            var score = parseInt(this.mgmtScore);
+            var totalScore = parseInt(this.mgmtTotalScore);
+            var percent = (score / totalScore) * 100;
+            percent = percent.toFixed(2);
+            this.setState({
+                management_score: this.mgmtScore,
+                management_score_pct: percent
+            })
         }
 
-        //   alert(this.score);
-        //   alert(this.totalScore);
-        var score = parseInt(this.score);
-        var totalScore = parseInt(this.totalScore);
-
-        var percent = (score / totalScore) * 100;
-        //   alert(percent)
-        percent = percent.toFixed(2);
+        var cumulativeScore = parseInt(this.fctScore) + parseInt(this.mgmtScore);
+        var cumulativeTotalScore = parseInt(this.fctTotalScore) + parseInt(this.mgmtTotalScore);
+        var cumulativePercent = (cumulativeScore / cumulativeTotalScore) * 100;
+        cumulativePercent = cumulativePercent.toFixed(2);
         this.setState({
-            monitoring_score: this.score,
-            monitoring_score_pct: percent
+            monitoring_score: cumulativeScore,
+            monitoring_score_pct: cumulativePercent
         })
-        //   alert(percent);
-        console.log(this.scoreArray);
     }
 
     // for multi select
@@ -487,22 +671,32 @@ class SecondaryMonitoringExit extends React.Component {
 
         try {
             if (name === "school_id") {
-
                 let participants = await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
-                        participants: participants
+                        participants: participants,
+                        school_name: e.locationName,
                     })
                 }
                 else {
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
+
+                let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.autopopulateFields(attributes);
+
+                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
+                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
+                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
+                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
+                this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -510,6 +704,28 @@ class SecondaryMonitoringExit extends React.Component {
             console.log(error);
         }
     };
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION" && attrTypeName === "school_tier") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                attributeValue = definition.definitionName;
+                self.setState({ [attrTypeName]: attributeValue });
+                self.newTier = attributeValue === "New" ? true : false;
+                self.runningTier = attributeValue === "Running" ? true : false;
+                self.exitTier = attributeValue === "Exit" ? true : false;
+            }
+        })
+    }
 
     handleSubmit = async event => {
         event.preventDefault();
@@ -519,7 +735,8 @@ class SecondaryMonitoringExit extends React.Component {
 
             this.setState({
                 // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);
@@ -591,41 +808,76 @@ class SecondaryMonitoringExit extends React.Component {
             jsonData.data = dataObj;
             console.log(jsonData);
 
+            if (this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId = this.fetchedForm.referenceId;
+                updateFormData(jsonData)
+                    .then(
+                        responseData => {
+                            if (!(String(responseData).includes("Error"))) {
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
+                                this.resetForm(this.nonRequiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
 
-            saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if (!(String(responseData).includes("Error"))) {
-
-                            this.setState({
-                                loading: false,
-                                modalHeading: 'Success!',
-                                okButtonStyle: { display: 'none' },
-                                modalText: 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-
-                            this.resetForm(this.lsbeRequiredFields);
-                            this.resetForm(this.lsbeDependantFields);
-                            this.resetForm(this.nonRequiredFields);
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                        else if (String(responseData).includes("Error")) {
+                    );
+            }
+            else {
+                saveFormData(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
 
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
 
-                            this.setState({
-                                loading: false,
-                                modalHeading: 'Fail!',
-                                okButtonStyle: { display: 'none' },
-                                modalText: submitMsg,
-                                modal: !this.state.modal
-                            });
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
+                                this.resetForm(this.nonRequiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+            }
 
         }
     }
@@ -653,22 +905,19 @@ class SecondaryMonitoringExit extends React.Component {
         const errorText = "Required";
         for (let j = 0; j < requireds.length; j++) {
 
-            // alert(requireds[j]);
-
             let stateName = requireds[j];
 
             // for array object
             if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is epmpty");
+                // alert(stateName + ": object is epmpty");
                 isOk = false;
                 this.errors[requireds[j]] = errorText;
-
             }
 
             // for text and others
             if (typeof this.state[stateName] != 'object') {
                 if (this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is epmpty");
+                    // alert(stateName + ": value is epmpty");
                     isOk = false;
                     this.errors[requireds[j]] = errorText;
                 }
@@ -678,24 +927,21 @@ class SecondaryMonitoringExit extends React.Component {
         for (let j = 0; j < dependants.length; j++) {
             var element = document.getElementById(dependants[j]);
 
-            // alert(dependants[j]);
             if (element != null) {
                 if (element.offsetParent != null) {
 
                     let stateName = dependants[j];
-
                     // for array object
                     if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
+                        // alert(stateName + ": object is empty");
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
-
                     }
 
                     // for text and others
                     if (typeof this.state[stateName] != 'object') {
                         if (this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
+                            // alert(stateName + ": value is empty");
                             isOk = false;
                             this.errors[dependants[j]] = errorText;
                         }
@@ -707,16 +953,15 @@ class SecondaryMonitoringExit extends React.Component {
 
                 // for array object
                 if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                    // alert("object is empty");
+                    // alert(stateName + ": object is empty");
                     isOk = false;
                     this.errors[dependants[j]] = errorText;
-
                 }
 
                 // for text and others
                 if (typeof this.state[stateName] != 'object') {
                     if (this.state[stateName] === "" || this.state[stateName] == undefined) {
-                        // alert("value is empty");
+                        // alert(stateName + ": value is empty");
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
                     }
@@ -747,11 +992,14 @@ class SecondaryMonitoringExit extends React.Component {
             }
         }
 
+        this.setState({
+            school_tier: ''
+        })
+
         clearCheckedFields();
         this.updateDisplay();
-
-        this.isOtherResources = false;
-        this.isOtherResourcesDistribute = false;
+        // this.isOtherResources = false;
+        // this.isOtherResourcesDistribute = false;
     }
 
     // for modal
@@ -762,8 +1010,6 @@ class SecondaryMonitoringExit extends React.Component {
     }
 
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
@@ -787,8 +1033,8 @@ class SecondaryMonitoringExit extends React.Component {
         const workbookBoysDistributeStyle = this.isWorkbookBoysDistribute ? {} : { display: 'none' };
         const otherResourcesDistributeStyle = this.isResourcesRequiredDistribute ? {} : { display: 'none' };
         const specifyOtherResourcesDistributeStyle = this.isOtherResourcesDistribute ? {} : { display: 'none' };
-
-        const { selectedOption } = this.state;
+        const exitRunningStyle = this.runningTier || this.exitTier ? {} : { display: 'none' };
+        const exitStyle = this.exitTier ? {} : { display: 'none' };
         // scoring labels
         const stronglyAgree = "Strongly Agree";
         const agree = "Agree";
@@ -798,9 +1044,21 @@ class SecondaryMonitoringExit extends React.Component {
         const yes = "Yes";
         const no = "No";
 
-        return (
+        var formNavVisible = false;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
+        }
+        else {
+            formNavVisible = false;
+        }
 
-            <div >
+        return (
+            <div id="formDiv">
+                <Router>
+                    <header>
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -817,7 +1075,7 @@ class SecondaryMonitoringExit extends React.Component {
                                             <Card className="main-card mb-6">
                                                 <CardHeader>
                                                     <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                    <b>Secondary Monitoring Form - Exit</b>
+                                                    <b>Secondary Monitoring Form</b>
                                                 </CardHeader>
                                             </Card>
                                         </Col>
@@ -840,29 +1098,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Monitoring Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
-
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School Name</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
-                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools}
-                                                                            />
+                                                                            <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
 
-                                                                <Row>
-
-
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
+                                                                            <Input name="school_name" id="school_name" value={this.state.school_name} disabled />
+                                                                        </FormGroup>
+                                                                    </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -887,20 +1147,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>
+
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="school_tier" >School Tier</Label>
+                                                                            <Input name="school_tier" id="school_tier" value={this.state.school_tier} disabled />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
                                                                             <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
-                                                                <Row>
+
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="participant_id" >Teacher ID</Label>  <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="secondary_grade" >Class</Label> <span class="errorMessage">{this.state.errors["secondary_grade"]}</span>
@@ -913,15 +1184,16 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
 
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
                                                                             <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => { this.inputChange(e, "class_students") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} max="99" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
+
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="class_duration" >Time duration of class in minutes</Label>  <span class="errorMessage">{this.state.errors["class_duration"]}</span>
@@ -944,7 +1216,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="lsbe_level_monitored" >LSBE Level</Label> <span class="errorMessage">{this.state.errors["lsbe_level_monitored"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" >
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" disabled={this.editMode}>
 
                                                                                 <option value="level_1">Level 1</option>
                                                                                 <option value="level_2">Level 2</option>
@@ -1274,7 +1546,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6">
+                                                                    <Col md="6" style={exitRunningStyle}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_beyond_guide" >Teacher has gone beyond the teacher’s guide to build on and/or develop new activities</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1302,7 +1574,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                     <Col md="8" style={beyondGuideStyle}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_beyond_guide_new" >What has the teacher done that is new?</Label> <span class="errorMessage">{this.state.errors["lsbe_beyond_guide_new"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "lsbe_beyond_guide_new")} value={this.state.lsbe_beyond_guide_new} id="lsbe_beyond_guide_new" options={new_activities_options} />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "lsbe_beyond_guide_new")} value={this.state.lsbe_beyond_guide_new} id="lsbe_beyond_guide_new" options={new_activities_options} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -1317,7 +1589,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                                         <Label check>
                                                                                             <Input type="radio" name="lsbe_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                             Strongly Disagree
-                                                                                </Label>
+                                                                                        </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
@@ -1610,6 +1882,21 @@ class SecondaryMonitoringExit extends React.Component {
 
                                                                 <Row>
                                                                     <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score" style={{ color: "green" }}><b>Facilitation Score</b></Label>
+                                                                            <Input value={this.state.facilitation_score} name="facilitation_score" id="facilitation_score" onChange={(e) => { this.inputChange(e, "facilitation_score") }} ></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score_pct" style={{ color: "green" }}><b>% Facilitation Score</b></Label>
+                                                                            <Input name="facilitation_score_pct" id="facilitation_score_pct" value={this.state.facilitation_score_pct} onChange={(e) => { this.inputChange(e, "facilitation_score_pct") }} ></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
                                                                         <Label><h7><u><b>Management</b></u></h7></Label>
                                                                     </Col>
 
@@ -1729,7 +2016,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="8">
+                                                                    <Col md="8" style={exitStyle}>
                                                                         <FormGroup>
                                                                             <Label for="lsbe_mt_count">Number of Master Trainers leading LSBE program</Label> <span class="errorMessage">{this.state.errors["lsbe_mt_count"]}</span>
                                                                             <Input type="number" value={this.state.lsbe_mt_count} name="lsbe_mt_count" id="lsbe_mt_count" onChange={(e) => { this.inputChange(e, "lsbe_mt_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
@@ -1738,7 +2025,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitStyle}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_mt_teacher_coordination" >There is excellent coordination between Master Trainers and teachers regarding the LSBE program</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1781,7 +2068,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitStyle}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_mt_conduct_monitoring" >Master Trainers conduct regular monitoring sessions to maintain quality of LSBE program</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1824,7 +2111,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitStyle}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_mt_conduct_training" >Master Trainers arrange and conduct refresher trainings as needed for LSBE teachers</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1866,7 +2153,33 @@ class SecondaryMonitoringExit extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="management_score" style={{ color: "green" }}><b>Management Score</b></Label>
+                                                                            <Input value={this.state.management_score} name="management_score" id="management_score" onChange={(e) => { this.inputChange(e, "management_score") }} ></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="management_score_pct" style={{ color: "green" }}><b>% Management Score</b></Label>
+                                                                            <Input name="management_score_pct" id="management_score_pct" value={this.state.management_score_pct} onChange={(e) => { this.inputChange(e, "management_score_pct") }} ></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <Label><h7><u><b>Score</b></u></h7></Label>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label>The cumulative score for the Facilitation and Management section is as below:</Label>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
@@ -1876,7 +2189,6 @@ class SecondaryMonitoringExit extends React.Component {
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
-                                                                            {/* TODO: apply style to hide this based on csa/primary question */}
                                                                             <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label>
                                                                             <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => { this.inputChange(e, "monitoring_score_pct") }} ></Input>
                                                                         </FormGroup>
@@ -2300,13 +2612,11 @@ class SecondaryMonitoringExit extends React.Component {
                                                         <Col md="2">
                                                         </Col>
                                                         <Col md="2">
-                                                            <LoadingIndicator loading={this.state.loading} />
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                            {/* </div> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
 
@@ -2349,4 +2659,4 @@ class SecondaryMonitoringExit extends React.Component {
 
 }
 
-export default SecondaryMonitoringExit;
+export default SecondaryMonitoring;

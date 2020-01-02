@@ -33,7 +33,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByRegexValue, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
-import { clearCheckedFields, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, loadFormState, resetFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -160,7 +160,9 @@ class SrhrPolicy extends React.Component {
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
-                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
                                 }
                             }
                         }
@@ -287,87 +289,8 @@ class SrhrPolicy extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-    }
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "never": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "rarely":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "occasionally":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "frequently":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "always":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
@@ -453,14 +376,18 @@ class SrhrPolicy extends React.Component {
         try {
             if (name === "school_id") {
 
-                this.locationObj = await getLocationByRegexValue(e.shortName);
-                console.log(this.locationObj);
-                if (this.locationObj != null && this.locationObj != undefined) {
-                    this.setState({
-                        school_name: this.locationObj.locationName
-                    })
-                }
-                let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
+                // this.locationObj = await getLocationByRegexValue(e.shortName);
+                // console.log(this.locationObj);
+                // if (this.locationObj != null && this.locationObj != undefined) {
+                //     this.setState({
+                //         school_name: this.locationObj.locationName
+                //     })
+                // }
+
+                this.setState({
+                    school_name: e.locationName
+                })
+                let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
             }
 
@@ -482,22 +409,16 @@ class SrhrPolicy extends React.Component {
             if (attrTypeName === "partnership_years")
                 return;
 
-
             if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
                 attributeValue = obj.attributeValue;
-
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
-
                 let definition = await getDefinitionByDefinitionId(definitionId);
-
                 let attrValue = definition.shortname;
-
                 attributeValue = definition.definitionName;
-
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {

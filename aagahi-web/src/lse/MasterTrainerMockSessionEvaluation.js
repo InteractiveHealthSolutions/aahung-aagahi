@@ -35,7 +35,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
-import { clearCheckedFields, loadFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, loadFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -172,8 +172,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
-                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
-                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
                                 }
                             }
                         }
@@ -419,58 +420,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-
-    }
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        var indicatorCode;
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-        }
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
@@ -553,7 +504,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 else {
                     this.setState({
                         participants: [],
-                        school_name: e.locationName,
                         participant_name: [],
                         participant_id: ''
                     })
@@ -575,7 +525,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
             this.setState({
                 // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             var jsonData = new Object();
@@ -932,8 +883,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level2HivStyle = this.isLevel2Hiv ? {} : { display: 'none' };
         const level2ViolenceStyle = this.isLevel2Violence ? {} : { display: 'none' };
         const level2PubertyStyle = this.isLevel2Puberty ? {} : { display: 'none' };
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
         var formNavVisible = false;
         if (this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false;
@@ -1037,7 +986,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                             />
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
                                                                 <Row>
                                                                     <Col md="6">
@@ -1055,16 +1003,13 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                                 <option value="school_level_secondary">Secondary</option>
                                                                             </Input>
                                                                         </FormGroup>
-
                                                                     </Col>
-
                                                                 </Row>
                                                                 <Row>
-
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="program_type" >Type of program being evaluated</Label> <span class="errorMessage">{this.state.errors["program_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type" disabled={this.editMode}>
                                                                                 <option value="csa">CSA</option>
                                                                                 <option value="lsbe">LSBE</option>
                                                                             </Input>
@@ -2907,7 +2852,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }

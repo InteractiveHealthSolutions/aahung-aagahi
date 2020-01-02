@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:58:37
+ * @Last Modified time: 2020-01-02 13:00:12
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -40,7 +40,7 @@ export const PRIMARY_MONITORING_RUNNING_FORM_UUID = "9da79ed5-d2d1-11e9-b422-024
 export const PRIMARY_MONITORING_EXIT_FORM_UUID = "9dac4e8e-d2d1-11e9-b422-0242ac130002";
 export const SECONDARY_MONITORING_NEW_FORM_UUID = "9db259fd-d2d1-11e9-b422-0242ac130002";
 export const SECONDARY_MONITORING_RUNNING_FORM_UUID = "9db71f45-d2d1-11e9-b422-0242ac130002";
-export const SECONDARY_MONITORING_EXIT_FORM_UUID = "9dbbc6ab-d2d1-11e9-b422-0242ac130002";
+export const SECONDARY_MONITORING_FORM_UUID = "0972e91f-b03f-4cf1-bc00-b9374927d376";
 export const SRHR_POLICY_FORM_UUID = "9dc0ccec-d2d1-11e9-b422-0242ac130002";
 export const STAKEHOLDER_MEETING_FORM_UUID = "9ddb1f83-d2d1-11e9-b422-0242ac130002";
 export const STEP_DOWN_FORM_UUID = "9dd68138-d2d1-11e9-b422-0242ac130002";

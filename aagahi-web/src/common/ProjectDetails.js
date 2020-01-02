@@ -83,7 +83,6 @@ class ProjectDetails extends React.Component {
      * Loads data when the component is mounted
      */
     loadData = async () => {
-
         this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
         try {
 
@@ -501,7 +500,6 @@ class ProjectDetails extends React.Component {
                                             </MDBModalFooter>
                                         </MDBModal>
                                     </MDBContainer>
-
                                 </Form>
                             </Container>
 
