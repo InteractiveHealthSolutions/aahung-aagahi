@@ -269,7 +269,7 @@ render() {
               <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator" onClick={this.toggleSidebar}  >
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeParticipantDetail">
-                  <b>Amplify Change Participant Details</b>
+                  <b>AC Participant Details</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -305,7 +305,7 @@ render() {
               <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeTrainingDetails">
-                  <b>Amplify Change Training Details Form</b>
+                  <b>AC Training Details Form</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -324,7 +324,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
-                  <b>Amplify Change Step Down Training Details</b>
+                  <b>AC Step Down Training Details</b>
                   </Link>
                   
                   </NavText>

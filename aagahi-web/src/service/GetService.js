@@ -170,7 +170,6 @@ export const getDonorByRegexValue = async function (content) {
 export const getDonorByName = async function (content) {
 
     console.log("GetService > calling getDonorByName()");
-
     try {
         var resourceName = DONORS_LIST_BY_NAME;
         let result = await getData(resourceName, content);
@@ -184,12 +183,13 @@ export const getDonorByName = async function (content) {
 }
 
 export const getAllProjects = async function () {
-
     try {
         let result = await getData(PROJECT_LIST);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.projectId, "uuid": obj.uuid, "shortName": obj.shortName, "name": obj.projectName, "label": obj.projectName, "value": obj.shortName, "donorName": obj.donor.donorName, "donorId": obj.donor.donorId });
+            if (!obj.isVoided) {
+                array.push({ "id": obj.projectId, "uuid": obj.uuid, "shortName": obj.shortName, "name": obj.projectName, "label": obj.projectName, "value": obj.shortName, "donorName": obj.donor.donorName, "donorId": obj.donor.donorId });
+            }
         })
         return array;
     }
@@ -204,7 +204,6 @@ export const getAllProjects = async function () {
 export const getProjectByRegexValue = async function (content) {
 
     console.log("GetService > calling getProjectByRegexValue()");
-
     try {
         var resourceName = PROJECT;
         var regInteger = /^\d+$/;
@@ -267,7 +266,9 @@ export const getAllUsers = async function () {
         let result = await getData(USER_LIST);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.fullName, "value": obj.userId });
+            if (!obj.isVoided) {
+                array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.fullName, "value": obj.userId });
+            }
         })
         return array;
     }
@@ -349,7 +350,9 @@ export const getAllRoles = async function () {
         let result = await getData(ROLE_LIST);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.roleId, "uuid": obj.uuid, "roleName": obj.roleName, "isRetired": obj.isRetired });
+            if (!obj.isVoided) {
+                array.push({ "id": obj.roleId, "uuid": obj.uuid, "roleName": obj.roleName, "isRetired": obj.isRetired });
+            }
         })
         return array;
     }
@@ -366,6 +369,7 @@ export const getAllLightWeightLocations = async function (content) {
 
     try {
         let result = await getData(LOCATION_LIGHTWEIGHT_LIST, content);
+        result = result.filter(location => location.isVoided === false);
         return result;
     }
     catch (error) {
@@ -695,7 +699,9 @@ export const getAllFormTypes = async function () {
         let result = await getData(FORM_TYPE_LIST);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.formTypeId, "uuid": obj.uuid, "shortName": obj.shortName, "name": obj.formName, "retired": obj.isRetired, "label": obj.formName, "value": obj.uuid });
+            if (!obj.isVoided) {
+                array.push({ "id": obj.formTypeId, "uuid": obj.uuid, "shortName": obj.shortName, "name": obj.formName, "retired": obj.isRetired, "label": obj.formName, "value": obj.uuid });
+            }
         })
         return array;
     }
