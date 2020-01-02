@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -713,6 +714,23 @@ public class LocationControllerTest extends BaseTestData {
 	actions.andExpect(jsonPath("$.locationName", Matchers.is(hogwartz.getLocationName())));
 	actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
 	verify(locationService, times(1)).getLocationDesearlizeDtoUuid(any(String.class),any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#unvoidLocation(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidLocation() throws Exception {
+	when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+	doNothing().when(locationService).unvoidLocation(hogwartz);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "location/{uuid}", hogwartz.getUuid()));
+	actions.andExpect(status().isNoContent());
+	verify(locationService, times(1)).getLocationByUuid(hogwartz.getUuid());
+	verify(locationService, times(1)).unvoidLocation(hogwartz);
+	verifyNoMoreInteractions(locationService);
     }
     
 

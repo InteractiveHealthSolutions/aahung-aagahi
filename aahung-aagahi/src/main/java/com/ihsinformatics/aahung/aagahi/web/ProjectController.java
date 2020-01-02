@@ -71,7 +71,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperation(value = "Void Project")
     @DeleteMapping("/project/{uuid}")
-    public ResponseEntity<?> deleteProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> unvoidProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete project: {}", uuid);
 	try {
 		Project project = uuid.matches(RegexUtil.UUID) ? service.getProjectByUuid(uuid)

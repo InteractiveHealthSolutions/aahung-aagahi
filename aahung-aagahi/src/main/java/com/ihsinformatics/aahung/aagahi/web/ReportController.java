@@ -56,7 +56,7 @@ public class ReportController extends BaseController {
     @Autowired
     private ReportServiceImpl service;
     
-    @ApiOperation(value = "Get results from SQL query")
+    /*@ApiOperation(value = "Get results from SQL query")
     @GetMapping(value = "/report/query")
     public ResponseEntity<?> queryData(@RequestParam("query") String query) throws HibernateException {
 	try {
@@ -69,7 +69,7 @@ public class ReportController extends BaseController {
 	} catch (SQLException e) {
 	    return exceptionFoundResponse(query, e);
 	}
-    }
+    }*/
 
 
     @ApiOperation(value = "Download FormData as CSV by UUID/Name/Short Name of the FormType")

@@ -148,7 +148,7 @@ public class LocationController extends BaseController {
 
     @ApiOperation(value = "Void Location")
     @DeleteMapping("/location/{uuid}")
-    public ResponseEntity<?> deleteLocation(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> voidLocation(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete participant: {}", uuid);
 	try {
 		Location location = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)

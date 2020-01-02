@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -253,4 +254,20 @@ public class ParticipantControllerTest extends BaseTestData {
 	verify(participantService, times(1)).getParticipantDesearlizeDtoUuid(any(String.class),any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
     }
     
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#unvoidParticipant(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidParticipant() throws Exception {
+	when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
+	doNothing().when(participantService).unvoidParticipant(seeker);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "participant/{uuid}", seeker.getUuid()));
+	actions.andExpect(status().isNoContent());
+	verify(participantService, times(1)).getParticipantByUuid(seeker.getUuid());
+	verify(participantService, times(1)).unvoidParticipant(seeker);
+	verifyNoMoreInteractions(participantService);
+    }
 }

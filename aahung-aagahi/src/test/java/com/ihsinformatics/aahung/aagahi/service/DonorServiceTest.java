@@ -21,8 +21,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+
+import javax.validation.ValidationException;
 
 import org.hamcrest.Matchers;
 import org.hibernate.HibernateException;
@@ -32,6 +35,7 @@ import org.junit.Test;
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Project;
+import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -247,5 +251,61 @@ public class DonorServiceTest extends BaseServiceTest {
 	triwizardTournament = donorService.updateProject(triwizardTournament);
 	assertNotNull(triwizardTournament.getDateUpdated());
 	verify(projectRepository, times(1)).save(any(Project.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl#unvoidProject(com.ihsinformatics.aahung.aagahi.model.Project)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidProject() throws HibernateException, ValidationException, IOException {
+    triwizardTournament.setIsVoided(true);
+    triwizardTournament.setReasonVoided("Testing");
+	when(projectRepository.save(any(Project.class))).thenReturn(triwizardTournament);
+	donorService.unvoidProject(triwizardTournament);
+	verify(projectRepository, times(1)).save(any(Project.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl#voidProject(com.ihsinformatics.aahung.aagahi.model.Project)}.
+     */
+    @Test
+    public void shouldVoidProject() {
+	doNothing().when(projectRepository).softDelete(any(Project.class));
+	donorService.voidProject(triwizardTournament);
+	verify(projectRepository, times(1)).softDelete(any(Project.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl#unvoidDonor(com.ihsinformatics.aahung.aagahi.model.Donor)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidDonor() throws HibernateException, ValidationException, IOException {
+    ministry.setIsVoided(true);
+    ministry.setReasonVoided("Testing");
+	when(donorRepository.save(any(Donor.class))).thenReturn(ministry);
+	donorService.unvoidDonor(ministry);
+	verify(donorRepository, times(1)).save(any(Donor.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl#voidDonor(com.ihsinformatics.aahung.aagahi.model.Donor)}.
+     */
+    @Test
+    public void shouldVoidDonor() {
+	doNothing().when(donorRepository).softDelete(any(Donor.class));
+	donorService.voidDonor(ministry);
+	verify(donorRepository, times(1)).softDelete(any(Donor.class));
     }
 }

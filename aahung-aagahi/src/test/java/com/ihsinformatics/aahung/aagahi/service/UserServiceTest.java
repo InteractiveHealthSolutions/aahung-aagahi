@@ -24,10 +24,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.ValidationException;
 
 import org.hamcrest.Matchers;
 import org.hibernate.HibernateException;
@@ -35,6 +38,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
+import com.ihsinformatics.aahung.aagahi.model.DataEntity;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -333,6 +338,41 @@ public class UserServiceTest extends BaseServiceTest {
 	assertEquals(userService.getUserByUuid(snape.getUuid()).getUuid(), snape.getUuid());
 	verify(userRepository, times(1)).findByUuid(any(String.class));
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeByUuid(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetUserAttributeTypeByUuid() {
+	when(userAttributeTypeRepository.findByUuid(any(String.class))).thenReturn(occupation);
+	assertEquals(userService.getUserAttributeTypeByUuid(occupation.getUuid()).getUuid(), occupation.getUuid());
+	verify(userAttributeTypeRepository, times(1)).findByUuid(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeByShortName(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetUserAttributeTypeByShortName() {
+	when(userAttributeTypeRepository.findByShortName(any(String.class))).thenReturn(occupation);
+	assertEquals(userService.getUserAttributeTypeByShortName(occupation.getShortName()).getShortName(), occupation.getShortName());
+	verify(userAttributeTypeRepository, times(1)).findByShortName(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeById(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetUserAttributeTypeById() {
+    occupation.setAttributeTypeId(1);
+    Optional<UserAttributeType> optional = Optional.of(occupation);
+	when(userAttributeTypeRepository.findById(any(Integer.class))).thenReturn(optional);
+	assertEquals(userService.getUserAttributeTypeById(1), occupation);
+	verify(userAttributeTypeRepository, times(1)).findById(any(Integer.class));
+    }
 
     /**
      * Test method for
@@ -343,6 +383,18 @@ public class UserServiceTest extends BaseServiceTest {
 	when(userRepository.findByFullName(any(String.class))).thenReturn(new ArrayList<User>(Arrays.asList(lily)));
 	assertEquals(1, userService.getUsersByFullName("potter").size());
 	verify(userRepository, times(1)).findByFullName(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUsersByRole(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetUsersByRole() {
+	when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(new ArrayList<User>(Arrays.asList(dumbledore)));
+	headmaster.setRoleId(1);
+	assertEquals(1, userService.getUsersByRole(headmaster).size());
+	verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
     }
 
     /**
@@ -397,6 +449,17 @@ public class UserServiceTest extends BaseServiceTest {
 	when(userRepository.save(any(User.class))).thenReturn(snape);
 	assertThat(userService.saveUser(snape), is(snape));
 	verify(userRepository, times(1)).save(any(User.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#savePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
+     */
+    @Test
+    public void shouldSavePrivilege() {
+	when(privilegeRepository.save(any(Privilege.class))).thenReturn(kill);
+	assertThat(userService.savePrivilege(kill), is(kill));
+	verify(privilegeRepository, times(1)).save(any(Privilege.class));
     }
 
     /**
@@ -479,4 +542,55 @@ public class UserServiceTest extends BaseServiceTest {
 	assertNotNull(userService.updateUserAttributeType(occupation).getDateUpdated());
 	verify(userAttributeTypeRepository, times(1)).save(any(UserAttributeType.class));
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+     */
+    @Test
+    public void shouldUpdateRole() {
+	when(roleRepository.save(any(Role.class))).thenReturn(headmaster);
+	assertNotNull(userService.updateRole(headmaster).getDateUpdated());
+	verify(roleRepository, times(1)).save(any(Role.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updatePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
+     */
+    @Test
+    public void shouldUpdatePrivilege() {
+	when(privilegeRepository.save(any(Privilege.class))).thenReturn(kill);
+	assertNotNull(userService.updatePrivilege(kill));
+	verify(privilegeRepository, times(1)).save(any(Privilege.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#unvoidUser(com.ihsinformatics.aahung.aagahi.model.User)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidUser() throws HibernateException, ValidationException, IOException {
+	snape.setIsVoided(true);
+	snape.setReasonVoided("Testing");
+	when(userRepository.save(any(User.class))).thenReturn(snape);
+	userService.unvoidUser(snape);
+	verify(userRepository, times(1)).save(any(User.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#voidUser(com.ihsinformatics.aahung.aagahi.model.User)}.
+     */
+    @Test
+    public void shouldVoidUser() {
+	doNothing().when(userRepository).softDelete(any(User.class));
+	userService.voidUser(snape);
+	verify(userRepository, times(1)).softDelete(any(User.class));
+    }
+
 }
