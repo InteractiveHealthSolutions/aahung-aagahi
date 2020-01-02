@@ -21,12 +21,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.ValidationException;
+
 import org.hamcrest.Matchers;
+import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -35,6 +39,7 @@ import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -166,4 +171,33 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	assertNotNull(seeker.getDateUpdated());
 	verify(participantRepository, times(1)).save(any(Participant.class));
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantImpl#unvoidParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidParticipant() throws HibernateException, ValidationException, IOException {
+	seeker.setIsVoided(true);
+	seeker.setReasonVoided("Testing");
+	when(participantRepository.save(any(Participant.class))).thenReturn(seeker);
+	participantService.unvoidParticipant(seeker);
+	verify(participantRepository, times(1)).save(any(Participant.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#voidParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
+     */
+    @Test
+    public void shouldVoidParticipant() {
+	doNothing().when(participantRepository).softDelete(any(Participant.class));
+	participantService.voidParticipant(seeker);
+	verify(participantRepository, times(1)).softDelete(any(Participant.class));
+    }
+
 }
