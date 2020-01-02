@@ -146,7 +146,7 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "Void User")
     @DeleteMapping("/user/{uuid}")
-    public ResponseEntity<?> deleteUser(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> voidUser(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete User: {}", uuid);
 	try {
 		User user = uuid.matches(RegexUtil.UUID) ? service.getUserByUuid(uuid)

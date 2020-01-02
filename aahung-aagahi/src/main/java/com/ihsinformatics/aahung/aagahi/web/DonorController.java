@@ -70,7 +70,7 @@ public class DonorController extends BaseController {
 
     @ApiOperation(value = "Void Donor")
     @DeleteMapping("/donor/{uuid}")
-    public ResponseEntity<?> deleteProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> voidProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete donor: {}", uuid);
 	try {
 		Donor donor = uuid.matches(RegexUtil.UUID) ? service.getDonorByUuid(uuid)
@@ -87,7 +87,7 @@ public class DonorController extends BaseController {
     
     @ApiOperation(value = "Restore Donor")
     @PatchMapping("/donor/{uuid}")
-    public ResponseEntity<?> unvoidProject(@PathVariable String uuid) {
+    public ResponseEntity<?> unvoidDonor(@PathVariable String uuid) {
 	LOG.info("Request to restore donor: {}", uuid);
 	try {
 		Donor donor = uuid.matches(RegexUtil.UUID) ? service.getDonorByUuid(uuid)

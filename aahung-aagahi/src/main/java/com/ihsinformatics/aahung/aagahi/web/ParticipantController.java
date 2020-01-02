@@ -99,7 +99,7 @@ public class ParticipantController extends BaseController {
 
     @ApiOperation(value = "Void Participant")
     @DeleteMapping("/participant/{uuid}")
-    public ResponseEntity<?> deleteParticipant(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> voidParticipant(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete participant: {}", uuid);
 	try {
 		Participant participant = uuid.matches(RegexUtil.UUID) ? service.getParticipantByUuid(uuid)

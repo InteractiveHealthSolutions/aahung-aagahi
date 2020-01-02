@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -244,5 +245,22 @@ public class ProjectControllerTest extends BaseTestData {
 	actions.andExpect(status().isOk());
 	verify(donorService, times(1)).getProjectByUuid(any(String.class));
 	verify(donorService, times(1)).updateProject(any(Project.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ProjectController#unvoidProject(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidProject() throws Exception {
+	when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
+	doNothing().when(donorService).unvoidProject(triwizardTournament);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
+	actions.andExpect(status().isNoContent());
+	verify(donorService, times(1)).getProjectByUuid(triwizardTournament.getUuid());
+	verify(donorService, times(1)).unvoidProject(triwizardTournament);
+	verifyNoMoreInteractions(donorService);
     }
 }
