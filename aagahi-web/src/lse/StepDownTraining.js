@@ -34,7 +34,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
-import { clearCheckedFields, getObject, loadFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, getObject, loadFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
@@ -195,7 +195,9 @@ class StepDownTraining extends React.Component {
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
-                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
                                 }
                             }
                         }
@@ -414,58 +416,8 @@ class StepDownTraining extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-    }
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
@@ -628,8 +580,6 @@ class StepDownTraining extends React.Component {
 
         try {
             if (name === "school_id") {
-
-
                 // if (this.locationObj != null && this.locationObj != undefined) {
                 this.setState({
                     school_name: e.locationName
@@ -661,13 +611,11 @@ class StepDownTraining extends React.Component {
                     participant_id: e.identifier
                 })
             }
-
         }
         catch (error) {
             console.log(error);
         }
     };
-
 
     /**
      * created separate method because async handle was not updating the local variables (location attrs)
@@ -690,13 +638,9 @@ class StepDownTraining extends React.Component {
             if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
-
                 let definition = await getDefinitionByDefinitionId(definitionId);
-
                 let attrValue = definition.shortname;
-
                 attributeValue = definition.definitionName;
-
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {
@@ -808,18 +752,34 @@ class StepDownTraining extends React.Component {
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if (element != null) {
+
+                        if(fields[i] === "mt_def_sexual_health") {
+                            alert(fields[i]);
+                        }
                         if (element.offsetParent != null) { // this line is for checking if the element is visible on page
                             // alert("it's visible:   >>> value: " + element.value);
+
+                            if(fields[i] === "mt_def_sexual_health") {
+                                alert("it is visible = " + fields[i]);
+                            }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                         else if (this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
+
+                            if(fields[i] === "mt_def_sexual_health") {
+                                alert("it is not a Dependent question = " + fields[i]);
+                            }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
                         if (this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            if(fields[i] === "mt_def_sexual_health") {
+                                alert("filling in states = " + fields[i]);
+                                alert(this.state[fields[i]]);
+                            }
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }

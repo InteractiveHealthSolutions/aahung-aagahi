@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getAllUsers, getFormDataById, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
-import { clearCheckedFields, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, loadFormState, resetFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -146,7 +146,9 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
-                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
                                 }
                             }
                         }
@@ -240,17 +242,16 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             [name]: e.target.value
         });
 
-        if (e.target.id === "primary_program_monitored")
+        if (e.target.id === "primary_program_monitored") {
             if (e.target.value === "csa") {
                 this.setState({ isCsa: true });
                 this.setState({ isGender: false });
-
             }
             else if (e.target.value === "gender") {
                 this.setState({ isCsa: false });
                 this.setState({ isGender: true });
             }
-
+        }
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -263,27 +264,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-    }
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
@@ -299,7 +281,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
             for (var i in this.scoreArray) {
                 if (this.scoreArray[i].elementName == fieldName) {
-
                     this.scoreArray[i].id = indicator; // they will remain same
                     this.scoreArray[i].elementName = fieldName; // they will remain same
                     this.scoreArray[i].value = value;

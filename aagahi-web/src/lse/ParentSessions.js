@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
-import { clearCheckedFields, getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, getObject, loadFormState, resetFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -160,8 +160,9 @@ class ParentSessions extends React.Component {
                             for (let i = 0; i < radios.length; i++) {
                                 if (parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
-                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
-                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
                                 }
                             }
                         }
@@ -308,58 +309,8 @@ class ParentSessions extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-    }
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {

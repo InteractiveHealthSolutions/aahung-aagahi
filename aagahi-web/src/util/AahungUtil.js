@@ -35,8 +35,8 @@ export const entityUrl = [
     { id: 27, name: 'step down training monitoring form', url: "/stepDownTrainingMonitoring" },
     { id: 28, name: 'training detail form', url: "/trainingDetailForm" },
     { id: 29, name: 'amplify change training details form', url: "/amplifyChangeTrainingDetails" },
-    { id: 30, name: 'general training details form', url: "/generalTrainingDetails" }
-
+    { id: 30, name: 'general training details form', url: "/generalTrainingDetails" },
+    { id: 31, name: 'secondary monitoring form', url: "/secondaryMonitoring" }
 ];
 
 /**
@@ -153,12 +153,74 @@ export const hasPrivilege = function (privilegeName) {
     return false;
 }
 
+// returns the integer total score for the indicator value passed to this method, e.g total score for "strongly_disagree" is 5
+export const getIndicatorCode = function (indicator) {
+    var indicatorCode = 0;
+    switch (indicator) {
+        case "strongly_disagree": // coding is 5
+            indicatorCode = 5;
+            break;
+
+        case "disagree":
+            indicatorCode = 5;
+            break;
+
+        case "neither":
+            indicatorCode = 5;
+            break;
+
+        case "agree":
+            indicatorCode = 5;
+            break;
+
+        case "strongly_agree":
+            indicatorCode = 5;
+            break;
+
+        case "yes":
+            indicatorCode = 1;
+            break;
+
+        case "no":
+            indicatorCode = 1;
+            break;
+        
+        case "never": // coding is 5
+            var indicatorCode = 5;
+            break;
+
+        case "rarely":
+            var indicatorCode = 5;
+            break;
+
+        case "occasionally":
+            var indicatorCode = 5;
+            break;
+
+        case "frequently":
+            var indicatorCode = 5;
+            break;
+
+        case "always":
+            var indicatorCode = 5;
+            break;
+    }
+
+    return indicatorCode;
+}
 export const loadFormState = function (formDataObj, stateObj) {
     console.log("printing state...........................................");
     console.log(stateObj);
 
     let self = this;
     formDataObj.data.map(function (element, i) {
+
+        if(element.key.shortName === "school_sex" || element.key.shortName === "class_sex") {
+            console.log("testing the school_sex and class_sex fields >>>>>>>")
+            console.log(element.key.shortName);
+            console.log(element.value);
+        }
+        
         switch ((element.dataType).toLowerCase()) {
 
             case 'string':
