@@ -33,6 +33,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
@@ -536,7 +537,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
     @Override
     @CheckPrivilege(privilege = "Void Location")
     @Transactional
-    public void voidLocation(Location obj) throws HibernateException {
+    public void voidLocation(Location obj) throws HibernateException, ValidationException, IOException {
 	obj = (Location) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
 	for (LocationAttribute attribute : obj.getAttributes()) {
@@ -547,6 +548,21 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 			attribute.setReasonVoided(obj.getReasonVoided() + " (Location voided)");
 			locationAttributeRepository.softDelete(attribute);
 		}
+	}
+	List<FormData> forms = formDataRepository.findByLocation(obj);
+	for (FormData form : forms) {
+		if(Boolean.FALSE.equals(form.getIsVoided())){
+			form.setIsVoided(Boolean.TRUE);
+			form.setVoidedBy(obj.getVoidedBy());
+			form.setDateVoided(obj.getDateVoided());
+			form.setReasonVoided(obj.getReasonVoided() + " (Location voided)");
+			formDataRepository.softDelete(form);
+		}
+	}
+	List<Participant> participants = participantRepository.findByLocation(obj);
+	for (Participant participant : participants) {
+		participant.setReasonVoided(obj.getReasonVoided() + " (Location voided)");
+		participantService.voidParticipant(participant);
 	}
 	locationRepository.softDelete(obj);
     }
@@ -579,6 +595,59 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 				attribute.setReasonVoided(attribute.getReasonVoided() + "(Location unvoided on "
 					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
 				updateLocationAttribute(attribute);
+			}
+		}
+	    
+	    List<FormData> forms = formDataRepository.findByLocation(obj);
+		for (FormData form : forms) {
+			if(Boolean.TRUE.equals(form.getIsVoided()) && form.getReasonVoided().equals(voidedReason + " (Location voided)")){
+				form.setIsVoided(Boolean.FALSE);
+				if (form.getReasonVoided() == null) {
+					form.setReasonVoided("");
+				 }
+				form.setReasonVoided(form.getReasonVoided() + "(Location unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				formService.updateFormData(form);
+			}
+		}
+		
+		List<Participant> participants = participantRepository.findByLocation(obj);
+		for (Participant participant : participants) {
+			if(Boolean.TRUE.equals(participant.getIsVoided()) && participant.getReasonVoided().equals(obj.getReasonVoided() + " (Location voided)")){
+				participant.setIsVoided(Boolean.FALSE);
+				if (participant.getReasonVoided() == null) {
+					participant.setReasonVoided("");
+				 }
+				
+				voidedReason = participant.getReasonVoided();
+						
+				participant.setReasonVoided(participant.getReasonVoided() + "(Location unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				participantService.updateParticipant(participant);
+				
+				Person person = participant.getPerson();
+			    if(Boolean.TRUE.equals(person.getIsVoided()) && person.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+					person.setIsVoided(Boolean.FALSE);
+					if (person.getReasonVoided() == null) {
+						person.setReasonVoided("");
+					 }
+					person.setReasonVoided(person.getReasonVoided() + "(Participant unvoided on "
+						    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					personService.updatePerson(person);
+				}
+			    
+			    for (PersonAttribute attribute : participant.getPerson().getAttributes()) {
+					if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+						attribute.setIsVoided(Boolean.FALSE);
+						if (attribute.getReasonVoided() == null) {
+							attribute.setReasonVoided("");
+						 }
+						attribute.setReasonVoided(attribute.getReasonVoided() + "(Participant unvoided on "
+							    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+						personService.updatePersonAttribute(attribute);
+					}
+				}
+				
 			}
 		}
 	    
