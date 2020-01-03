@@ -27,6 +27,7 @@ import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Project;
+import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
@@ -321,6 +322,18 @@ public class DonorServiceImpl extends BaseService implements DonorService {
     public void voidDonor(Donor obj) throws HibernateException {
 	obj = (Donor) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
+	
+	List<Project> projects = projectRepository.findByDonor(obj);
+	for(Project project: projects){
+		if(Boolean.FALSE.equals(project.getIsVoided())){
+			project.setIsVoided(Boolean.TRUE);
+			project.setVoidedBy(obj.getVoidedBy());
+			project.setDateVoided(obj.getDateVoided());
+			project.setReasonVoided(obj.getReasonVoided() + " (Donor voided)");
+			projectRepository.softDelete(project);
+		}
+	}
+	
 	donorRepository.softDelete(obj);
     }
     
@@ -339,9 +352,24 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
+	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
-	    updateDonor(obj);
+	    
+	    List<Project> projects = projectRepository.findByDonor(obj);
+		for(Project project: projects){
+			if(Boolean.TRUE.equals(project.getIsVoided()) && project.getReasonVoided().equals(voidedReason + " (Donor voided)")){
+				project.setIsVoided(Boolean.FALSE);
+				if (project.getReasonVoided() == null) {
+					project.setReasonVoided("");
+				 }
+				project.setReasonVoided(project.getReasonVoided() + "(Donor unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				updateProject(project);
+			}
+		}
+		
+		updateDonor(obj);
 	}
     }
 }
