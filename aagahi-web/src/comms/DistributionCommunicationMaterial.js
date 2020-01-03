@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-26 13:36:34
+ * @Last Modified time: 2020-01-03 17:20:57
  */
 
 
@@ -20,7 +20,7 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -1427,27 +1427,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    {/* </div> */}
-                                    {/* </div> */}
-                                    <CustomModal
-                                        modal={this.modal}
-                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                        ModalHeader="Leave Page Confrimation!"
-                                    ></CustomModal>
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
 

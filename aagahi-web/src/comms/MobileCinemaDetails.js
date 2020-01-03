@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:22:15
+ * @Last Modified time: 2020-01-03 17:21:10
  */
 
 
@@ -20,13 +20,14 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
@@ -823,7 +824,6 @@ class MobileCinemaDetails extends React.Component {
                                                                             <Input type="number" value={this.state.age_50_plus_count} name="age_50_plus_count" id="age_50_plus_count" onChange={(e) => { this.inputChange(e, "age_50_plus_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 {/* please don't remove this div unless you are adding multiple questions here*/}
@@ -838,15 +838,10 @@ class MobileCinemaDetails extends React.Component {
                                         </Col>
                                     </Row>
 
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
-
                                                 <CardHeader>
-
                                                     <Row>
                                                         <Col md="3">
                                                         </Col>
@@ -862,29 +857,13 @@ class MobileCinemaDetails extends React.Component {
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
