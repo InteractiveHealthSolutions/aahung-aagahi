@@ -421,9 +421,20 @@ public class LocationServiceTest extends BaseServiceTest {
      * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#voidLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
      */
     @Test
-    public void shouldVoidUser() {
+    public void shouldVoidUseLocation() {
 	doNothing().when(locationRepository).softDelete(any(Location.class));
-	locationService.voidLocation(hogwartz);
+	try {
+		locationService.voidLocation(hogwartz);
+	} catch (HibernateException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ValidationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	verify(locationRepository, times(1)).softDelete(any(Location.class));
     }
     
