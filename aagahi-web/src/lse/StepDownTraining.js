@@ -713,7 +713,6 @@ class StepDownTraining extends React.Component {
                 for (let i = 0; i < fields.length; i++) {
                     // alert(fields[i]);
 
-
                     if (fields[i] === "monitor") {
                         dataObj.monitor = [];
                         // monitor
@@ -753,38 +752,37 @@ class StepDownTraining extends React.Component {
                     // alert(element);
                     if (element != null) {
 
-                        if(fields[i] === "mt_def_sexual_health") {
-                            alert(fields[i]);
-                        }
+                        // if(fields[i] === "mt_def_sexual_health") {
+                            // alert(fields[i]);
+                        // }
                         if (element.offsetParent != null) { // this line is for checking if the element is visible on page
                             // alert("it's visible:   >>> value: " + element.value);
 
-                            if(fields[i] === "mt_def_sexual_health") {
-                                alert("it is visible = " + fields[i]);
-                            }
+                            // if(fields[i] === "mt_def_sexual_health") {
+                                // alert("it is visible = " + fields[i]);
+                            // }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                         else if (this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
 
-                            if(fields[i] === "mt_def_sexual_health") {
-                                alert("it is not a Dependent question = " + fields[i]);
-                            }
+                            // if(fields[i] === "mt_def_sexual_health") {
+                                // alert("it is not a Dependent question = " + fields[i]);
+                            // }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
                         if (this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
-                            if(fields[i] === "mt_def_sexual_health") {
-                                alert("filling in states = " + fields[i]);
-                                alert(this.state[fields[i]]);
-                            }
+                            // if(fields[i] === "mt_def_sexual_health") {
+                                // alert("filling in states = " + fields[i]);
+                                // alert(this.state[fields[i]]);
+                            // }
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
                 }
-
                 console.log(dataObj);
             }
 
@@ -793,8 +791,6 @@ class StepDownTraining extends React.Component {
                 var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
                 for (let i = 0; i < fields.length; i++) {
                     // alert(fields[i]);
-
-
                     if (fields[i] === "monitor") {
                         dataObj.monitor = [];
                         // trainer
