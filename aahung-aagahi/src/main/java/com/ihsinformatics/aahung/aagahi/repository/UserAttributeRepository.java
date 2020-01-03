@@ -45,7 +45,7 @@ public interface UserAttributeRepository extends JpaRepository<UserAttribute, In
     @Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
     List<UserAttribute> findByValue(@Param("attributeValue") String attributeValue);
     
-    @Query("UPDATE UserAttribute d set d.isVoided = true WHERE d = :UserAttribute")
+    @Query("UPDATE UserAttribute d set d.isVoided = true WHERE d = :userAttribute")
     @Modifying
     void softDelete(@Param("userAttribute") UserAttribute userAttribute);
 }
