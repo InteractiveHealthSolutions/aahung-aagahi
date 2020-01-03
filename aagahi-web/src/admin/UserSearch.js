@@ -53,7 +53,8 @@ class UserSearch extends React.Component {
                 { headerName: "Roles", field: "roles", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
-                { headerName: "Updated By", field: "updatedBy", sortable: true }],
+                // { headerName: "Updated By", field: "updatedBy", sortable: true }
+            ],
                 rowData: []
             },
             allRoles: [],
@@ -211,7 +212,7 @@ class UserSearch extends React.Component {
                 var rolesString = userRoles.map(function (role) {
                     return role.roleName;
                 }).join(', ');
-                array.push({ "userId": obj.id, "name": obj.fullName, "username": obj.username, "roles": rolesString, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy });
+                array.push({ "userId": obj.id, "name": obj.fullName, "username": obj.username, "roles": rolesString, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy });
             })
         }
 
