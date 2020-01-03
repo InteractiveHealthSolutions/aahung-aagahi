@@ -5,9 +5,12 @@ class CustomModal extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
-      modal: false
-    };
+      modal: false,
+      modalHeading : this.props.modalHeading,
+      modalText : this.props.modalText
+    }
   }
 
   toggle = () => {
@@ -16,20 +19,29 @@ class CustomModal extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ data: nextProps.data });
+
+    this.state = {
+      modal: nextProps.modal,
+      modalHeading: nextProps.modalHeading,
+      modalText : nextProps.modalText
+    }
+  }
+
   render() {
     return (
+
       <MDBContainer>
-        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-        <MDBModal isOpen={this.props.modal} toggle={this.toggle}>
-          <MDBModalHeader toggle={this.toggle}>{this.props.ModalHeader}</MDBModalHeader>
+      <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+          <MDBModalHeader toggle={this.props.toggle}>{this.state.modalHeading}</MDBModalHeader>
           <MDBModalBody>
-            (...)
-        </MDBModalBody>
+              {this.state.modalText}
+          </MDBModalBody>
           <MDBModalFooter>
-            <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
-            <MDBBtn color="primary">Save changes</MDBBtn>
+              <MDBBtn color="secondary" onClick={this.props.toggle}>OK!</MDBBtn>
           </MDBModalFooter>
-        </MDBModal>
+      </MDBModal>
       </MDBContainer>
     );
   }

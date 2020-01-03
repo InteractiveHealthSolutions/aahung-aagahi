@@ -25,11 +25,10 @@ import classnames from 'classnames';
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import CustomModal from "../alerts/CustomModal";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
-import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole, getLocationAttributesByLocation, getDefinitionByDefinitionId } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
@@ -85,7 +84,6 @@ class SecondaryMonitoring extends React.Component {
             loading: false,
             modal: false,
             modalText: '',
-            okButtonStyle: {},
             modalHeading: ''
         };
 
@@ -215,6 +213,13 @@ class SecondaryMonitoring extends React.Component {
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
 
+                    if(this.state.school_tier !== "") {
+                        this.state.school_tier = this.state.school_tier === "school_tier_new" ? "New" 
+                        : (this.state.school_tier === "school_tier_running" ? "Running" 
+                        : (this.state.school_tier === "school_tier_exit" ? "Exit" 
+                        : ""));
+                    }
+
                     let self = this;
                     this.fetchedForm.data.map(function (element, i) {
                         var dataType = (element.dataType).toLowerCase();
@@ -332,13 +337,10 @@ class SecondaryMonitoring extends React.Component {
         if (this.state.school_sex !== '' && this.state.school_sex !== undefined) {
             this.isSchoolSexGirls = this.state.school_sex === "girls" ? true : false;
             this.isSchoolSexBoys = this.state.school_sex === "boys" ? true : false;
-
             this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired;
             this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
-
             this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute;
             this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
-
             this.setState({ class_sex: this.state.school_sex === "girls" ? 'girls' : 'boys' });
         }
 
@@ -382,11 +384,9 @@ class SecondaryMonitoring extends React.Component {
             this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
 
             if (!this.isResourcesRequiredDistribute) {
-
                 this.isWorkbookGirlsDistribute = false;
                 this.isWorkbookBoysDistribute = false;
                 this.isOtherResourcesDistribute = false;
-
             }
         }
 
@@ -671,11 +671,18 @@ class SecondaryMonitoring extends React.Component {
 
         try {
             if (name === "school_id") {
+
+                this.setState({
+                    school_name: e.locationName
+                })
+
                 let participants = await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
+                    
                     this.setState({
-                        participants: participants,
-                        school_name: e.locationName,
+                        participants: participants ,
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
                 else {
@@ -719,6 +726,19 @@ class SecondaryMonitoring extends React.Component {
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 attributeValue = definition.definitionName;
+                if(self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
+                    // Edits are painful!! 
+                    // Handling the case where change of tier will have an impact on scoring questions and everntually the cumulative score
+                    self.setState({
+                        modalHeading: 'Tier mismatch error!',
+                        modalText: 'You can not select a school which has a different tier from the school which was saved earlier.',
+                        modal: !self.state.modal,
+                        school_id: {},
+                        school_name: ''
+                    });
+                    return;
+                }
+                
                 self.setState({ [attrTypeName]: attributeValue });
                 self.newTier = attributeValue === "New" ? true : false;
                 self.runningTier = attributeValue === "Running" ? true : false;
@@ -751,6 +771,13 @@ class SecondaryMonitoring extends React.Component {
             jsonData.data = {};
 
             var dataObj = {};
+            // alert(this.state.school_tier);
+            if(this.state.school_tier !== "") {
+                dataObj.school_tier = this.state.school_tier === "New" ? "school_tier_new" 
+                : (this.state.school_tier === "Running" ? "school_tier_running" 
+                : (this.state.school_tier === "Exit" ? "school_tier_exit" 
+                : ""));
+            }
 
             // for lsbe
             var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
@@ -818,7 +845,6 @@ class SecondaryMonitoring extends React.Component {
                                 this.setState({
                                     loading: false,
                                     modalHeading: 'Success!',
-                                    okButtonStyle: { display: 'none' },
                                     modalText: 'Data updated successfully.',
                                     modal: !this.state.modal
                                 });
@@ -834,7 +860,6 @@ class SecondaryMonitoring extends React.Component {
                                 this.setState({
                                     loading: false,
                                     modalHeading: 'Fail!',
-                                    okButtonStyle: { display: 'none' },
                                     modalText: submitMsg,
                                     modal: !this.state.modal
                                 });
@@ -852,7 +877,6 @@ class SecondaryMonitoring extends React.Component {
                                 this.setState({
                                     loading: false,
                                     modalHeading: 'Success!',
-                                    okButtonStyle: { display: 'none' },
                                     modalText: 'Data saved successfully.',
                                     modal: !this.state.modal
                                 });
@@ -870,7 +894,6 @@ class SecondaryMonitoring extends React.Component {
                                 this.setState({
                                     loading: false,
                                     modalHeading: 'Fail!',
-                                    okButtonStyle: { display: 'none' },
                                     modalText: submitMsg,
                                     modal: !this.state.modal
                                 });
@@ -906,10 +929,8 @@ class SecondaryMonitoring extends React.Component {
         for (let j = 0; j < requireds.length; j++) {
 
             let stateName = requireds[j];
-
             // for array object
-            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert(stateName + ": object is epmpty");
+            if (typeof this.state[stateName] === 'object' && (this.state[stateName].length === 0 || (Object.entries(this.state[stateName]).length === 0 && this.state[stateName].constructor === Object))) {
                 isOk = false;
                 this.errors[requireds[j]] = errorText;
             }
@@ -932,7 +953,7 @@ class SecondaryMonitoring extends React.Component {
 
                     let stateName = dependants[j];
                     // for array object
-                    if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    if (typeof this.state[stateName] === 'object' && (this.state[stateName].length === 0 || (Object.entries(this.state[stateName]).length === 0 && this.state[stateName].constructor === Object))) {
                         // alert(stateName + ": object is empty");
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
@@ -1890,7 +1911,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="facilitation_score_pct" style={{ color: "green" }}><b>% Facilitation Score</b></Label>
-                                                                            <Input name="facilitation_score_pct" id="facilitation_score_pct" value={this.state.facilitation_score_pct} onChange={(e) => { this.inputChange(e, "facilitation_score_pct") }} ></Input>
+                                                                            <Input name="facilitation_score_pct" id="facilitation_score_pct" value={this.state.facilitation_score_pct} onChange={(e) => { this.inputChange(e, "facilitation_score_pct") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -2163,7 +2184,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="management_score_pct" style={{ color: "green" }}><b>% Management Score</b></Label>
-                                                                            <Input name="management_score_pct" id="management_score_pct" value={this.state.management_score_pct} onChange={(e) => { this.inputChange(e, "management_score_pct") }} ></Input>
+                                                                            <Input name="management_score_pct" id="management_score_pct" value={this.state.management_score_pct} onChange={(e) => { this.inputChange(e, "management_score_pct") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -2190,7 +2211,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label>
-                                                                            <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => { this.inputChange(e, "monitoring_score_pct") }} ></Input>
+                                                                            <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => { this.inputChange(e, "monitoring_score_pct") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -2625,27 +2646,7 @@ class SecondaryMonitoring extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    {/* </div> */}
-                                    {/* </div> */}
-                                    <CustomModal
-                                        modal={this.modal}
-                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                        ModalHeader="Leave Page Confrimation!"
-                                    ></CustomModal>
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
 
