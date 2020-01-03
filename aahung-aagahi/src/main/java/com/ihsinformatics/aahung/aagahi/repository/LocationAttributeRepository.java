@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -43,5 +44,9 @@ public interface LocationAttributeRepository extends JpaRepository<LocationAttri
 
     @Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
     List<LocationAttribute> findByValue(@Param("attributeValue") String attributeValue);
+    
+    @Query("UPDATE LocationAttribute d set d.isVoided = true WHERE d = :locationAttribute")
+    @Modifying
+    void softDelete(@Param("locationAttribute") LocationAttribute locationAttribute);
 
 }
