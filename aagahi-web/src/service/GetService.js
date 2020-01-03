@@ -287,7 +287,7 @@ export const getUsersByName = async function (content) {
         let result = await getData(resourceName, content);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
+            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
         })
         return array;
     }
@@ -307,7 +307,7 @@ export const getUsersByRole = async function (content) {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
+            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
         })
         return array;
     }
@@ -335,7 +335,7 @@ export const getUserByRegexValue = async function (content) {
         let result = await getData(resourceName, content);
         var userObject = null;
         if (result != null) {
-            userObject = { "id": result.userId, "uuid": result.uuid, "username": result.username, "fullName": result.fullName, "voided": result.isVoided, "label": result.username, "value": result.userId, "roles": result.userRoles, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.fullName };
+            userObject = { "id": result.userId, "uuid": result.uuid, "username": result.username, "fullName": result.fullName, "voided": result.isVoided, "label": result.username, "value": result.userId, "roles": result.userRoles, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName };
         }
         return userObject;
     }

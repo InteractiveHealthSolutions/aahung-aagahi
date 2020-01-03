@@ -22,21 +22,21 @@
 // Contributors: Tahira Niazi
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import CustomModal from "../alerts/CustomModal";
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole, getLocationAttributesByLocation, getDefinitionByDefinitionId } from "../service/GetService";
+import { getDefinitionByDefinitionId, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
 import { clearCheckedFields, getIndicatorCode, loadFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import LoadingIndicator from "../widget/LoadingIndicator";
 import FormNavBar from "../widget/FormNavBar";
-import { BrowserRouter as Router } from 'react-router-dom';
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
@@ -453,6 +453,7 @@ class SecondaryMonitoring extends React.Component {
         // for required
         if (name === "lsbe_resources_required") {
             this.isResourcesRequired = e.target.id === "yes" ? true : false;
+            this.isOtherResources = false;
 
             this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired;
             this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
@@ -474,6 +475,7 @@ class SecondaryMonitoring extends React.Component {
         // for disrtibuted
         if (name === "lsbe_resources_delivered") {
             this.isResourcesRequiredDistribute = e.target.id === "yes" ? true : false;
+            this.isOtherResourcesDistribute = false;
 
             this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute;
             this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
