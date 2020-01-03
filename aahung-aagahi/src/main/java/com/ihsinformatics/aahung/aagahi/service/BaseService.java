@@ -106,7 +106,10 @@ public class BaseService {
 
     @Autowired
     protected UserRepository userRepository;
-
+    
+    @Autowired
+    protected PersonService personService;
+    
     @Autowired
     private SecurityService securityService;
 

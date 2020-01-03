@@ -33,6 +33,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
@@ -538,6 +539,15 @@ public class LocationServiceImpl extends BaseService implements LocationService 
     public void voidLocation(Location obj) throws HibernateException {
 	obj = (Location) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
+	for (LocationAttribute attribute : obj.getAttributes()) {
+		if(Boolean.FALSE.equals(attribute.getIsVoided())){
+			attribute.setIsVoided(Boolean.TRUE);
+			attribute.setVoidedBy(obj.getVoidedBy());
+			attribute.setDateVoided(obj.getDateVoided());
+			attribute.setReasonVoided(obj.getReasonVoided() + " (Location voided)");
+			locationAttributeRepository.softDelete(attribute);
+		}
+	}
 	locationRepository.softDelete(obj);
     }
     
@@ -556,8 +566,22 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
+	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    
+	    for (LocationAttribute attribute : obj.getAttributes()) {
+			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (Location voided)")){
+				attribute.setIsVoided(Boolean.FALSE);
+				if (attribute.getReasonVoided() == null) {
+					attribute.setReasonVoided("");
+				 }
+				attribute.setReasonVoided(attribute.getReasonVoided() + "(Location unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				updateLocationAttribute(attribute);
+			}
+		}
+	    
 	    updateLocation(obj);
 	}
     }

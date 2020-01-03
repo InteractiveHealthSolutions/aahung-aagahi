@@ -13,8 +13,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -22,4 +26,8 @@ import com.ihsinformatics.aahung.aagahi.model.Person;
 public interface PersonRepository extends JpaRepository<Person, Integer>, CustomPersonRepository {
 
     Person findByUuid(String uuid);
+    
+    @Query("UPDATE Person d set d.isVoided = true WHERE d = :person")
+    @Modifying
+    void softDelete(@Param("person") Person person);
 }

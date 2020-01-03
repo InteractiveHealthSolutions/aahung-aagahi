@@ -32,6 +32,7 @@ import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
@@ -240,6 +241,19 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
     public void voidParticipant(Participant obj) throws HibernateException {
 	obj = (Participant) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
+	Person person = (Person) setSoftDeleteAuditAttributes(obj.getPerson());
+	person.setIsVoided(Boolean.TRUE);
+	person.setReasonVoided(obj.getReasonVoided() + " (Participant voided)");
+	for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+		if(Boolean.FALSE.equals(attribute.getIsVoided())){
+			attribute.setIsVoided(Boolean.TRUE);
+			attribute.setVoidedBy(obj.getVoidedBy());
+			attribute.setDateVoided(obj.getDateVoided());
+			attribute.setReasonVoided(obj.getReasonVoided() + " (Participant voided)");
+			personAttributeRepository.softDelete(attribute);
+		}
+	}
+	personRepository.softDelete(person);
 	participantRepository.softDelete(obj);
     }
     
@@ -258,8 +272,33 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
+	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    
+	    Person person = obj.getPerson();
+	    if(Boolean.TRUE.equals(person.getIsVoided()) && person.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+			person.setIsVoided(Boolean.FALSE);
+			if (person.getReasonVoided() == null) {
+				person.setReasonVoided("");
+			 }
+			person.setReasonVoided(person.getReasonVoided() + "(Participant unvoided on "
+				    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+			personService.updatePerson(person);
+		}
+	    
+	    for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+				attribute.setIsVoided(Boolean.FALSE);
+				if (attribute.getReasonVoided() == null) {
+					attribute.setReasonVoided("");
+				 }
+				attribute.setReasonVoided(attribute.getReasonVoided() + "(Participant unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				personService.updatePersonAttribute(attribute);
+			}
+		}
+	    
 	    updateParticipant(obj);
 	}
     }
