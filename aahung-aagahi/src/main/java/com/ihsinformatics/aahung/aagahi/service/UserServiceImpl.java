@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -703,6 +705,17 @@ public class UserServiceImpl extends BaseService implements UserService {
     public void voidUser(User obj) throws HibernateException {
 	obj = (User) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);
+	
+	for (UserAttribute attribute : obj.getAttributes()) {
+		if(Boolean.FALSE.equals(attribute.getIsVoided())){
+			attribute.setIsVoided(Boolean.TRUE);
+			attribute.setVoidedBy(obj.getVoidedBy());
+			attribute.setDateVoided(obj.getDateVoided());
+			attribute.setReasonVoided(obj.getReasonVoided() + " (User voided)");
+			userAttributeRepository.softDelete(attribute);
+		}
+	}
+	
 	userRepository.softDelete(obj);
     }
     
@@ -721,8 +734,22 @@ public class UserServiceImpl extends BaseService implements UserService {
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
+	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+	    
+	    for (UserAttribute attribute : obj.getAttributes()) {
+			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (User voided)")){
+				attribute.setIsVoided(Boolean.FALSE);
+				if (attribute.getReasonVoided() == null) {
+					attribute.setReasonVoided("");
+				 }
+				attribute.setReasonVoided(attribute.getReasonVoided() + "(User unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				updateUserAttribute(attribute);
+			}
+		}
+	    
 	    updateUser(obj);
 	}
     }

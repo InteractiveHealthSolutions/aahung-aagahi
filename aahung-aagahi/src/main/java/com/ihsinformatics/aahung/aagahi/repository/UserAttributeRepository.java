@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -43,4 +44,8 @@ public interface UserAttributeRepository extends JpaRepository<UserAttribute, In
 
     @Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
     List<UserAttribute> findByValue(@Param("attributeValue") String attributeValue);
+    
+    @Query("UPDATE UserAttribute d set d.isVoided = true WHERE d = :userAttribute")
+    @Modifying
+    void softDelete(@Param("userAttribute") UserAttribute userAttribute);
 }
