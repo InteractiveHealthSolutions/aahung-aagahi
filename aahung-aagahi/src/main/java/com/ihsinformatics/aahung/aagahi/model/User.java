@@ -55,7 +55,7 @@ import lombok.ToString;
 @Audited
 @Table(name = "users")
 @Builder
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "userPrivileges"}, allowSetters = true)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "userPrivileges", "createdBy", "updatedBy", "voidedBy"}, allowSetters = true)
 public class User extends DataEntity {
 
     private static final long serialVersionUID = 438143645994205849L;
