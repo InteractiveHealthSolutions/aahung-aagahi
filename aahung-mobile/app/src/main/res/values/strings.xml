@@ -131,5 +131,6 @@
 
     <string name="is_mandatory"><font color="#E22214"> * </font></string>
     <string name="school_update_details">This form will be filled by LSE team members to update details of all partner schools</string>
+    <string name="warning_form_check">* This form can\'t be edited later. Please make sure the details you have entered are correct.</string>
 
 </resources>

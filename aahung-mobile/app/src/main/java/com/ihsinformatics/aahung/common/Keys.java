@@ -775,4 +775,5 @@ public class Keys {
     public static final String ROLE_IMPLEMENTER = "Implementer";
     public static final String PARTICIPANT = "participantId";
 
+    public static final String Warning = "warning";
 }

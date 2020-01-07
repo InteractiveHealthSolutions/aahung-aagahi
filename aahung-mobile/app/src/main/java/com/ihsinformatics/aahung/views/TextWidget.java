@@ -36,6 +36,7 @@ public class TextWidget extends Widget {
     private MultiWidgetContract.ChangeNotifier dataChangeListener;
     private WidgetContract.DateChangeNotifier widgetDateChangeListener;
     private DataProvider.DateType dateType;
+    private boolean isWarning;
 
     public TextWidget(Context context, String key, String question) {
         this.context = context;
@@ -154,5 +155,14 @@ public class TextWidget extends Widget {
 
         this.widgetDateChangeListener = dateChangeListener;
         this.dateType = dateType;
+    }
+
+    public TextWidget enableWarning() {
+        isWarning = true;
+        CharSequence text = binding.title.getText();
+        binding.text.setText(text);
+        binding.text.setTextColor(context.getResources().getColor(R.color.red));
+        binding.title.setText("");
+        return this;
     }
 }
