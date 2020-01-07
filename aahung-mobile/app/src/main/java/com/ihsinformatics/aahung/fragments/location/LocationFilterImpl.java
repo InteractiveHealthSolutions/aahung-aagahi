@@ -49,6 +49,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
 
             @Override
             public void onFailure(String message) {
+                view.dismissLoading();
                 view.showToast(message);
             }
         });

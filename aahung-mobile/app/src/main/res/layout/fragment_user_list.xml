@@ -63,7 +63,7 @@
                     android:layout_weight="5"
                     android:padding="@dimen/padding_normal"
                     tools:context=".fragments.SelectUserFragment"
-                    tools:listitem="@layout/fragment_user" />
+                    tools:listitem="@layout/dialog_item" />
 
 
                 <Button

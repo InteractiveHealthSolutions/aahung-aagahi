@@ -108,8 +108,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         loadingFragment = new LoadingFragment();
 
         if (isInternetAvailable(getContext())) {
-            if (!loadingFragment.isAdded())
-                loadingFragment.show(getFragmentManager(), LOADING_TAG);
+            showLoadingFragment();
             presenter.getLocations(locationType);
         } else {
             presenter.getOfflineLocations(locationType);
@@ -122,6 +121,13 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
             }
         });
 
+    }
+
+    private void showLoadingFragment() {
+      /*  if (!loadingFragment.isAdded())
+            loadingFragment.show(getFragmentManager(), LOADING_TAG);*/
+
+      binding.loader.setVisibility(View.VISIBLE);
     }
 
 
@@ -154,8 +160,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         filterInteractionListener.onLocationClick(location);
 
         if (isInternetAvailable(getContext())) {
-            if (!loadingFragment.isAdded())
-                loadingFragment.show(getFragmentManager(), LOADING_TAG);
+            showLoadingFragment();
             presenter.getLocationById("" + location.getUUID());
         } else {
             finishDialog();
@@ -170,13 +175,14 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void dismissLoading() {
-        if (loadingFragment != null && loadingFragment.isVisible()) {
+ /*       if (loadingFragment != null && loadingFragment.isVisible()) {
             try {
                 loadingFragment.dismiss();
             } catch (IllegalStateException ignored) {
                 ignored.printStackTrace();
             }
-        }
+        }*/
+        binding.loader.setVisibility(View.GONE);
     }
 
     @Override

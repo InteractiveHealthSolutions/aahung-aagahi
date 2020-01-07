@@ -73,11 +73,19 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         } else {
             view.setEnabled(false);
             if (isInternetAvailable(this)) {
-                if (!loading.isAdded())
-                    loading.show(getSupportFragmentManager(), LOADING_TAG);
+                showLoadingDialog();
                 presenter.validateUserOnline(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
             } else
                 presenter.validateUserOffine(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
+        }
+    }
+
+    private void showLoadingDialog() {
+        try {
+            if (!loading.isAdded())
+                loading.show(getSupportFragmentManager(), LOADING_TAG);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 
@@ -111,8 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void onSyncButtonClicked(View view) {
         if (isInternetAvailable(this)) {
             view.setEnabled(false);
-            if (!loading.isAdded())
-                loading.show(getSupportFragmentManager(), LOADING_TAG);
+            showLoadingDialog();
             presenter.syncMetadata(true);
         } else {
             showToast("Internet is not available");
