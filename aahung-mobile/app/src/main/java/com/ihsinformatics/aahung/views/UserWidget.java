@@ -294,7 +294,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 Double prePerc = Double.valueOf(binding.prePercentage.getText().toString());
                 if (preScore > 0 && prePerc == 0) {
                     isValid = false;
-                    binding.prePercentage.setError("percentage can't be less zero");
+                    binding.prePercentage.setError("percentage can't be less or equal to zero");
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.preScore.setError("score can't be less zero");
