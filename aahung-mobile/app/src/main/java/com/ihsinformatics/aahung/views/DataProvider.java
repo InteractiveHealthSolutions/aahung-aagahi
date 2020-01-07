@@ -2221,6 +2221,8 @@ public class DataProvider {
     private List<Widget> getAmplifyChangeTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         UserWidget trainers = new UserWidget(context, Keys.TRAINER, "Trainer", new ArrayList<BaseItem>()).enableStringJson();
@@ -2267,7 +2269,6 @@ public class DataProvider {
     private List<Widget> getAmplifyChangeStepDownTrainingDetailsFormWidgets() {
 
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new TextWidget(context,Keys.Warning,context.getResources().getString(R.string.warning_form_check)).enableWarning().enabledViewOnly());
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 

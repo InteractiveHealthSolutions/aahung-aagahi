@@ -128,6 +128,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
             loadingFragment.show(getFragmentManager(), LOADING_TAG);*/
 
       binding.loader.setVisibility(View.VISIBLE);
+      binding.root.setVisibility(View.GONE);
     }
 
 
@@ -182,6 +183,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
                 ignored.printStackTrace();
             }
         }*/
+        binding.root.setVisibility(View.VISIBLE);
         binding.loader.setVisibility(View.GONE);
     }
 
@@ -196,9 +198,8 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void finishDialog() {
-
         try {
-            dismiss();
+            dismissAllowingStateLoss();
         } catch (IllegalStateException ignored) {
             ignored.printStackTrace();
         }
