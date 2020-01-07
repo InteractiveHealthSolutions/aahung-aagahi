@@ -5,6 +5,7 @@ import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.Definition;
+import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
 import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.network.RestServices;
@@ -15,6 +16,7 @@ import static com.ihsinformatics.aahung.fragments.FormListFragment.SCHOOL;
 
 public class LocationFilterImpl implements LocationFilterContact.Presenter, ResponseCallback {
 
+    public static final String LOCATION_CATEGORY = "location_category";
     private RestServices restServices;
     private AppDatabase database;
     private LocationFilterContact.View view;
@@ -29,10 +31,11 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
     @Override
     public void getLocations(String locationType) {
         Definition definition;
+        DefinitionType type= database.getMetadataDao().getDefinitionTypeByShortName(LOCATION_CATEGORY);
         if (locationType.equals(SCHOOL)) {
-            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.SCHOOL);
+            definition = database.getMetadataDao().getDefinitionByType(RestServices.SCHOOL,type);
         } else {
-            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.INSTITUTION);
+            definition = database.getMetadataDao().getDefinitionByType(RestServices.INSTITUTION,type);
         }
         restServices.getLocations(this, definition.getUuid());
     }
