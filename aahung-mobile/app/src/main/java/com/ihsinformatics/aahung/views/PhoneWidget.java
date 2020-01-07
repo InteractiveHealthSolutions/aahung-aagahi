@@ -166,9 +166,11 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     }
 
     public void setText(String value) {
-        String[] split = value.split("-");
-        binding.phoneCode.setText(split[0]);
-        binding.phoneExtention.setText(split[1]);
+        if (value.matches(mobileRegex) || value.matches(landlineRegex)) {
+            String[] split = value.split("-");
+            binding.phoneCode.setText(split[0]);
+            binding.phoneExtention.setText(split[1]);
+        }
     }
 
     public Widget setPhoneListener(WidgetContract.PhoneListener phoneListener) {

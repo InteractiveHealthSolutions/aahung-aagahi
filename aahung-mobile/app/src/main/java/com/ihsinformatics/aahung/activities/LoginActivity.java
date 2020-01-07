@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         try {
             if (!loading.isAdded())
                 loading.show(getSupportFragmentManager(), LOADING_TAG);
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
