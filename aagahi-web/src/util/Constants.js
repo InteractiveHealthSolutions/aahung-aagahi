@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-02 13:00:12
+ * @Last Modified time: 2020-01-08 14:40:07
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -35,11 +35,9 @@ export const MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID = "9dcd5adf-d2d1-11e9
 export const MASTER_TRAINER_MOCK_SESSION_FORM_UUID = "9dd1e4a8-d2d1-11e9-b422-0242ac130002";
 export const ONE_TOUCH_SESSION_DETAIL_FORM_UUID = "9de0ba60-d2d1-11e9-b422-0242ac130002";
 export const PARENT_SESSION_FORM_UUID = "9dc781ec-d2d1-11e9-b422-0242ac130002";
-export const PRIMARY_MONITORING_NEW_FORM_UUID = "9da2a8a6-d2d1-11e9-b422-0242ac130002";
-export const PRIMARY_MONITORING_RUNNING_FORM_UUID = "9da79ed5-d2d1-11e9-b422-0242ac130002";
-export const PRIMARY_MONITORING_EXIT_FORM_UUID = "9dac4e8e-d2d1-11e9-b422-0242ac130002";
-export const SECONDARY_MONITORING_NEW_FORM_UUID = "9db259fd-d2d1-11e9-b422-0242ac130002";
-export const SECONDARY_MONITORING_RUNNING_FORM_UUID = "9db71f45-d2d1-11e9-b422-0242ac130002";
+export const PRIMARY_MONITORING_FORM_UUID = "558bcc0b-5e4b-4b32-86d7-913a2207e864";
+export const PRIMARY_MONITORING_RUNNING_FORM_UUID = "558bcc0b-5e4b-4b32-86d7-913a2207e864";
+export const PRIMARY_MONITORING_NEW_FORM_UUID = "558bcc0b-5e4b-4b32-86d7-913a2207e864";
 export const SECONDARY_MONITORING_FORM_UUID = "0972e91f-b03f-4cf1-bc00-b9374927d376";
 export const SRHR_POLICY_FORM_UUID = "9dc0ccec-d2d1-11e9-b422-0242ac130002";
 export const STAKEHOLDER_MEETING_FORM_UUID = "9ddb1f83-d2d1-11e9-b422-0242ac130002";

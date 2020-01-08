@@ -33,12 +33,9 @@ import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import ParentSessions from "../lse/ParentSessions";
 import ParticipantDetails from "../lse/ParticipantDetail";
-import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
-import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
-import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
+import PrimaryMonitoring from "../lse/PrimaryMonitoring";
 import SchoolClosing from "../lse/SchoolClosing";
 import SchoolDetails from "../lse/SchoolDetails";
-import SchoolUpdate from "../lse/SchoolUpdate";
 import SecondaryMonitoring from "../lse/SecondaryMonitoring";
 import SrhrPolicy from "../lse/SrhrPolicy";
 import StakeholderMeeting from "../lse/StakeholderMeeting";
@@ -151,16 +148,6 @@ class LseMainPage extends React.Component {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    componentDidMount() {
-        // alert("LSE: Component did mount called!");
-        // this.cancelCheck = this.cancelCheck.bind(this);
-        window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-        // if no rights, redirect to main menu
-        // alert("You do not have rights to view this page");
-        // this.props.history.push("/mainMenu");
-    }
-
     componentWillUnmount() {
         // alert("LSE: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
@@ -267,16 +254,6 @@ class LseMainPage extends React.Component {
                                         </NavText>
                                     </NavItem>
 
-                                    <NavItem eventKey="/schoolUpdate" className="navItemSeparator" onClick={this.toggleSidebar}>
-                                        <NavText>
-
-                                            <Link className="link formLink" to="/schoolUpdate">
-                                                <b>School Update</b>
-                                            </Link>
-
-                                        </NavText>
-                                    </NavItem>
-
                                     <NavItem eventKey="/participantDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                                         <NavText>
 
@@ -295,25 +272,9 @@ class LseMainPage extends React.Component {
                                         </NavText>
                                     </NavItem>
 
-                                    <NavItem eventKey="/primaryMonitoringNew" className="navItemSeparator" onClick={this.toggleSidebar}>
+                                    <NavItem eventKey="/primaryMonitoring" className="navItemSeparator" onClick={this.toggleSidebar}>
                                         <NavText>
-                                            <Link className="link formLink" to="/primaryMonitoringNew">
-                                                <b>Primary Monitoring Form - New</b>
-                                            </Link>
-                                        </NavText>
-                                    </NavItem>
-
-                                    <NavItem eventKey="/primaryMonitoringRunning" className="navItemSeparator" onClick={this.toggleSidebar}>
-                                        <NavText>
-                                            <Link className="link formLink" to="/primaryMonitoringRunning">
-                                                <b>Primary Monitoring Form - Running</b>
-                                            </Link>
-                                        </NavText>
-                                    </NavItem>
-
-                                    <NavItem eventKey="/primaryMonitoringExit" className="navItemSeparator" onClick={this.toggleSidebar}>
-                                        <NavText>
-                                            <Link className="link formLink" to="/primaryMonitoringExit">
+                                            <Link className="link formLink" to="/primaryMonitoring">
                                                 <b>Primary Monitoring Form - Exit</b>
                                             </Link>
                                         </NavText>
@@ -419,12 +380,9 @@ class LseMainPage extends React.Component {
                                         <Route path='/donorRegistration' component={DonorRegistration} />
                                         <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                                         <Route path='/schoolDetails' component={SchoolDetails} />
-                                        <Route path='/schoolUpdate' component={SchoolUpdate} />
                                         <Route path='/trainingDetails' component={TrainingDetails} />
                                         <Route path='/participantDetails' component={ParticipantDetails} />
-                                        <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew} />
-                                        <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning} />
-                                        <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit} />
+                                        <Route path='/primaryMonitoring' component={PrimaryMonitoring} />
                                         <Route path='/secondaryMonitoring' component={SecondaryMonitoring} />
                                         <Route path='/srhrPolicy' component={SrhrPolicy} />
                                         <Route path='/stepDownTraining' component={StepDownTraining} />
