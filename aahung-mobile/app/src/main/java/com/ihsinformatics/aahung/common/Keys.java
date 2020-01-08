@@ -396,7 +396,7 @@ public class Keys {
     public static final String TYPE_OF_MATERIAL = "distribution_material_type";
     public static final String ANNUAL_REPORT = "annual_report_count";
     public static final String AAHUNG_PROFILE = "aahung_profile_count";
-    public static final String PAMPHLET = "phamplet_count";
+    public static final String PAMPHLET = "pamphlet_count";//pamphlet_count
     public static final String BOOKLET = "booklet_count";
     public static final String REPORT = "report_count";
     public static final String OTHER_NUMBER = "otherNmuber";
@@ -776,4 +776,5 @@ public class Keys {
     public static final String PARTICIPANT = "participantId";
 
     public static final String Warning = "warning";
+
 }
