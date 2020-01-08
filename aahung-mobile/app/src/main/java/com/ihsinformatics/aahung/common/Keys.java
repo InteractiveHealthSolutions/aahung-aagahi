@@ -257,6 +257,7 @@ public class Keys {
     public static final String MASTER_TRAINER_PROBES = "mt_csa_probing_style";
     public static final String MASTER_TRAINER_QUANTITY = "csa_mt_count";
     public static final String MASTER_TRAINER_SEXUAL_HEALTH = "mt_def_sexual_health";
+    public static final String MASTER_TRAINER_SEXUAL_HEALTH_LSBE = "mt_def_sexual_health_lsbe";
     public static final String PARTICIPATING_DEMO = "pts_link_health_aspects";
     public static final String PARTICIPATING_SEX_GENDER = "pts_dif_sex_gender";
     public static final String PARTICIPATING_NORM = "pts_gender_norm_sterotype";
