@@ -843,7 +843,7 @@ public class DataProvider {
         final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants show clear understanding of gender norms and stereotypes", true).setScoreListener(lsbeScore).hideView();
         widgets.add(participatingNormLSBE);
 
-        final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", true).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH_LSBE, "Master Trainer is able to accurately define sexual health", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerSexualHealthLSBE);
 
         final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", true).setScoreListener(lsbeScore).hideView();
