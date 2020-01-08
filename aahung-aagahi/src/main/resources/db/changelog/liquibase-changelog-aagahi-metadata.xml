@@ -1836,4 +1836,15 @@
 			UPDATE `element` SET `short_name` = 'pamphlet_count', `element_name` = 'Pamphlet Count' WHERE (`element_id` = '231');
 		</sql>
 	</changeSet>
+	<changeSet author="rabbia.hassan" id="ELEMENT_CHANGE_2">
+		<sql endDelimiter=";">
+			UPDATE `element` SET `dataType` = 'JSON' WHERE (`element_id` = '18');
+			UPDATE `element` SET `dataType` = 'JSON' WHERE (`element_id` = '64');
+		</sql>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="FORM_TYPE_FIX">
+		<sql endDelimiter=";">
+			UPDATE `aagahi`.`form_type` SET `description` = 'Primary Monitoring Form', `form_name` = 'Primary Monitoring Form', `short_name` = 'lse_primary_monitoring' WHERE (`form_type_id` = '27');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
