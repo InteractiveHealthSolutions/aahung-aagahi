@@ -297,7 +297,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     binding.prePercentage.setError("percentage can't be less or equal to zero");
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
-                    binding.preScore.setError("score can't be less zero");
+                    binding.preScore.setError("score can't be less or equal to zero");
                 } else if (!binding.prePercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
                     isValid = false;
                     binding.prePercentage.setError("Percentage should be between 1-100");
@@ -313,10 +313,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 Double prePerc = Double.valueOf(binding.postPercentage.getText().toString());
                 if (preScore > 0 && prePerc == 0) {
                     isValid = false;
-                    binding.postPercentage.setError("percentage can't be less zero");
+                    binding.postPercentage.setError("percentage can't be less or equal to zero");
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
-                    binding.postScore.setError("score can't be less zero");
+                    binding.postScore.setError("score can't be less or equal to zero");
                 } else if (!binding.postPercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
                     isValid = false;
                     binding.postPercentage.setError("Percentage should be between 1-100");
