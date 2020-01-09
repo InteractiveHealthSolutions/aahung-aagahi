@@ -21,6 +21,7 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -824,9 +825,6 @@ class TrainingDetails extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
@@ -834,7 +832,7 @@ class TrainingDetails extends React.Component {
                                                     <Row>
                                                         <Col md="6">
                                                             <FormGroup className="warningBox">
-                                                                <Label for="facilitation_score" style={{ color: "#f57c00"}}><b>WARNING! This form is not editable. Please re-check data before submission.</b></Label>
+                                                                <Label style={{ color: "#f57c00"}}><b>WARNING! This form is not editable. Please re-check data before submission.</b></Label>
                                                             </FormGroup>
                                                         </Col>
                                                         <Col md="1">
@@ -843,8 +841,8 @@ class TrainingDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

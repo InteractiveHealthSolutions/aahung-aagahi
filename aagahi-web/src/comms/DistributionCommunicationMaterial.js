@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:20:57
+ * @Last Modified time: 2020-01-09 14:12:45
  */
 
 
@@ -419,6 +419,13 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isAttendantOther = false;
             }
         }
+
+        if (this.state.city !== undefined && this.state.city !== '') {
+            this.isCityOther = this.state.city === "Other" ? true : false;
+        }
+        if (this.state.distribution_location !== undefined && this.state.distribution_location !== '') {
+            this.isLocationOther = this.state.distribution_location === "other" ? true : false;
+        }
     }
 
     beforeunload(e) {
@@ -427,18 +434,6 @@ class DistributionCommunicationMaterial extends React.Component {
     }
 
     cancelCheck = () => {
-        // this.setState({
-        //     topic_covered : [
-        //         {
-        //           label: "Aahung Branding Material",
-        //           value: "aahung_branding_material"
-        //         },
-        //         {
-        //           label: "Nikah Nama",
-        //           value: "nikah_nama"
-        //         }
-        //       ]
-        // })
         this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
     }
@@ -744,7 +739,7 @@ class DistributionCommunicationMaterial extends React.Component {
                 jsonData.data.aahung_profile_count = data.get('aahung_profile_count');
 
             if (this.isPamphlet)
-                jsonData.data.phamplet_count = data.get('phamplet_count');
+                jsonData.data.pamphlet_count = data.get('pamphlet_count');
 
             if (this.isBooklet)
                 jsonData.data.booklet_count = data.get('booklet_count');
@@ -904,7 +899,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
         this.isAnnualReport ? this.requiredFields.push("annual_report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "annual_report_count");
         this.isAahungProfile ? this.requiredFields.push("aahung_profile_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_profile_count");
-        this.isPamphlet ? this.requiredFields.push("phamplet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "phamplet_count");
+        this.isPamphlet ? this.requiredFields.push("pamphlet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "pamphlet_count");
         this.isBooklet ? this.requiredFields.push("booklet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "booklet_count");
         this.isReport ? this.requiredFields.push("report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "report_count");
         this.isAahungMug ? this.requiredFields.push("aahung_mugs_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_mugs_count");
@@ -1189,8 +1184,8 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                     <Col md="6" style={pamphletStyle}>
 
                                                                         <FormGroup >
-                                                                            <Label for="phamplet_count" >Number of Pamphlet</Label> <span class="errorMessage">{this.state.errors["phamplet_count"]}</span>
-                                                                            <Input type="number" value={this.state.phamplet_count} name="phamplet_count" id="phamplet_count" onChange={(e) => { this.inputChange(e, "phamplet_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                            <Label for="pamphlet_count" >Number of Pamphlet</Label> <span class="errorMessage">{this.state.errors["pamphlet_count"]}</span>
+                                                                            <Input type="number" value={this.state.pamphlet_count} name="pamphlet_count" id="pamphlet_count" onChange={(e) => { this.inputChange(e, "pamphlet_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
