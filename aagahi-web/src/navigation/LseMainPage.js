@@ -275,7 +275,7 @@ class LseMainPage extends React.Component {
                                     <NavItem eventKey="/primaryMonitoring" className="navItemSeparator" onClick={this.toggleSidebar}>
                                         <NavText>
                                             <Link className="link formLink" to="/primaryMonitoring">
-                                                <b>Primary Monitoring Form - Exit</b>
+                                                <b>Primary Monitoring Form</b>
                                             </Link>
                                         </NavText>
                                     </NavItem>

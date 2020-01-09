@@ -261,11 +261,11 @@ class SecondaryMonitoring extends React.Component {
                 loading: false
             })
 
-            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
-            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
-            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
-            this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
-            this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
+            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
+            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
+            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
+            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
+            // this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
         }
         catch (error) {
             console.log(error);
@@ -379,7 +379,7 @@ class SecondaryMonitoring extends React.Component {
             }
         }
 
-        if (this.state.other_resource_required_count !== '' && this.state.other_resource_required_count !== undefined) {
+        if (this.state.other_resource_required_count !== '' && this.state.other_resource_required_count !== undefined && this.isResourcesRequired) {
             this.isOtherResources = this.state.other_resource_required_count > 0 ? true : false;
             this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_required_type");
         }
@@ -398,9 +398,8 @@ class SecondaryMonitoring extends React.Component {
             }
         }
 
-        if (this.state.other_resource_delivered_count !== '' && this.state.other_resource_delivered_count !== undefined) {
+        if (this.state.other_resource_delivered_count !== '' && this.state.other_resource_delivered_count !== undefined && this.isResourcesRequiredDistribute) {
             this.isOtherResourcesDistribute = this.state.other_resource_delivered_count > 0 ? true : false;
-            // other_resource_delivered_type
             this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "other_resource_delivered_type");
         }
 
@@ -681,9 +680,10 @@ class SecondaryMonitoring extends React.Component {
 
         try {
             if (name === "school_id") {
-
                 this.setState({
-                    school_name: e.locationName
+                    school_name: e.locationName,
+                    loading: true,
+                    loadingMsg: "Fetching data..."
                 })
 
                 let participants = await getParticipantsByLocation(e.uuid);
@@ -705,12 +705,7 @@ class SecondaryMonitoring extends React.Component {
 
                 let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
-
-                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
-                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
-                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
-                this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
-                this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
+                this.setState({ loading: false });
             }
 
             if (name === "participant_name") {
@@ -755,6 +750,12 @@ class SecondaryMonitoring extends React.Component {
                 self.exitTier = attributeValue === "Exit" ? true : false;
             }
         })
+
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
+        this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
     }
 
     handleSubmit = async event => {
@@ -915,7 +916,12 @@ class SecondaryMonitoring extends React.Component {
     }
 
     handleValidation() {
-        // check each required state
+
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
+        this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
+        this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
 
         let formIsValid = true;
         this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
@@ -955,6 +961,10 @@ class SecondaryMonitoring extends React.Component {
         }
 
         for (let j = 0; j < dependants.length; j++) {
+
+            if(dependants[j] === "lsbe_mt_count") {
+                alert("lsbe_mt_count is being validated");
+            }
             var element = document.getElementById(dependants[j]);
 
             if (element != null) {

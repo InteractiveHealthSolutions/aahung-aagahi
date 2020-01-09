@@ -21,6 +21,7 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -879,13 +880,10 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                             return input
                                                                         })
                                                                     }
-
                                                                 </div>
 
                                                                 {/* please don't remove this div unless you are adding multiple questions here*/}
                                                                 <div style={{ height: '250px' }}><span>   </span></div>
-
-
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
@@ -895,27 +893,24 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                         </Col>
                                     </Row>
 
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
                                                 <CardHeader>
                                                     <Row>
-                                                        <Col md="3">
+                                                        <Col md="6">
+                                                            <FormGroup className="warningBox">
+                                                                <Label for="facilitation_score" style={{ color: "#f57c00"}}><b>WARNING! This form is not editable. Please re-check data before submission.</b></Label>
+                                                            </FormGroup>
                                                         </Col>
-                                                        <Col md="2">
-                                                        </Col>
-                                                        <Col md="2">
+                                                        <Col md="1">
                                                         </Col>
                                                         <Col md="2">
                                                             <LoadingIndicator loading={this.state.loading} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                            {/* </div> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
