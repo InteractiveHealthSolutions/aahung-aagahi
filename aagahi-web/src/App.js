@@ -23,6 +23,7 @@ import StakeholderMeeting from './lse/StakeholderMeeting';
 import StepDownTraining from './lse/StepDownTraining';
 import TrainingDetails from './lse/TrainingDetails';
 import SecondaryMonitoring from './lse/SecondaryMonitoring';
+import PrimaryMonitoring from './lse/PrimaryMonitoring';
 import AdminMainPage from './navigation/AdminMainPage';
 import AdminPage from './navigation/AdminPage';
 import CommsMainPage from './navigation/CommsMainPage';
@@ -84,6 +85,7 @@ class App extends Component {
           <SessionRoute path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails} />
           <SessionRoute path='/generalTrainingDetails' component={GeneralTrainingDetails} />
           <SessionRoute path='/secondaryMonitoring' component={SecondaryMonitoring} />
+          <SessionRoute path='/primaryMonitoring' component={PrimaryMonitoring} />
         </Switch>
       </Router>
     );

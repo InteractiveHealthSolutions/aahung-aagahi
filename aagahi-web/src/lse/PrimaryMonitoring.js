@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:23:09
+ * @Last Modified time: 2020-01-08 19:27:39
  */
 
 
@@ -24,18 +24,18 @@ import classnames from 'classnames';
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { clearCheckedFields } from "../util/AahungUtil.js";
+import { getDefinitionByDefinitionId, getFormTypeByUuid, getFormDataById, getLocationsByCategory, getLocationAttributesByLocation, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
+import { updateFormData, saveFormData } from "../service/PostService";
+import { clearCheckedFields, loadFormState, getIndicatorCode } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
-
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const csaFlashcards = [
     { value: 'one', label: '1' },
@@ -61,25 +61,6 @@ const genderFlashcards = [
     { value: 'ten', label: '10' },
 ];
 
-const programsImplemented = [
-    { label: 'CSA', value: 'csa' },
-    { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' },
-];
-
-const options = [
-    { label: 'Math', value: 'math' },
-    { label: 'Science', value: 'science' },
-    { label: 'English', value: 'def' },
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies' },
-    { label: 'Islamiat', value: 'islamiat' },
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music' },
-    { label: 'Other', value: 'other', },
-];
-
-
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
     { value: 'additional_probes', label: 'Additional Probes' },
@@ -87,15 +68,13 @@ const new_activities_options = [
     { value: 'additional_videos', label: 'Additional videos' },
 ];
 
-class PrimaryMonitoringExit extends React.Component {
+class PrimaryMonitoring extends React.Component {
 
     modal = false;
-
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-
         this.state = {
             date_start: '',
             schools: [],
@@ -103,7 +82,6 @@ class PrimaryMonitoringExit extends React.Component {
             participants: [],
             participant_id: '',
             participant_name: '',
-            school_sex: 'girls',
             class_sex: 'girls',
             program_type: 'csa',
             primary_grade: '1',
@@ -133,9 +111,7 @@ class PrimaryMonitoringExit extends React.Component {
             modal: false,
             modalText: '',
             okButtonStyle: {},
-            modalHeading: '',
-            isCsa: true,
-            isGender: false
+            modalHeading: ''
         };
 
 
@@ -146,6 +122,8 @@ class PrimaryMonitoringExit extends React.Component {
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
+        this.isCsa = true;
+        this.isGender = false;
         this.isCsaBeyondGuide = false;
         this.isGenderBeyondGuide = false;
         this.isCsaIntegrated = false;
@@ -166,33 +144,52 @@ class PrimaryMonitoringExit extends React.Component {
         this.isGenderChallenge6 = false;
         this.isCsaResourcesRequired = false;
         this.isGenderResourcesRequired = false;
+
         this.score = 0;
         this.totalScore = 0;
         this.scoreArray = [];
 
-        this.formTypeId = 0;
-        this.csaRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name", "participant_id", "primary_grade",
-            "class_students", "class_duration", "program_type", "csa_flashcard", "csa_flashcard_revision", "csa_prompts", "csa_flashcard_objective",
-            "csa_material_preparation", "csa_teacher_preparation", "csa_activity_time_allotment", "csa_beyond_guide", "csa_subject_comfort", "csa_nonjudmental_tone",
-            "csa_impartial_opinions", "csa_student_engagement", "csa_student_understanding", "csa_student_attention", "csa_timetable_integration",
-            "csa_two_teacher_assigned", "csa_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "csa_mt_count", "csa_mt_teacher_coordination",
-            "csa_mt_conduct_monitoring", "csa_mt_conduct_training", "csa_challenge_1",
-            "csa_challenge_2", "csa_challenge_3", "csa_challenge_4", "csa_challenge_5", "csa_challenge_6", "csa_resources_required",
-            "csa_resources_delivered"];
+        this.fctScore = 0;
+        this.fctTotalScore = 0;
+        this.fctScoreArray = [];
+        this.mgmtScore = 0;
+        this.mgmtTotalScore = 0;
+        this.mgmtScoreArray = [];
 
-        this.genderRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name", "participant_id", "primary_grade",
-            "class_students", "class_duration", "program_type", "gender_flashcard", "gender_flashcard_revision", "gender_prompts",
-            "gender_flashcard_objective", "gender_material_preparation", "gender_teacher_preparation", "gender_activity_time_allotment", "gender_beyond_guide",
-            "gender_subject_comfort", "gender_nonjudmental_tone", "gender_impartial_opinions", "gender_student_engagement",
-            "gender_student_understanding", "gender_student_attention", "gender_timetable_integration", "gender_class_frequency",
-            "gender_two_teacher_assigned", "gender_teacher_mgmt_coordination", "monitoring_score",
-            "monitoring_score_pct", "gender_challenge_1", "gender_challenge_2", "gender_challenge_3", "gender_challenge_4", "gender_challenge_5",
-            "gender_challenge_6", "gender_resources_required", "gender_resources_delivered"];
+        this.genderFctScore = 0;
+        this.genderFctTotalScore = 0;
+        this.genderFctScoreArray = [];
+        this.genderMgmtScore = 0;
+        this.genderMgmtTotalScore = 0;
+        this.genderMgmtScoreArray = [];
+
+        this.newTier = false;
+        this.runningTier = false;
+        this.exitTier = false;
+
+        this.formTypeId = 0;
+        this.csaRequiredFields = ["date_start", "school_id", "monitor", "class_sex", "participant_name", "participant_id", "primary_grade",
+            "class_students", "class_duration", "program_type", "csa_flashcard", "csa_flashcard_revision", "csa_prompts", "csa_flashcard_objective",
+            "csa_material_preparation", "csa_teacher_preparation", "csa_activity_time_allotment", "csa_subject_comfort", "csa_nonjudmental_tone",
+            "csa_impartial_opinions", "csa_student_engagement", "csa_student_understanding", "csa_student_attention", "csa_timetable_integration",
+            "csa_two_teacher_assigned", "csa_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "facilitation_score",
+            "facilitation_score_pct", "management_score", "management_score_pct", "csa_challenge_1", "csa_challenge_2", "csa_challenge_3",
+            "csa_challenge_4", "csa_challenge_5", "csa_challenge_6", "csa_resources_required", "csa_resources_delivered"];
+
+        this.genderRequiredFields = ["date_start", "school_id", "monitor", "class_sex", "participant_name",
+            "participant_id", "primary_grade", "class_students", "class_duration", "program_type", "gender_flashcard",
+            "gender_flashcard_revision", "gender_prompts", "gender_flashcard_objective", "gender_material_preparation",
+            "gender_teacher_preparation", "gender_activity_time_allotment", "gender_beyond_guide", "gender_subject_comfort",
+            "gender_nonjudmental_tone", "gender_impartial_opinions", "gender_student_engagement", "gender_student_understanding",
+            "gender_student_attention", "gender_timetable_integration", "gender_class_frequency", "gender_two_teacher_assigned",
+            "gender_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "facilitation_score", "facilitation_score_pct",
+            "management_score", "management_score_pct", "gender_challenge_1", "gender_challenge_2", "gender_challenge_3",
+            "gender_challenge_4", "gender_challenge_5", "gender_challenge_6", "gender_resources_required", "gender_resources_delivered"];
 
         this.csaDependantFields = ["csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status",
             "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status"];
 
-        this.csaNonRequiredFields = ["csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type",
+        this.csaNonRequiredFields = ["csa_beyond_guide", "csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type",
             "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
 
         this.genderDependantFields = ["gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status",
@@ -202,6 +199,26 @@ class PrimaryMonitoringExit extends React.Component {
         this.genderNonRequiredFields = ["gender_guide_required_count", "gender_book_required_count", "gender_other_required_count",
             "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count",
             "gender_other_delivered_type"];
+
+        // CSA: Scoring arrays
+        // facilitation fields; created a separate array for facilitation fields w.r.t scoring purpose
+        this.fctFields = ["csa_prompts", "csa_flashcard_objective", "csa_material_preparation", "csa_teacher_preparation",
+            "csa_activity_time_allotment", "csa_beyond_guide", "csa_subject_comfort", "csa_nonjudmental_tone", "csa_impartial_opinions",
+            "csa_student_engagement", "csa_student_understanding", "csa_student_attention"];
+
+        // management fields; created a separate array for management fields w.r.t scoring purpose
+        this.mgmtFields = ["csa_timetable_integration", "csa_two_teacher_assigned", "csa_teacher_mgmt_coordination",
+            "csa_mt_teacher_coordination", "csa_mt_conduct_monitoring", "csa_mt_conduct_training"];
+
+        // Gender: Scoring arrays
+        // facilitation fields; created a separate array for facilitation fields w.r.t scoring purpose
+        this.genderFctFields = ["gender_prompts", "gender_flashcard_objective", "gender_material_preparation", "gender_teacher_preparation",
+            "gender_activity_time_allotment", "gender_beyond_guide", "gender_subject_comfort", "gender_nonjudmental_tone", "gender_impartial_opinions",
+            "gender_student_engagement", "gender_student_understanding", "gender_student_attention"];
+
+        // management fields; created a separate array for management fields w.r.t scoring purpose
+        this.genderMgmtFields = ["gender_timetable_integration", "gender_two_teacher_assigned", "gender_teacher_mgmt_coordination",
+            "csa_mt_teacher_coordination", "csa_mt_conduct_monitoring", "csa_mt_conduct_training"];
 
         this.errors = {};
     }
@@ -220,14 +237,16 @@ class PrimaryMonitoringExit extends React.Component {
      */
     loadData = async () => {
         try {
-
-            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_EXIT_FORM_UUID);
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            console.log("Role ID:" + role.roleId);
-            console.log(role.roleName);
             let trainersArray = await getUsersByRole(role.uuid);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
@@ -241,17 +260,221 @@ class PrimaryMonitoringExit extends React.Component {
                     schools: schools
                 })
             }
+
+            if (this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if (this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    if (this.state.school_tier !== "") {
+                        this.state.school_tier = this.state.school_tier === "school_tier_new" ? "New"
+                            : (this.state.school_tier === "school_tier_running" ? "Running"
+                                : (this.state.school_tier === "school_tier_exit" ? "Exit"
+                                    : ""));
+                    }
+
+                    let self = this;
+                    this.fetchedForm.data.map(function (element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if (dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for (let i = 0; i < radios.length; i++) {
+                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                    radios[i].checked = true;
+                                    var indicator = radios[i].id; // e.g "strongly_agree"
+                                    var indicatorCode = getIndicatorCode(indicator);
+                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                                }
+                            }
+                        }
+                        else if (dataType === 'definition') { //for final decision mt_eligible
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for (let i = 0; i < radios.length; i++) {
+                                if (radios[i].value === element.value.shortName) {
+                                    radios[i].checked = true;
+                                }
+                            }
+                        }
+                    })
+
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+
+                    let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+
+                    this.isCsa = this.state.program_type === "csa" ? true : false;
+                    this.isGender = this.state.program_type === "gender" ? true : false;
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({
+                loading: false
+            })
+
+            this.newTier && this.isCsa ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
+            this.newTier && this.isGender ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
+            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
+            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
+            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
+            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
         }
         catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
+        }
+    }
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                attributeValue = definition.definitionName;
+
+                if (attrTypeName === "school_tier") {
+                    if (self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
+                        // Edits are painful!! 
+                        // Handling the case where change of tier will have an impact on scoring questions and everntually the cumulative score
+                        self.setState({
+                            modalHeading: 'Tier mismatch error!',
+                            modalText: 'You can not select a school which has a different tier from the school which was saved earlier.',
+                            modal: !self.state.modal,
+                            school_id: {},
+                            school_name: ''
+                        });
+                        return;
+                    }
+
+                    self.newTier = attributeValue === "New" ? true : false;
+                    self.runningTier = attributeValue === "Running" ? true : false;
+                    self.exitTier = attributeValue === "Exit" ? true : false;
+                }
+
+                if (attrTypeName === "school_sex") {
+                    self.setState({ class_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : "girls" });
+                }
+                self.setState({ [attrTypeName]: attributeValue });
+            }
+        })
+    }
+
+    editUpdateDisplay() {
+
+        if (this.isCsa) {
+            if (this.state.csa_challenge_1 !== '' && this.state.csa_challenge_1 !== undefined) {
+                this.isCsaChallenge1 = this.state.csa_challenge_1 === "yes" ? true : false;
+            }
+            if (this.state.csa_challenge_2 !== '' && this.state.csa_challenge_2 !== undefined) {
+                this.isCsaChallenge2 = this.state.csa_challenge_2 === "yes" ? true : false;
+            }
+            if (this.state.csa_challenge_3 !== '' && this.state.csa_challenge_3 !== undefined) {
+                this.isCsaChallenge3 = this.state.csa_challenge_3 === "yes" ? true : false;
+            }
+            if (this.state.csa_challenge_4 !== '' && this.state.csa_challenge_4 !== undefined) {
+                this.isCsaChallenge4 = this.state.csa_challenge_4 === "yes" ? true : false;
+            }
+            if (this.state.csa_challenge_5 !== '' && this.state.csa_challenge_5 !== undefined) {
+                this.isCsaChallenge5 = this.state.csa_challenge_5 === "yes" ? true : false;
+            }
+            if (this.state.csa_challenge_6 !== '' && this.state.csa_challenge_6 !== undefined) {
+                this.isCsaChallenge6 = this.state.csa_challenge_6 === "yes" ? true : false;
+            }
+
+            // for csa  - required
+            if (this.state.csa_resources_required !== '' && this.state.csa_resources_required !== undefined)
+                this.isCsaResourcesRequired = this.state.csa_resources_required === "yes" ? true : false;
+
+            if (this.state.csa_other_required_count !== '' && this.state.csa_other_required_count !== undefined)
+                this.isCsaOtherResourcesRequired = this.state.csa_other_required_count > 0 ? true : false;
+
+            // for csa - delivered
+            if (this.state.csa_resources_delivered !== '' && this.state.csa_resources_delivered !== undefined)
+                this.isCsaResourcesDelivered = this.state.csa_resources_delivered === "yes" ? true : false;
+
+            if (this.state.csa_other_delivered_count !== '' && this.state.csa_other_delivered_count !== undefined)
+                this.isCsaOtherResourcesDelivered = this.state.csa_other_delivered_count > 0 ? true : false;
+
+            if (this.state.csa_class_frequency !== '' && this.state.csa_class_frequency !== undefined)
+                this.isCsaFrequencyOther = this.state.csa_class_frequency === "other" ? true : false;
+
+            if (this.state.csa_beyond_guide !== '' && this.state.csa_beyond_guide !== undefined)
+                this.isCsaBeyondGuide = String(this.state.csa_beyond_guide) === "1" ? true : false;
+            if (this.state.csa_timetable_integration !== '' && this.state.csa_timetable_integration !== undefined)
+                this.isCsaIntegrated = String(this.state.csa_timetable_integration) === "1" ? true : false;
+
+            this.isCsaBeyondGuide ? this.csaDependantFields.push("csa_beyond_guide_new") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "csa_beyond_guide_new");
+        }
+
+        if (this.isGender) {
+            if (this.state.gender_challenge_1 !== '' && this.state.gender_challenge_1 !== undefined) {
+                this.isCsaChallenge1 = this.state.gender_challenge_1 === "yes" ? true : false;
+            }
+            if (this.state.gender_challenge_2 !== '' && this.state.gender_challenge_2 !== undefined) {
+                this.isCsaChallenge2 = this.state.gender_challenge_2 === "yes" ? true : false;
+            }
+            if (this.state.gender_challenge_3 !== '' && this.state.gender_challenge_3 !== undefined) {
+                this.isCsaChallenge3 = this.state.csa_challenge_3 === "yes" ? true : false;
+            }
+            if (this.state.gender_challenge_4 !== '' && this.state.gender_challenge_4 !== undefined) {
+                this.isCsaChallenge4 = this.state.gender_challenge_4 === "yes" ? true : false;
+            }
+            if (this.state.gender_challenge_5 !== '' && this.state.gender_challenge_5 !== undefined) {
+                this.isCsaChallenge5 = this.state.gender_challenge_5 === "yes" ? true : false;
+            }
+            if (this.state.gender_challenge_6 !== '' && this.state.gender_challenge_6 !== undefined) {
+                this.isCsaChallenge6 = this.state.gender_challenge_6 === "yes" ? true : false;
+            }
+
+            // for gender - required
+            if (this.state.gender_resources_required !== '' && this.state.gender_resources_required !== undefined)
+                this.isGenderResourcesRequired = this.state.gender_resources_required === "yes" ? true : false;
+            if (this.state.gender_other_required_count !== '' && this.state.gender_other_required_count !== undefined)
+                this.isGenderOtherResourcesRequired = this.state.gender_other_required_count > 0 ? true : false;
+
+            // for gender - delivered
+            if (this.state.gender_resources_delivered !== '' && this.state.gender_resources_delivered !== undefined)
+                this.isGenderResourcesDelivered = this.state.gender_resources_delivered === "yes" ? true : false;
+            if (this.state.gender_other_delivered_count !== '' && this.state.gender_other_delivered_count !== undefined)
+                this.isGenderOtherResourcesDelivered = this.state.gender_other_delivered_count > 0 ? true : false;
+
+            if (this.state.gender_class_frequency !== '' && this.state.gender_class_frequency !== undefined)
+                this.isGenderFrequencyOther = this.state.gender_class_frequency === "other" ? true : false;
+
+            if (this.state.gender_beyond_guide !== '' && this.state.gender_beyond_guide !== undefined)
+                this.isGenderBeyondGuide = String(this.state.gender_beyond_guide) === "1" ? true : false;
+            if (this.state.gender_timetable_integration !== '' && this.state.gender_timetable_integration !== undefined)
+                this.isGenderIntegrated = String(this.state.gender_timetable_integration) === "1" ? true : false;
+
+            this.isGenderBeyondGuide ? this.genderDependantFields.push("gender_beyond_guide_new") : this.genderDependantFields = this.genderDependantFields.filter(e => e !== "gender_beyond_guide_new");
         }
     }
 
     updateDisplay() {
-
         this.setState({
             primary_grade: '1',
-            school_sex: 'girls',
             class_sex: 'girls',
             program_type: 'csa',
             csa_challenge_1_status: 'resolved',
@@ -272,6 +495,46 @@ class PrimaryMonitoringExit extends React.Component {
             gender_class_frequency: 'weekly'
         })
 
+        this.isCsa = true;
+        this.isGender = false;
+        this.isCsaBeyondGuide = false;
+        this.isGenderBeyondGuide = false;
+        this.isCsaIntegrated = false;
+        this.isGenderIntegrated = false;
+        this.isCsaFrequencyOther = false;
+        this.isGenderFrequencyOther = false;
+        this.isCsaChallenge1 = false;
+        this.isCsaChallenge2 = false;
+        this.isCsaChallenge3 = false;
+        this.isCsaChallenge4 = false;
+        this.isCsaChallenge5 = false;
+        this.isCsaChallenge6 = false;
+        this.isGenderChallenge1 = false;
+        this.isGenderChallenge2 = false;
+        this.isGenderChallenge3 = false;
+        this.isGenderChallenge4 = false;
+        this.isGenderChallenge5 = false;
+        this.isGenderChallenge6 = false;
+        this.isCsaResourcesRequired = false;
+        this.isGenderResourcesRequired = false;
+
+        this.score = 0;
+        this.totalScore = 0;
+        this.scoreArray = [];
+
+        this.fctScore = 0;
+        this.fctTotalScore = 0;
+        this.fctScoreArray = [];
+        this.mgmtScore = 0;
+        this.mgmtTotalScore = 0;
+        this.mgmtScoreArray = [];
+
+        this.genderFctScore = 0;
+        this.genderFctTotalScore = 0;
+        this.genderFctScoreArray = [];
+        this.genderMgmtScore = 0;
+        this.genderMgmtTotalScore = 0;
+        this.genderMgmtScoreArray = [];
     }
 
     toggleTab(tab) {
@@ -287,16 +550,15 @@ class PrimaryMonitoringExit extends React.Component {
         e.returnValue = true;
     }
 
-
     cancelCheck = () => {
 
         console.log(" ============================================================= ");
-        if (this.state.isCsa) {
+        if (this.isCsa) {
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
             this.resetForm(this.csaNonRequiredFields);
         }
-        if (this.state.isGender) {
+        if (this.isGender) {
             this.resetForm(this.genderRequiredFields);
             this.resetForm(this.genderDependantFields);
             this.resetForm(this.genderNonRequiredFields);
@@ -309,40 +571,24 @@ class PrimaryMonitoringExit extends React.Component {
             [name]: e.target.value
         });
 
-
-        if (name === "date_start") {
-            this.setState({ date_start: e.target.value });
-        }
-
+        // for csa
         if (name === "csa_challenge_1") {
             this.isCsaChallenge1 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge1)
-                this.setState({ csa_challenge_1_status: 'resolved' });
         }
         if (name === "csa_challenge_2") {
             this.isCsaChallenge2 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge2)
-                this.setState({ csa_challenge_2_status: 'resolved' });
         }
         if (name === "csa_challenge_3") {
             this.isCsaChallenge3 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge3)
-                this.setState({ csa_challenge_3_status: 'resolved' });
         }
         if (name === "csa_challenge_4") {
             this.isCsaChallenge4 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge4)
-                this.setState({ csa_challenge_4_status: 'resolved' });
         }
         if (name === "csa_challenge_5") {
             this.isCsaChallenge5 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge5)
-                this.setState({ csa_challenge_5_status: 'resolved' });
         }
         if (name === "csa_challenge_6") {
             this.isCsaChallenge6 = e.target.id === "yes" ? true : false;
-            if (this.isCsaChallenge6)
-                this.setState({ csa_challenge_6_status: 'resolved' });
         }
 
         // for gender
@@ -388,10 +634,8 @@ class PrimaryMonitoringExit extends React.Component {
         if (name === "gender_resources_required")
             this.isGenderResourcesRequired = e.target.id === "yes" ? true : false;
 
-
         if (name === "gender_other_required_count")
             this.isGenderOtherResourcesRequired = e.target.value > 0 ? true : false;
-
 
         // for csa - delivered
         if (name === "csa_resources_delivered")
@@ -404,10 +648,8 @@ class PrimaryMonitoringExit extends React.Component {
         if (name === "gender_resources_delivered")
             this.isGenderResourcesDelivered = e.target.id === "yes" ? true : false;
 
-
         if (name === "gender_other_delivered_count")
             this.isGenderOtherResourcesDelivered = e.target.value > 0 ? true : false;
-
     }
 
     // for single select
@@ -417,35 +659,30 @@ class PrimaryMonitoringExit extends React.Component {
             [name]: e.target.value
         });
 
-        if (name === "school_sex")
-            this.setState({ class_sex: e.target.value === "girls" ? 'girls' : 'boys' });
-
         if (name === "program_type") {
             if (e.target.value === "csa") {
 
+                this.isCsa = true;
+                this.isGender = false;
                 // empty error becasue switching whole program
                 this.errors = {};
                 this.setState({
-                    isCsa: true,
-                    isGender: false,
                     error: this.errors,
                     hasError: false
                 });
-
             }
             else if (e.target.value === "gender") {
 
+                this.isCsa = false;
+                this.isGender = true;
                 // empty error becasue switching whole program
                 this.errors = {};
                 this.setState({
-                    isCsa: false,
-                    isGender: true,
                     error: this.errors,
                     hasError: false
                 });
             }
         }
-
 
         if (name == "csa_class_frequency") {
             this.isCsaFrequencyOther = e.target.value === "other" ? true : false;
@@ -486,103 +723,216 @@ class PrimaryMonitoringExit extends React.Component {
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
-        this.calcualtingScore(indicator, fieldName, value);
-    }
-
-
-    // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) {
-
-        switch (indicator) {
-            case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "disagree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "neither":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "strongly_agree":
-                var indicatorCode = 5;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-
-            case "no":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-
-                break;
-        }
-
+        var indicatorCode = getIndicatorCode(indicator);
+        this.calculate(indicator, fieldName, value, indicatorCode);
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
-        let answered = [];
-        if (this.scoreArray != undefined || this.scoreArray != null) {
-            answered = this.scoreArray.filter(question => question.elementName == fieldName);
-        }
-        if (answered[0] != null) {
-            answered[0].id = indicator;
-            answered[0].elementName = fieldName;
-            this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
-            this.score += parseInt(value);
 
-            for (var i in this.scoreArray) {
-                if (this.scoreArray[i].elementName == fieldName) {
+        if (this.isCsa) {
+            let fctField = [];
+            let mgmtField = [];
 
-                    this.scoreArray[i].id = indicator; // they will remain same
-                    this.scoreArray[i].elementName = fieldName; // they will remain same
-                    this.scoreArray[i].value = value;
-                    this.scoreArray[i].score = this.score;
-                    break; //Stop this loop, we found it!
+            fctField = this.fctFields.filter(f => f === fieldName);
+            mgmtField = this.mgmtFields.filter(f => f === fieldName);
+
+            if (fctField.length > 0) {
+
+                let answered = [];
+                if (this.fctScoreArray != undefined || this.fctScoreArray != null) {
+                    answered = this.fctScoreArray.filter(question => question.elementName == fieldName);
                 }
+                if (answered[0] != null) {
+                    answered[0].id = indicator;
+                    answered[0].elementName = fieldName;
+                    this.fctScore = this.fctScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                    this.fctScore += parseInt(value);
+
+                    for (var i in this.fctScoreArray) {
+                        if (this.fctScoreArray[i].elementName == fieldName) {
+                            this.fctScoreArray[i].id = indicator; // they will remain same
+                            this.fctScoreArray[i].elementName = fieldName; // they will remain same
+                            this.fctScoreArray[i].value = value;
+                            this.fctScoreArray[i].score = this.fctScore;
+                            break; //Stop this loop, we found it!
+                        }
+                    }
+                }
+                else { //push this question along with value and other attributes
+                    let newAnswered = {}
+                    newAnswered.id = indicator;
+                    newAnswered.elementName = fieldName;
+                    newAnswered.value = value;
+                    this.fctScore += parseInt(value);
+                    this.fctTotalScore += indicatorValue;
+                    newAnswered.score = this.fctScore;
+                    newAnswered.totalScore = this.fctTotalScore;
+                    this.fctScoreArray.push(newAnswered);
+                }
+
+                var score = parseInt(this.fctScore);
+                var totalScore = parseInt(this.fctTotalScore);
+                var percent = (score / totalScore) * 100;
+                percent = percent.toFixed(2);
+                this.setState({
+                    facilitation_score: this.fctScore,
+                    facilitation_score_pct: percent
+                })
             }
-        }
-        else { //push this question along with value and other attributes
+            else if (mgmtField.length > 0) {
+                let answered = [];
+                if (this.mgmtScoreArray != undefined || this.mgmtScoreArray != null) {
+                    answered = this.mgmtScoreArray.filter(question => question.elementName == fieldName);
+                }
+                if (answered[0] != null) {
+                    answered[0].id = indicator;
+                    answered[0].elementName = fieldName;
+                    this.mgmtScore = this.mgmtScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                    this.mgmtScore += parseInt(value);
 
-            let newAnswered = {}
-            newAnswered.id = indicator;
-            newAnswered.elementName = fieldName;
-            newAnswered.value = value;
-            this.score += parseInt(value);
-            this.totalScore += indicatorValue;
-            newAnswered.score = this.score;
-            newAnswered.totalScore = this.totalScore;
-            this.scoreArray.push(newAnswered);
-        }
+                    for (var i in this.mgmtScoreArray) {
+                        if (this.mgmtScoreArray[i].elementName == fieldName) {
+                            this.mgmtScoreArray[i].id = indicator; // they will remain same
+                            this.mgmtScoreArray[i].elementName = fieldName; // they will remain same
+                            this.mgmtScoreArray[i].value = value;
+                            this.mgmtScoreArray[i].score = this.mgmtScore;
+                            break; //Stop this loop, we found it!
+                        }
+                    }
+                }
+                else { //push this question along with value and other attributes
+                    let newAnswered = {}
+                    newAnswered.id = indicator;
+                    newAnswered.elementName = fieldName;
+                    newAnswered.value = value;
+                    this.mgmtScore += parseInt(value);
+                    this.mgmtTotalScore += indicatorValue;
+                    newAnswered.score = this.mgmtScore;
+                    newAnswered.totalScore = this.mgmtTotalScore;
+                    this.mgmtScoreArray.push(newAnswered);
+                }
 
-        var score = parseInt(this.score);
-        var totalScore = parseInt(this.totalScore);
-        var percent = (score / totalScore) * 100;
-        percent = percent.toFixed(2);
-        this.setState({
-            monitoring_score: this.score,
-            monitoring_score_pct: percent
-        })
-        console.log(this.scoreArray);
+                var score = parseInt(this.mgmtScore);
+                var totalScore = parseInt(this.mgmtTotalScore);
+                var percent = (score / totalScore) * 100;
+                percent = percent.toFixed(2);
+                this.setState({
+                    management_score: this.mgmtScore,
+                    management_score_pct: percent
+                })
+            }
+
+            var cumulativeScore = parseInt(this.fctScore) + parseInt(this.mgmtScore);
+            var cumulativeTotalScore = parseInt(this.fctTotalScore) + parseInt(this.mgmtTotalScore);
+            var cumulativePercent = (cumulativeScore / cumulativeTotalScore) * 100;
+            cumulativePercent = cumulativePercent.toFixed(2);
+            this.setState({
+                monitoring_score: cumulativeScore,
+                monitoring_score_pct: cumulativePercent
+            })
+        }
+        else if (this.isGender) {
+            let genderFctField = [];
+            let genderMgmtField = [];
+
+            genderFctField = this.genderFctFields.filter(f => f === fieldName);
+            genderMgmtField = this.genderMgmtFields.filter(f => f === fieldName);
+
+            if (genderFctField.length > 0) {
+
+                let answered = [];
+                if (this.genderFctScoreArray != undefined || this.genderFctScoreArray != null) {
+                    answered = this.genderFctScoreArray.filter(question => question.elementName == fieldName);
+                }
+                if (answered[0] != null) {
+                    answered[0].id = indicator;
+                    answered[0].elementName = fieldName;
+                    this.genderFctScore = this.genderFctScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                    this.genderFctScore += parseInt(value);
+
+                    for (var i in this.genderFctScoreArray) {
+                        if (this.genderFctScoreArray[i].elementName == fieldName) {
+                            this.genderFctScoreArray[i].id = indicator; // they will remain same
+                            this.genderFctScoreArray[i].elementName = fieldName; // they will remain same
+                            this.genderFctScoreArray[i].value = value;
+                            this.genderFctScoreArray[i].score = this.genderFctScore;
+                            break; //Stop this loop, we found it!
+                        }
+                    }
+                }
+                else { //push this question along with value and other attributes
+                    let newAnswered = {}
+                    newAnswered.id = indicator;
+                    newAnswered.elementName = fieldName;
+                    newAnswered.value = value;
+                    this.genderFctScore += parseInt(value);
+                    this.genderFctTotalScore += indicatorValue;
+                    newAnswered.score = this.genderFctScore;
+                    newAnswered.totalScore = this.genderFctTotalScore;
+                    this.genderFctScoreArray.push(newAnswered);
+                }
+
+                var score = parseInt(this.genderFctScore);
+                var totalScore = parseInt(this.genderFctTotalScore);
+                var percent = (score / totalScore) * 100;
+                percent = percent.toFixed(2);
+                this.setState({
+                    facilitation_score: this.genderFctScore,
+                    facilitation_score_pct: percent
+                })
+            }
+            else if (genderMgmtField.length > 0) {
+                let answered = [];
+                if (this.genderMgmtScoreArray != undefined || this.genderMgmtScoreArray != null) {
+                    answered = this.genderMgmtScoreArray.filter(question => question.elementName == fieldName);
+                }
+                if (answered[0] != null) {
+                    answered[0].id = indicator;
+                    answered[0].elementName = fieldName;
+                    this.genderMgmtScore = this.genderMgmtScore - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                    this.genderMgmtScore += parseInt(value);
+
+                    for (var i in this.genderMgmtScoreArray) {
+                        if (this.genderMgmtScoreArray[i].elementName == fieldName) {
+                            this.genderMgmtScoreArray[i].id = indicator; // they will remain same
+                            this.genderMgmtScoreArray[i].elementName = fieldName; // they will remain same
+                            this.genderMgmtScoreArray[i].value = value;
+                            this.genderMgmtScoreArray[i].score = this.genderMgmtScore;
+                            break; //Stop this loop, we found it!
+                        }
+                    }
+                }
+                else { //push this question along with value and other attributes
+                    let newAnswered = {}
+                    newAnswered.id = indicator;
+                    newAnswered.elementName = fieldName;
+                    newAnswered.value = value;
+                    this.genderMgmtScore += parseInt(value);
+                    this.genderMgmtTotalScore += indicatorValue;
+                    newAnswered.score = this.genderMgmtScore;
+                    newAnswered.totalScore = this.genderMgmtTotalScore;
+                    this.genderMgmtScoreArray.push(newAnswered);
+                }
+
+                var score = parseInt(this.genderMgmtScore);
+                var totalScore = parseInt(this.genderMgmtTotalScore);
+                var percent = (score / totalScore) * 100;
+                percent = percent.toFixed(2);
+                this.setState({
+                    management_score: this.genderMgmtScore,
+                    management_score_pct: percent
+                })
+            }
+
+            var cumulativeScore = parseInt(this.fctScore) + parseInt(this.genderMgmtScore);
+            var cumulativeTotalScore = parseInt(this.fctTotalScore) + parseInt(this.genderMgmtTotalScore);
+            var cumulativePercent = (cumulativeScore / cumulativeTotalScore) * 100;
+            cumulativePercent = cumulativePercent.toFixed(2);
+            this.setState({
+                monitoring_score: cumulativeScore,
+                monitoring_score_pct: cumulativePercent
+            })
+        }
     }
 
     // for multi select
@@ -606,17 +956,35 @@ class PrimaryMonitoringExit extends React.Component {
 
         try {
             if (name === "school_id") {
+
+                this.setState({ loading: true, loadingMsg: "Fetching data..." });
                 let participants = await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
-                        participants: participants
+                        participants: participants,
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
                 else {
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
+
+                let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.autopopulateFields(attributes);
+
+                this.newTier && this.isCsa ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
+                this.newTier && this.isGender ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
+                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
+                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
+                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
+                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
+
+                this.setState({ loading: false });
             }
 
             if (name === "participant_name") {
@@ -644,14 +1012,22 @@ class PrimaryMonitoringExit extends React.Component {
             jsonData.formDate = this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.school_id.id;
             jsonData.referenceId = "";
 
             jsonData.data = {};
 
             var dataObj = {};
+            if (this.state.school_tier !== "") {
+                dataObj.school_tier = this.state.school_tier === "New" ? "school_tier_new"
+                    : (this.state.school_tier === "Running" ? "school_tier_running"
+                        : (this.state.school_tier === "Exit" ? "school_tier_exit"
+                            : ""));
+            }
 
             // for csa
-            if (this.state.isCsa) {
+            if (this.isCsa) {
 
                 var fields = this.csaRequiredFields.concat(this.csaDependantFields);
                 fields = fields.concat(this.csaNonRequiredFields);
@@ -717,7 +1093,7 @@ class PrimaryMonitoringExit extends React.Component {
             }
 
             // for gender
-            if (this.state.isGender) {
+            if (this.isGender) {
                 var fields = this.genderRequiredFields.concat(this.genderDependantFields);
                 fields = fields.concat(this.genderNonRequiredFields);
                 for (let i = 0; i < fields.length; i++) {
@@ -782,50 +1158,88 @@ class PrimaryMonitoringExit extends React.Component {
             jsonData.data = dataObj;
             console.log(jsonData);
 
-            saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if (!(String(responseData).includes("Error"))) {
-
-                            this.setState({
-                                loading: false,
-                                modalHeading: 'Success!',
-                                okButtonStyle: { display: 'none' },
-                                modalText: 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-
-                            if (this.state.isCsa) {
-                                this.resetForm(this.csaRequiredFields);
-                                this.resetForm(this.csaDependantFields);
-                                this.resetForm(this.csaNonRequiredFields);
+            if (this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId = this.fetchedForm.referenceId;
+                updateFormData(jsonData)
+                    .then(
+                        responseData => {
+                            if (!(String(responseData).includes("Error"))) {
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    modalText: 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                if (this.isCsa) {
+                                    this.resetForm(this.csaRequiredFields);
+                                    this.resetForm(this.csaDependantFields);
+                                    this.resetForm(this.csaNonRequiredFields);
+                                }
+                                if (this.isGender) {
+                                    this.resetForm(this.genderRequiredFields);
+                                    this.resetForm(this.genderDependantFields);
+                                    this.resetForm(this.genderNonRequiredFields);
+                                }
                             }
-                            if (this.state.isGender) {
-                                this.resetForm(this.genderRequiredFields);
-                                this.resetForm(this.genderDependantFields);
-                                this.resetForm(this.genderNonRequiredFields);
+                            else if (String(responseData).includes("Error")) {
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
                             }
-
-                            // document.getElementById("projectForm").reset();
-                            // this.messageForm.reset();
                         }
-                        else if (String(responseData).includes("Error")) {
+                    );
+            }
+            else {
+                saveFormData(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
 
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
 
-                            this.setState({
-                                loading: false,
-                                modalHeading: 'Fail!',
-                                okButtonStyle: { display: 'none' },
-                                modalText: submitMsg,
-                                modal: !this.state.modal
-                            });
+                                if (this.isCsa) {
+                                    this.resetForm(this.csaRequiredFields);
+                                    this.resetForm(this.csaDependantFields);
+                                    this.resetForm(this.csaNonRequiredFields);
+                                }
+                                if (this.isGender) {
+                                    this.resetForm(this.genderRequiredFields);
+                                    this.resetForm(this.genderDependantFields);
+                                    this.resetForm(this.genderNonRequiredFields);
+                                }
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+            }
 
         }
     }
@@ -834,14 +1248,12 @@ class PrimaryMonitoringExit extends React.Component {
         // check each required state
 
         let formIsValid = true;
-        if (this.state.isCsa) {
-
+        if (this.isCsa) {
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
             formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
         }
 
-        if (this.state.isGender) {
-
+        if (this.isGender) {
             this.setState({ hasError: this.checkValid(this.genderRequiredFields, this.genderDependantFields) ? false : true });
             formIsValid = this.checkValid(this.genderRequiredFields, this.genderDependantFields);
         }
@@ -958,10 +1370,12 @@ class PrimaryMonitoringExit extends React.Component {
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
 
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
-        const csaBeyondGuideStyle = this.isCsaBeyondGuide ? {} : { display: 'none' };
-        const genderBeyondGuideStyle = this.isGenderBeyondGuide ? {} : { display: 'none' };
+        const monitoredCsaStyle = this.isCsa ? {} : { display: 'none' };
+        const monitoredGenderStyle = this.isGender ? {} : { display: 'none' };
+        const newTierStyle = this.newTier ? {} : { display: 'none' };
+        const exitTierStyle = this.exitTier ? {} : { display: 'none' };
+        const csaBeyondGuideStyle = this.isCsaBeyondGuide && this.newTier ? {} : { display: 'none' };
+        const genderBeyondGuideStyle = this.newTier ? {} : { display: 'none' };
         const csaIntegratedStyle = this.isCsaIntegrated ? {} : { display: 'none' };
         const genderIntegratedStyle = this.isGenderIntegrated ? {} : { display: 'none' };
         const csaFrequencyOtherStyle = this.isCsaFrequencyOther ? {} : { display: 'none' };
@@ -1004,10 +1418,22 @@ class PrimaryMonitoringExit extends React.Component {
         const yes = "Yes";
         const no = "No";
 
+        var formNavVisible = false;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
 
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -1024,8 +1450,7 @@ class PrimaryMonitoringExit extends React.Component {
                                             <Card className="main-card mb-6">
                                                 <CardHeader>
                                                     <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                    <b>Primary Monitoring Form - Exit</b>
-                                                    {/* <p style={{fontSize: "10px"}}>This is the form in the LSE component to be filled by LSE Monitors.</p> */}
+                                                    <b>Primary Monitoring Form</b>
                                                 </CardHeader>
 
                                             </Card>
@@ -1073,17 +1498,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
-                                                                                <option value="girls">Girls</option>
-                                                                                <option value="boys">Boys</option>
-                                                                                <option value="coed">Co-ed</option>
-                                                                            </Input>
+                                                                            <Input name="school_sex" id="school_sex" value={this.state.school_sex} disabled />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -1098,20 +1519,29 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>
+
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="school_tier" >School Tier</Label>
+                                                                            <Input name="school_tier" id="school_tier" value={this.state.school_tier} disabled />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
                                                                             <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="primary_grade" >Class</Label> <span class="errorMessage">{this.state.errors["primary_grade"]}</span>
@@ -1125,31 +1555,26 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
-
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
                                                                             <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => { this.inputChange(e, "class_students") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} max="99" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
+                                                                </Row>
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="class_duration" >Time duration of class in minutes</Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
                                                                             <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onChange={(e) => { this.inputChange(e, "class_duration") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} max="999" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="program_type" >Primary Program</Label> <span class="errorMessage">{this.state.errors["program_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
-
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type" disabled={this.editMode}>
                                                                                 <option value="csa">CSA</option>
                                                                                 <option value="gender">Gender</option>
-
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -1168,7 +1593,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="csa_flashcard" >CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={csaFlashcards} required />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={csaFlashcards} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -1414,7 +1839,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6">
+                                                                    <Col md="6" style={newTierStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_beyond_guide" >Teacher has gone beyond the teacher’s guide to build on and/or develop new activities</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1442,7 +1867,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="8" style={csaBeyondGuideStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_beyond_guide_new" >What has the teacher done that is new?</Label> <span class="errorMessage">{this.state.errors["csa_beyond_guide_new"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_beyond_guide_new")} value={this.state.csa_beyond_guide_new} id="csa_beyond_guide_new" options={new_activities_options} required />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "csa_beyond_guide_new")} value={this.state.csa_beyond_guide_new} id="csa_beyond_guide_new" options={new_activities_options} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -1708,9 +2133,23 @@ class PrimaryMonitoringExit extends React.Component {
 
                                                                 <Row>
                                                                     <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score" style={{ color: "green" }}><b>Facilitation Score</b></Label>
+                                                                            <Input value={this.state.facilitation_score} name="facilitation_score" id="facilitation_score" onChange={(e) => { this.inputChange(e, "facilitation_score") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score_pct" style={{ color: "green" }}><b>% Facilitation Score</b></Label>
+                                                                            <Input name="facilitation_score_pct" id="facilitation_score_pct" value={this.state.facilitation_score_pct} onChange={(e) => { this.inputChange(e, "facilitation_score_pct") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
                                                                         <Label><h7><u><b>Management</b></u></h7></Label>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
@@ -1827,7 +2266,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="8">
+                                                                    <Col md="8" style={exitTierStyle}>
                                                                         <FormGroup>
                                                                             <Label for="csa_mt_count">Number of Master Trainers leading CSA program</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
                                                                             <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => { this.inputChange(e, "csa_mt_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
@@ -1836,7 +2275,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitTierStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_mt_teacher_coordination" >There is excellent coordination between Master Trainers and teachers regarding the CSA program</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1880,7 +2319,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitTierStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_mt_conduct_monitoring" >Master Trainers conduct regular monitoring sessions to maintain quality of CSA program</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1924,7 +2363,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="12">
+                                                                    <Col md="12" style={exitTierStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_mt_conduct_training" >Master Trainers arrange and conduct refresher trainings as needed for CSA teachers</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -1966,17 +2405,43 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
-                                                                <Row >
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
-                                                                            <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
+                                                                            <Label for="management_score" style={{ color: "green" }}><b>Management Score</b></Label>
+                                                                            <Input value={this.state.management_score} name="management_score" id="management_score" onChange={(e) => { this.inputChange(e, "management_score") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="management_score_pct" style={{ color: "green" }}><b>% Management Score</b></Label>
+                                                                            <Input name="management_score_pct" id="management_score_pct" value={this.state.management_score_pct} onChange={(e) => { this.inputChange(e, "management_score_pct") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <Label><h7><u><b>Score</b></u></h7></Label>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label>The cumulative score for the Facilitation and Management section is as below:</Label>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label>
                                                                             <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
-                                                                            {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                            <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score_pct"]}</span>
+                                                                            <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label>
                                                                             <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => { this.inputChange(e, "monitoring_score_pct") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -2322,7 +2787,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup>
                                                                             <Label for="gender_flashcard" >Gender Flashcard being run</Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={genderFlashcards} required />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={genderFlashcards} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -2563,7 +3028,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6">
+                                                                    <Col md="6" style={newTierStyle}>
                                                                         <FormGroup >
                                                                             <Label for="gender_beyond_guide" >Teacher has gone beyond the teacher’s guide to build on and/or develop new activities</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -2591,7 +3056,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="8" style={genderBeyondGuideStyle}>
                                                                         <FormGroup >
                                                                             <Label for="gender_beyond_guide_new" >What has the teacher done that is new?</Label> <span class="errorMessage">{this.state.errors["gender_beyond_guide_new"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_beyond_guide_new")} value={this.state.gender_beyond_guide_new} id="gender_beyond_guide_new" options={new_activities_options} />
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "gender_beyond_guide_new")} value={this.state.gender_beyond_guide_new} id="gender_beyond_guide_new" options={new_activities_options} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -2856,6 +3321,21 @@ class PrimaryMonitoringExit extends React.Component {
 
                                                                 <Row>
                                                                     <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score" style={{ color: "green" }}><b>Facilitation Score</b></Label>
+                                                                            <Input value={this.state.facilitation_score} name="facilitation_score" id="facilitation_score" onChange={(e) => { this.inputChange(e, "facilitation_score") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="facilitation_score_pct" style={{ color: "green" }}><b>% Facilitation Score</b></Label>
+                                                                            <Input name="facilitation_score_pct" id="facilitation_score_pct" value={this.state.facilitation_score_pct} onChange={(e) => { this.inputChange(e, "facilitation_score_pct") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
                                                                         <Label><h7><u><b>Management</b></u></h7></Label>
                                                                     </Col>
 
@@ -2977,14 +3457,40 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
-                                                                            <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
-                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} readOnly></Input>
+                                                                            <Label for="management_score" style={{ color: "green" }}><b>Management Score</b></Label>
+                                                                            <Input value={this.state.management_score} name="management_score" id="management_score" onChange={(e) => { this.inputChange(e, "management_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
-                                                                            {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                            <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score_pct"]}</span>
+                                                                            <Label for="management_score_pct" style={{ color: "green" }}><b>% Management Score</b></Label>
+                                                                            <Input name="management_score_pct" id="management_score_pct" value={this.state.management_score_pct} onChange={(e) => { this.inputChange(e, "management_score_pct") }} readOnly></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <Label><h7><u><b>Score</b></u></h7></Label>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label>The cumulative score for the Facilitation and Management section is as below:</Label>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label>
+                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} ></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup className="monitoringScoreBox">
+                                                                            <Label for="monitoring_score_pct" style={{ color: "green" }}><b>% Monitoring Score</b></Label>
                                                                             <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => { this.inputChange(e, "monitoring_score_pct") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -2994,7 +3500,6 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <Col md="6">
                                                                         <Label><h7><u><b>Challenges</b></u></h7></Label>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
@@ -3371,13 +3876,11 @@ class PrimaryMonitoringExit extends React.Component {
                                                         <Col md="2">
                                                         </Col>
                                                         <Col md="2">
-                                                            <LoadingIndicator loading={this.state.loading} />
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                            {/* </div> */}
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
@@ -3413,4 +3916,4 @@ class PrimaryMonitoringExit extends React.Component {
     }
 }
 
-export default PrimaryMonitoringExit;
+export default PrimaryMonitoring;

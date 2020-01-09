@@ -269,6 +269,14 @@ class SecondaryMonitoring extends React.Component {
         }
         catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -682,7 +690,7 @@ class SecondaryMonitoring extends React.Component {
                 if (participants != null && participants.length > 0) {
                     
                     this.setState({
-                        participants: participants ,
+                        participants: participants,
                         participant_name: [],
                         participant_id: ''
                     })
@@ -773,7 +781,6 @@ class SecondaryMonitoring extends React.Component {
             jsonData.data = {};
 
             var dataObj = {};
-            // alert(this.state.school_tier);
             if(this.state.school_tier !== "") {
                 dataObj.school_tier = this.state.school_tier === "New" ? "school_tier_new" 
                 : (this.state.school_tier === "Running" ? "school_tier_running" 
@@ -1021,8 +1028,6 @@ class SecondaryMonitoring extends React.Component {
 
         clearCheckedFields();
         this.updateDisplay();
-        // this.isOtherResources = false;
-        // this.isOtherResourcesDistribute = false;
     }
 
     // for modal
@@ -2642,8 +2647,6 @@ class SecondaryMonitoring extends React.Component {
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>

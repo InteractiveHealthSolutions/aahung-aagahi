@@ -36,7 +36,8 @@ export const entityUrl = [
     { id: 28, name: 'training detail form', url: "/trainingDetailForm" },
     { id: 29, name: 'amplify change training details form', url: "/amplifyChangeTrainingDetails" },
     { id: 30, name: 'general training details form', url: "/generalTrainingDetails" },
-    { id: 31, name: 'secondary monitoring form', url: "/secondaryMonitoring" }
+    { id: 31, name: 'secondary monitoring form', url: "/secondaryMonitoring" },
+    { id: 31, name: 'primary monitoring form', url: "/primaryMonitoring" }
 ];
 
 /**
@@ -214,17 +215,14 @@ export const loadFormState = function (formDataObj, stateObj) {
 
     let self = this;
     formDataObj.data.map(function (element, i) {
-
-        if(element.key.shortName === "school_sex" || element.key.shortName === "class_sex") {
-            console.log("testing the school_sex and class_sex fields >>>>>>>")
-            console.log(element.key.shortName);
-            console.log(element.value);
-        }
         
-        switch ((element.dataType).toLowerCase()) {
+        console.log(element);
+            console.log(element.value);
+            
+        switch ((element.dataType).toLowerCase()) { 
 
             case 'string':
-                if (moment(element.value, 'LT', true).isValid()) {
+                if (moment(element.value, 'LT', true).isValid()) { // just because of single case (for time) in Radio Appearance form
                     var time = element.value;
                     var datetimeString = moment(time, 'HH:mm');
                     var dateObj = datetimeString.toDate();
