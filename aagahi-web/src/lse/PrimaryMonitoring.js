@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-08 19:27:39
+ * @Last Modified time: 2020-01-09 13:42:21
  */
 
 
@@ -21,7 +21,7 @@
 // Contributors: Tahira Niazi
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import Select from 'react-select';
@@ -316,16 +316,10 @@ class PrimaryMonitoring extends React.Component {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
+
             this.setState({
                 loading: false
             })
-
-            this.newTier && this.isCsa ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
-            this.newTier && this.isGender ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
-            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
-            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
-            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
-            this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
         }
         catch (error) {
             console.log(error);
@@ -379,6 +373,13 @@ class PrimaryMonitoring extends React.Component {
                 self.setState({ [attrTypeName]: attributeValue });
             }
         })
+
+        this.isCsa && (this.runningTier || this.exitTier) ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
+        this.isGender && (this.runningTier || this.exitTier) ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
     }
 
     editUpdateDisplay() {
@@ -406,15 +407,13 @@ class PrimaryMonitoring extends React.Component {
             // for csa  - required
             if (this.state.csa_resources_required !== '' && this.state.csa_resources_required !== undefined)
                 this.isCsaResourcesRequired = this.state.csa_resources_required === "yes" ? true : false;
-
-            if (this.state.csa_other_required_count !== '' && this.state.csa_other_required_count !== undefined)
+            if (this.state.csa_other_required_count !== '' && this.state.csa_other_required_count !== undefined && this.isCsaResourcesRequired)
                 this.isCsaOtherResourcesRequired = this.state.csa_other_required_count > 0 ? true : false;
 
             // for csa - delivered
             if (this.state.csa_resources_delivered !== '' && this.state.csa_resources_delivered !== undefined)
                 this.isCsaResourcesDelivered = this.state.csa_resources_delivered === "yes" ? true : false;
-
-            if (this.state.csa_other_delivered_count !== '' && this.state.csa_other_delivered_count !== undefined)
+            if (this.state.csa_other_delivered_count !== '' && this.state.csa_other_delivered_count !== undefined && this.isCsaResourcesDelivered)
                 this.isCsaOtherResourcesDelivered = this.state.csa_other_delivered_count > 0 ? true : false;
 
             if (this.state.csa_class_frequency !== '' && this.state.csa_class_frequency !== undefined)
@@ -451,13 +450,13 @@ class PrimaryMonitoring extends React.Component {
             // for gender - required
             if (this.state.gender_resources_required !== '' && this.state.gender_resources_required !== undefined)
                 this.isGenderResourcesRequired = this.state.gender_resources_required === "yes" ? true : false;
-            if (this.state.gender_other_required_count !== '' && this.state.gender_other_required_count !== undefined)
+            if (this.state.gender_other_required_count !== '' && this.state.gender_other_required_count !== undefined && this.isGenderResourcesRequired)
                 this.isGenderOtherResourcesRequired = this.state.gender_other_required_count > 0 ? true : false;
 
             // for gender - delivered
             if (this.state.gender_resources_delivered !== '' && this.state.gender_resources_delivered !== undefined)
                 this.isGenderResourcesDelivered = this.state.gender_resources_delivered === "yes" ? true : false;
-            if (this.state.gender_other_delivered_count !== '' && this.state.gender_other_delivered_count !== undefined)
+            if (this.state.gender_other_delivered_count !== '' && this.state.gender_other_delivered_count !== undefined && this.isGenderResourcesDelivered)
                 this.isGenderOtherResourcesDelivered = this.state.gender_other_delivered_count > 0 ? true : false;
 
             if (this.state.gender_class_frequency !== '' && this.state.gender_class_frequency !== undefined)
@@ -976,14 +975,6 @@ class PrimaryMonitoring extends React.Component {
 
                 let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
-
-                this.newTier && this.isCsa ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
-                this.newTier && this.isGender ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
-                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
-                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
-                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
-                this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
-
                 this.setState({ loading: false });
             }
 
@@ -1247,6 +1238,13 @@ class PrimaryMonitoring extends React.Component {
     handleValidation() {
         // check each required state
 
+        (this.runningTier || this.exitTier) && this.isCsa ? this.csaDependantFields.push("csa_beyond_guide") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_beyond_guide");
+        (this.runningTier || this.exitTier) && this.isGender ? this.genderDependantFields.push("gender_beyond_guide") : this.genderRequiredFields = this.genderRequiredFields.filter(e => e !== "gender_beyond_guide");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_count") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_count");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_teacher_coordination") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_teacher_coordination");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_monitoring") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_monitoring");
+        this.exitTier && this.isCsa ? this.csaDependantFields.push("csa_mt_conduct_training") : this.csaRequiredFields = this.csaRequiredFields.filter(e => e !== "csa_mt_conduct_training");
+
         let formIsValid = true;
         if (this.isCsa) {
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
@@ -1372,10 +1370,11 @@ class PrimaryMonitoring extends React.Component {
 
         const monitoredCsaStyle = this.isCsa ? {} : { display: 'none' };
         const monitoredGenderStyle = this.isGender ? {} : { display: 'none' };
-        const newTierStyle = this.newTier ? {} : { display: 'none' };
+        const csaExitRunningStyle = this.isCsa && (this.runningTier || this.exitTier) ? {} : { display: 'none' };
+        const genderExitRunningStyle = this.isGender && (this.runningTier || this.exitTier) ? {} : { display: 'none' };
         const exitTierStyle = this.exitTier ? {} : { display: 'none' };
-        const csaBeyondGuideStyle = this.isCsaBeyondGuide && this.newTier ? {} : { display: 'none' };
-        const genderBeyondGuideStyle = this.newTier ? {} : { display: 'none' };
+        const csaBeyondGuideStyle = this.isCsaBeyondGuide && (this.runningTier || this.exitTier) ? {} : { display: 'none' };
+        const genderBeyondGuideStyle = this.isGenderBeyondGuide && (this.runningTier || this.exitTier) ? {} : { display: 'none' };
         const csaIntegratedStyle = this.isCsaIntegrated ? {} : { display: 'none' };
         const genderIntegratedStyle = this.isGenderIntegrated ? {} : { display: 'none' };
         const csaFrequencyOtherStyle = this.isCsaFrequencyOther ? {} : { display: 'none' };
@@ -1452,24 +1451,16 @@ class PrimaryMonitoring extends React.Component {
                                                     <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
                                                     <b>Primary Monitoring Form</b>
                                                 </CardHeader>
-
                                             </Card>
                                         </Col>
-
                                     </Row>
-
-                                    {/* <br/> */}
-
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6 center-col">
                                                 <CardBody>
-
-                                                    {/* error message div */}
                                                     <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
                                                         <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
                                                     </div>
-
                                                     <br />
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
@@ -1839,7 +1830,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6" style={newTierStyle}>
+                                                                    <Col md="6" style={csaExitRunningStyle}>
                                                                         <FormGroup >
                                                                             <Label for="csa_beyond_guide" >Teacher has gone beyond the teacher’s guide to build on and/or develop new activities</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -3028,7 +3019,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6" style={newTierStyle}>
+                                                                    <Col md="6" style={genderExitRunningStyle}>
                                                                         <FormGroup >
                                                                             <Label for="gender_beyond_guide" >Teacher has gone beyond the teacher’s guide to build on and/or develop new activities</Label>
                                                                             <FormGroup tag="fieldset" row>
@@ -3879,33 +3870,15 @@ class PrimaryMonitoring extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal
-                                        modal={this.modal}
-                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                        ModalHeader="Leave Page Confrimation!"
-                                    ></CustomModal>
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
                         </div>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:24:06
+ * @Last Modified time: 2020-01-09 13:45:43
  */
 
 
@@ -1347,7 +1347,7 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_email" >Email address for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
+                                                                        <Label for="point_person_email" >Email address for point of contact at school</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => { this.inputChange(e, "point_person_email") }} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
