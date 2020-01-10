@@ -19,12 +19,14 @@ import com.droidnet.DroidNet;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.FormAdapterListener;
 import com.ihsinformatics.aahung.common.GlobalConstants;
+import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.databinding.FragmentListBinding;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
 import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.common.FormsAdaper;
+import com.ihsinformatics.aahung.views.DataProvider;
 
 import java.io.Serializable;
 import java.util.List;
@@ -106,7 +108,9 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
             binding.recycler.setAdapter(new FormsAdaper(getContext(), forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
-                    if (!isFormLoading) {
+                    if (!Utils.isInternetAvailable(getContext()) && formDetails.getForms().getMethod().equals(DataProvider.Method.PUT))
+                        showError("This form is not available in offline mode");
+                    else if (!isFormLoading) {
                         binding.progressBar.setVisibility(View.VISIBLE);
                         isFormLoading = true;
                         getFragmentManager()

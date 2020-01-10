@@ -68,6 +68,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private boolean isParticipants = false;
     private boolean isSingleSelect;
     private boolean isStringJson = false;
+    private boolean isUpdateTrigger = false;
 
     private Map<Participant, ParticipantScores> participantScores = new HashMap<>();
     public static final String PERCENTAGE_REGEX = "^0*(?:[1-9][0-9]?|100)$";
@@ -122,6 +123,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_user, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
         binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,8 +133,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     private void showUserDialog() {
-
-        selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, this);
+        selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, isUpdateTrigger, this);
         selectUserFragment.show(((MainActivity) context).getSupportFragmentManager(), USER_TAG);
     }
 
@@ -375,7 +376,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     }
 
-    private void clear() {
+    public void clear() {
 
         retainValues();
         binding.scoreContainer.removeAllViews();
@@ -448,9 +449,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public void onSuccess(List<? extends BaseItem> items) {
         this.users = (List<BaseItem>) items;
+        isUpdateTrigger = true;
         if (selectUserFragment != null && selectUserFragment.isVisible()) {
             selectUserFragment.updateDialog(users);
         }
+
 
         if (defaultValues != null) {
             setDefaultValues();
@@ -476,11 +479,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     @Override
     public void onFailure(String message) {
-        if (!isParticipants) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            ((MainActivity) context).onBackPressed();
-        }
 
+
+        isUpdateTrigger = true;
         if (selectUserFragment != null && selectUserFragment.isVisible()) {
             selectUserFragment.updateDialog(new ArrayList<BaseItem>());
         }
@@ -521,4 +522,5 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             setDefaultValues();
 
     }
+
 }
