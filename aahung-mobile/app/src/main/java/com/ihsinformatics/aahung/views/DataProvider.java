@@ -1205,7 +1205,7 @@ public class DataProvider {
         TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
         widgets.add(dataUpdater.add(schoolClassification).hideView());
 
-        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
+
 
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, getDefinitions(Keys.CLASS_CLASSIFICATION));
         widgets.add(classClassification);
@@ -1214,6 +1214,8 @@ public class DataProvider {
         RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier)).disableAttributes();
         tier.disableSwitching();
         widgets.add(dataUpdater.add(tier));
+
+        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
         UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participantID);
@@ -1442,7 +1444,7 @@ public class DataProvider {
         TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
         widgets.add(dataUpdater.add(schoolClassification).hideView());
 
-        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
+
 
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, getDefinitions(Keys.CLASS_CLASSIFICATION));
         widgets.add(classClassification);
@@ -1451,6 +1453,8 @@ public class DataProvider {
         RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier)).disableAttributes();
         tier.disableSwitching();
         widgets.add(dataUpdater.add(tier));
+
+        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
         RadioWidget program = new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, getDefinitionsByName(Arrays.asList(new String[]{"csa", "gender"}), Keys.PRIMARY_PROGRAM));
 
@@ -1964,15 +1968,9 @@ public class DataProvider {
         RadioWidget schoolSex = new RadioWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex", true, getDefinitions(Keys.school_sex));
         widgets.add(schoolSex);
 
-        ToggleWidgetData sexToggler = new ToggleWidgetData();
-        ToggleWidgetData.SkipData coedSkipper = sexToggler.addOption("Co-ed");
 
-        Widget approximateNumberOfGirls = coedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, getLocationAttribute(Keys.GIRLS_COUNT), "Approximate number of girls", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
-        Widget approximateNumberOfBoys = coedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, getLocationAttribute(Keys.BOYS_COUNT), "Approximate number of boys", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
-
-        coedSkipper.build();
-
-        schoolSex.addDependentWidgets(sexToggler.getToggleMap());
+        Widget approximateNumberOfGirls =new EditTextWidget.Builder(context, getLocationAttribute(Keys.GIRLS_COUNT), "Approximate number of girls", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build();
+        Widget approximateNumberOfBoys = new EditTextWidget.Builder(context, getLocationAttribute(Keys.BOYS_COUNT), "Approximate number of boys", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build();
 
         RadioWidget programLevel = new RadioWidget(context, getLocationAttribute(Keys.school_level), "Level of Program", true, getDefinitions(Keys.school_level));
         widgets.add(programLevel);
@@ -2027,11 +2025,22 @@ public class DataProvider {
         widgets.add(approximateNumberOfGirls.hideView());
         widgets.add(approximateNumberOfBoys.hideView());
         EditTextWidget numberOfStudents = new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, SIX, true).setMinimumValue(ONE).setInputRange(1, 999999).build();
-        widgets.add(numberOfStudents);
+        widgets.add(numberOfStudents.hideView());
 
-        MultiSumService sumService=  new MultiSumService(numberOfStudents);
+        EditTextWidget numberOfStudentsCoed = new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, SIX, true).setMinimumValue(ONE).setInputRange(1, 999999).build();
+        widgets.add(numberOfStudentsCoed.hideView());
+        numberOfStudentsCoed.disableWidget();
+
+        MultiSumService sumService=  new MultiSumService(numberOfStudentsCoed);
         sumService.addSumWidget(approximateNumberOfBoys);
         sumService.addSumWidget(approximateNumberOfGirls);
+
+
+        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolSex);
+        multiSwitcher.addNewOption().addKeys("Co-ed").addWidgets(numberOfStudentsCoed,approximateNumberOfBoys,approximateNumberOfGirls).build();
+        multiSwitcher.addNewOption().addKeys("Boys").addWidget(numberOfStudents).build();
+        multiSwitcher.addNewOption().addKeys("Girls").addWidget(numberOfStudents).build();
+        schoolSex.setMultiSwitchListenerList(multiSwitcher);
 
 
 
