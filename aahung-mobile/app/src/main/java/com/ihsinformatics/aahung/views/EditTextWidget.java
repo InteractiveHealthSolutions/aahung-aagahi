@@ -458,4 +458,8 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     public boolean isViewOnly() {
         return false;
     }
+
+    public void disableWidget() {
+        binding.hint.setEnabled(false);
+    }
 }
