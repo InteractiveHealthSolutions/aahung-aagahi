@@ -260,12 +260,6 @@ class SecondaryMonitoring extends React.Component {
             this.setState({
                 loading: false
             })
-
-            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_count") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_count");
-            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_teacher_coordination") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_teacher_coordination");
-            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_monitoring") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_monitoring");
-            // this.exitTier ? this.lsbeDependantFields.push("lsbe_mt_conduct_training") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_mt_conduct_training");
-            // this.runningTier || this.exitTier ? this.lsbeDependantFields.push("lsbe_beyond_guide") : this.lsbeRequiredFields = this.lsbeRequiredFields.filter(e => e !== "lsbe_beyond_guide");
         }
         catch (error) {
             console.log(error);
@@ -296,7 +290,7 @@ class SecondaryMonitoring extends React.Component {
             lsbe_challenge_5_status: 'resolved',
             lsbe_challenge_6_status: 'resolved',
             lsbe_chapter_revision: 'revision',
-            lsbe_class_frequency: 'weekly',
+            lsbe_class_frequency: 'weekly'
         })
 
         this.isClassSexCoed = false;
@@ -349,7 +343,7 @@ class SecondaryMonitoring extends React.Component {
             this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
             this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute;
             this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute;
-            this.setState({ class_sex: this.state.school_sex === "girls" ? 'girls' : 'boys' });
+            // this.setState({ class_sex: this.state.school_sex === "girls" ? 'girls' : 'boys' });
         }
 
         if (this.state.lsbe_challenge_1 !== '' && this.state.lsbe_challenge_1 !== undefined)
@@ -926,9 +920,6 @@ class SecondaryMonitoring extends React.Component {
         let formIsValid = true;
         this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
         formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
-
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({ errors: this.errors });
         return formIsValid;
     }
@@ -962,9 +953,6 @@ class SecondaryMonitoring extends React.Component {
 
         for (let j = 0; j < dependants.length; j++) {
 
-            if(dependants[j] === "lsbe_mt_count") {
-                alert("lsbe_mt_count is being validated");
-            }
             var element = document.getElementById(dependants[j]);
 
             if (element != null) {
@@ -1166,7 +1154,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex" disabled>
                                                                                 <option value="girls">Girls</option>
                                                                                 <option value="boys">Boys</option>
                                                                                 <option value="coed">Co-ed</option>

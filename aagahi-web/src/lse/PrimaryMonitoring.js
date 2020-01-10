@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-09 13:42:21
+ * @Last Modified time: 2020-01-09 17:07:23
  */
 
 
@@ -367,7 +367,7 @@ class PrimaryMonitoring extends React.Component {
                     self.exitTier = attributeValue === "Exit" ? true : false;
                 }
 
-                if (attrTypeName === "school_sex") {
+                if (attrTypeName === "school_sex" && !self.editMode) {
                     self.setState({ class_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : "girls" });
                 }
                 self.setState({ [attrTypeName]: attributeValue });
@@ -491,7 +491,9 @@ class PrimaryMonitoring extends React.Component {
             gender_challenge_5_status: 'resolved',
             gender_challenge_6_status: 'resolved',
             gender_flashcard_revision: 'revision',
-            gender_class_frequency: 'weekly'
+            gender_class_frequency: 'weekly',
+            school_sex: '',
+            school_tier: ''
         })
 
         this.isCsa = true;
@@ -2785,8 +2787,8 @@ class PrimaryMonitoring extends React.Component {
                                                                         <FormGroup >
                                                                             <Label for="gender_flashcard_revision">Revision or first time flashcard is being taught</Label> <span class="errorMessage">{this.state.errors["gender_flashcard_revision"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "gender_flashcard_revision")} value={this.state.gender_flashcard_revision} name="gender_flashcard_revision" id="gender_flashcard_revision" required>
-                                                                                <option value="csa">Revision</option>
-                                                                                <option value="gender">First time</option>
+                                                                                <option value="revision">Revision</option>
+                                                                                <option value="first_time">First time</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                     </Col>

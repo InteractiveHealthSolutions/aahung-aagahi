@@ -37,6 +37,9 @@ import "../index.css";
 import { getAllRoles, getUserByRegexValue, getUsersByName, getUsersByRole } from '../service/GetService';
 import { getEntityUrlByName } from "../util/AahungUtil.js";
 import CustomRadioButton from "../widget/CustomRadioButton";
+import Modal from 'react-bootstrap/Modal';
+import { Button } from 'reactstrap';
+// import Button from 'react-bootstrap/Button';
 
 class UserSearch extends React.Component {
 
@@ -53,11 +56,21 @@ class UserSearch extends React.Component {
                 { headerName: "Roles", field: "roles", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
-                // { headerName: "Updated By", field: "updatedBy", sortable: true }
+                {
+                    headerName: "Void",
+                    template: `<i class="fas fa-ban"></i>`,
+                    width: 80
+                },
+                {
+                    headerName: "Unvoid",
+                    template: `<i class="fas fa-redo"></i>`,
+                    width: 80
+                }
             ],
                 rowData: []
             },
             allRoles: [],
+            openModal: false,
             parent_organization: '',  // widget IDs (and their states) are with underscore notation
             username: '',  // widget IDs (and their states) are with underscore notation
             disableUser: true,
@@ -122,6 +135,16 @@ class UserSearch extends React.Component {
         }
     }
 
+    // buttonClick = (e) => {
+        // let deletedRow = this.props.node.data;
+        // e.gridApi.updateRowData({ remove: [deletedRow] })
+    // }
+
+    onBtnClick(e) {
+        this.rowDataClicked1 = e.rowData;
+        alert(e.rowData.userId);
+      }
+
     // for text and numeric questions
     inputChange(e, name) {
 
@@ -130,16 +153,33 @@ class UserSearch extends React.Component {
         });
     }
 
-    onSelectionChanged() {
+    onSelectionChanged(event) {
         var selectedRows = this.gridApi.getSelectedRows();
         let self = this;
-        selectedRows.forEach(function (selectedRow) {
-            var urlEntity = getEntityUrlByName("user")[0];
-            self.props.history.push({
-                pathname: urlEntity.url,
-                state: { edit: true, userId: selectedRow.userId }
+        if(event.colDef.headerName === "Void") {
+            alert("voiding");
+        }
+        else if(event.colDef.headerName === "Unvoid") {
+            // alert("un-voiding");
+            this.setState({
+                openModal: true
+            })
+        }
+        else {
+            selectedRows.forEach(function (selectedRow) {
+                var urlEntity = getEntityUrlByName("user")[0];
+                self.props.history.push({
+                    pathname: urlEntity.url,
+                    state: { edit: true, userId: selectedRow.userId }
+                });
             });
-        });
+        }
+    }
+
+    closeModal() {
+        this.setState({
+            openModal: false
+        })
     }
 
     onChange = e => {
@@ -280,14 +320,48 @@ class UserSearch extends React.Component {
                                 rowData={this.state.user.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
-                                onSelectionChanged={this.onSelectionChanged.bind(this)}
+                                onCellClicked={this.onSelectionChanged.bind(this)}
                                 pagination={true}
                                 paginationPageSize="10"
-                                enableColResize={true}>
+                                enableColResize={true}
+                                suppressCellSelection={true}>
                             </AgGridReact>
                         </div>
                     </Animated>
                 </MDBCardBody>
+
+
+                <Modal
+                    show={this.state.openModal}
+                    onHide={() => this.closeModal()}
+                    style={{ marginTop: '100px' }}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Void Data</Modal.Title>
+                    </Modal.Header>
+                    <form onSubmit={this.handleSubmit}>
+                        <Modal.Body style={{ height: '309px', overflowY: 'auto' }} >
+                            <div className='form-group'>
+                                <label htmlFor='locationName'>Name</label>
+                                <input
+                                    type='text'
+                                    className='form-control'
+                                    autoComplete='off'
+                                    value={this.state.locationName}
+                                    pattern='^[a-zA-Z\s]*$'
+                                    name='locationName'
+                                    onChange={this.handleChange}
+                                    required
+                                />
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Void<MDBIcon icon="frown-open" className="ml-2" size="lg" /></Button>
+                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.closeModal} >Cancel<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                        
+                        </Modal.Footer>
+                    </form>
+                </Modal>
             </div>
         );
     }

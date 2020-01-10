@@ -215,12 +215,8 @@ export const loadFormState = function (formDataObj, stateObj) {
 
     let self = this;
     formDataObj.data.map(function (element, i) {
-        
-        console.log(element);
-            console.log(element.value);
             
         switch ((element.dataType).toLowerCase()) { 
-
             case 'string':
                 if (moment(element.value, 'LT', true).isValid()) { // just because of single case (for time) in Radio Appearance form
                     var time = element.value;

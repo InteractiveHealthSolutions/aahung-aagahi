@@ -580,3 +580,23 @@ code {
 #point_person_contact {
   margin-right: 2%;
 }
+
+.voidButton {
+  background-color: transparent;
+  width: inherit;
+  margin-left: 2%;
+  margin-right: 2%;
+  border: 5% solid #f3e5f5 ;
+  border-radius: 5px !important;
+  height: 100%;
+}
+
+.unVoidButton {
+  background-color: transparent;
+  width: inherit;
+  margin-left: 2%;
+  margin-right: 2%;
+  border: 5% solid #f3e5f5 ;
+  border-radius: 5px !important;
+  height: 100%;
+}
