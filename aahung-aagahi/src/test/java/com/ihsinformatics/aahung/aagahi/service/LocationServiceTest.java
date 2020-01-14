@@ -42,6 +42,7 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -411,6 +412,10 @@ public class LocationServiceTest extends BaseServiceTest {
     public void shouldUnvoidLocation() throws HibernateException, ValidationException, IOException {
     hogwartz.setIsVoided(true);
     hogwartz.setReasonVoided("Testing");
+    
+    List<LocationAttribute> locationAttributes = Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers);
+    hogwartz.setAttributes(locationAttributes);
+    
 	when(locationRepository.save(any(Location.class))).thenReturn(hogwartz);
 	locationService.unvoidLocation(hogwartz);
 	verify(locationRepository, times(1)).save(any(Location.class));
@@ -421,9 +426,11 @@ public class LocationServiceTest extends BaseServiceTest {
      * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#voidLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
      */
     @Test
-    public void shouldVoidUseLocation() {
+    public void shouldVoidLocation() {
 	doNothing().when(locationRepository).softDelete(any(Location.class));
 	try {
+		List<LocationAttribute> locationAttributes = Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers);
+	    hogwartz.setAttributes(locationAttributes);		
 		locationService.voidLocation(hogwartz);
 	} catch (HibernateException e) {
 		// TODO Auto-generated catch block
