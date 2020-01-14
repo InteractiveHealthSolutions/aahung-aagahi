@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2400" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2360" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="1685"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="post_platform" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    date(`social_media_details`.`post_date`) as post_date,
+    dayname(`social_media_details`.`post_date`) as post_day,
+    time(`social_media_details`.`post_date`) as post_time,
+    `social_media_details`.post_component,
+	`social_media_details`.`post_platform`,
+    `social_media_details`.`post_platform_other`,
+    `social_media_details`.`post_type`,
+    `social_media_details`.`post_type_other`,
+    `social_media_details`.`topic_covered`,
+    `social_media_details`.`topic_covered_other`,
+    `social_media_details`.`post_url`,
+    `social_media_details`.`post_boosted`,
+
+    (if(`social_media_details`.`post_likes_count` is null,0,`social_media_details`.`post_likes_count`)+
+    if(`social_media_details`.`post_shares_count` is null,0,`social_media_details`.`post_shares_count`)+
+    if(`social_media_details`.`post_comments_count` is null,0,`social_media_details`.`post_comments_count`)) as traffic
+FROM `aagahi`.`social_media_details`
+
+
+
+where
+date(`post_date`) between date($P{start_date}) and date($P{end_date}) and
+`post_platform`
+REGEXP concat('[[:<:]]', SUBSTRING_INDEX( $P{post_platform}, ',',1), '[[:>:]]|[[:<:]]',SUBSTRING_INDEX(SUBSTRING_INDEX( $P{post_platform} , ',', 2), ',', -1),'[[:>:]]|[[:<:]]',SUBSTRING_INDEX(SUBSTRING_INDEX( $P{post_platform} , ',', 3), ',', -1),'[[:>:]]|[[:<:]]',SUBSTRING_INDEX(SUBSTRING_INDEX( $P{post_platform} , ',', 4), ',', -1),'[[:>:]]|[[:<:]]',SUBSTRING_INDEX(SUBSTRING_INDEX( $P{post_platform} , ',', 5), ',', -1),'[[:>:]]')
+
+ order by post_date]]>
+	</queryString>
+	<field name="post_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_day" class="java.lang.String"/>
+	<field name="post_time" class="java.sql.Time"/>
+	<field name="post_component" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_platform" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_platform_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_type_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_url" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="post_boosted" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="traffic" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="453" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Social Media Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report will provide information on social media activity]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="2350" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="180" height="20" uuid="54f58ad6-cfc8-4baa-a63c-b731526e6c07"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="180" height="20" uuid="d6a9d028-e664-44a2-bc59-bc54294b7687"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_day]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="180" height="20" uuid="77e066a9-4f4c-405c-b643-65eda6803000"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="0" width="180" height="20" uuid="647f5722-7876-40fe-8f75-3003824434f2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_component]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="720" y="0" width="180" height="20" uuid="cc725c4b-c672-41d6-81d1-8bf51ef04a43"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_platform]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1067" y="0" width="180" height="20" uuid="7c3c7e15-58ba-41e9-b417-51198f39a763"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1247" y="0" width="180" height="20" uuid="8f356529-8fd3-40fe-bb75-dd38d1f85e0f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_type_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1427" y="0" width="180" height="20" uuid="4cd94ae0-0b0b-44de-9a26-489df239d2de"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1607" y="0" width="180" height="20" uuid="4d19372f-c021-498a-a4e3-47c419a6cc1e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1787" y="0" width="180" height="20" uuid="b12df2f4-dc68-47f8-90b3-e81992bf8d7e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_url]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1967" y="0" width="180" height="20" uuid="c901d76e-0375-43fc-8a0c-f48ae18577f8"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_boosted]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2147" y="0" width="180" height="20" uuid="1f2fec62-c80b-404c-b645-fd77c238c74e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[traffic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="0" width="167" height="20" uuid="943113d3-a21c-4d83-83eb-8c3773b1d648"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_platform_other]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="2350" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="180" height="20" uuid="8bf8376e-7fcf-4e73-935d-4f5a0477330c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="180" y="0" width="180" height="20" uuid="766a6d0f-b17d-490b-974a-530f3b19b242"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_day}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="360" y="0" width="180" height="20" uuid="3fe1655a-aa21-4458-91c0-b7d8e4dcd778"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_time}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="540" y="0" width="180" height="20" uuid="c66e0bdb-0858-4ae9-aa74-f2e26c6fdc57"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_component}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="720" y="0" width="180" height="20" uuid="46d5f61a-3391-4b19-a732-391bca51035a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_platform}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1067" y="0" width="180" height="20" uuid="f868590d-094f-4ad9-a96a-760806645a11"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1247" y="0" width="180" height="20" uuid="6998c262-0ff3-47cd-a7c5-2971ed5d7cfa"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_type_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1427" y="0" width="180" height="20" uuid="a1cec6e1-c06f-4ff5-8c49-9d7bf8849703"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1607" y="0" width="180" height="20" uuid="8ffbbac2-8c46-4d9f-adb9-eb0f834b3fd4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1787" y="0" width="180" height="20" uuid="85014d0f-a192-4a43-b8af-2adb3def1d90"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_url}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1967" y="0" width="180" height="20" uuid="4e901d38-13a0-443c-9988-dc0280e13e0b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_boosted}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2147" y="0" width="180" height="20" uuid="0c637438-8482-42f7-a56c-1ba038dcf98b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{traffic}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="900" y="0" width="167" height="20" uuid="fdae9308-1ad2-4801-b942-483f19d749bf"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_platform_other}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
