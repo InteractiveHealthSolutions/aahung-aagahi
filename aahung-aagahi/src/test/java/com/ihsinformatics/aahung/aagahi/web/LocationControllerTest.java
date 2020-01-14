@@ -202,7 +202,6 @@ public class LocationControllerTest extends BaseTestData {
 	when(locationService.getLocationByUuid(any(String.class))).thenReturn(diagonalley);
 	doNothing().when(locationService).voidLocation(diagonalley);
 	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}?reasonVoided=Test123", diagonalley.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(locationService, times(1)).getLocationByUuid(diagonalley.getUuid());
 	verify(locationService, times(1)).voidLocation(diagonalley);
 	verifyNoMoreInteractions(locationService);
@@ -725,9 +724,8 @@ public class LocationControllerTest extends BaseTestData {
     @Test
     public void shouldUnvoidLocation() throws Exception {
 	when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
-	doNothing().when(locationService).unvoidLocation(hogwartz);
+	when(locationService.unvoidLocation(any(Location.class))).thenReturn(hogwartz);
 	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "location/{uuid}", hogwartz.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(locationService, times(1)).getLocationByUuid(hogwartz.getUuid());
 	verify(locationService, times(1)).unvoidLocation(hogwartz);
 	verifyNoMoreInteractions(locationService);
