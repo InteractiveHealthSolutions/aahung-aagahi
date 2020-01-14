@@ -128,7 +128,6 @@ public class ParticipantControllerTest extends BaseTestData {
 	when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
 	doNothing().when(participantService).voidParticipant(seeker);
 	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "participant/{uuid}?reasonVoided=Test123", seeker.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(participantService, times(1)).getParticipantByUuid(seeker.getUuid());
 	verify(participantService, times(1)).voidParticipant(seeker);
 	verifyNoMoreInteractions(participantService);
@@ -263,9 +262,9 @@ public class ParticipantControllerTest extends BaseTestData {
     @Test
     public void shouldUnvoidParticipant() throws Exception {
 	when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
-	doNothing().when(participantService).unvoidParticipant(seeker);
+	when(participantService.unvoidParticipant(any(Participant.class)))
+	.thenReturn(seeker);
 	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "participant/{uuid}", seeker.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(participantService, times(1)).getParticipantByUuid(seeker.getUuid());
 	verify(participantService, times(1)).unvoidParticipant(seeker);
 	verifyNoMoreInteractions(participantService);

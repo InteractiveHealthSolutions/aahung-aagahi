@@ -158,7 +158,7 @@ public class UserController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
     
     @ApiOperation(value = "Restore User")
@@ -170,11 +170,12 @@ public class UserController extends BaseController {
 				: service.getUserById(Integer.parseInt(uuid));
 		if(user == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidUser(user);
+	    User obj = service.unvoidUser(user);
+	    return ResponseEntity.ok().body(obj);
+
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Delete a UserAttribute")

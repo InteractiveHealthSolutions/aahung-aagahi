@@ -159,7 +159,6 @@ public class UserControllerTest extends BaseTestData {
 	when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
 	doNothing().when(userService).voidUser(dumbledore);
 	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}?reasonVoided=Test123", dumbledore.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
 	verify(userService, times(1)).voidUser(dumbledore);
 	verifyNoMoreInteractions(userService);
@@ -497,9 +496,8 @@ public class UserControllerTest extends BaseTestData {
     @Test
     public void shouldUnvoidUser() throws Exception {
 	when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
-	doNothing().when(userService).unvoidUser(dumbledore);
+	when(userService.unvoidUser(any(User.class))).thenReturn(dumbledore);
 	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
-	actions.andExpect(status().isNoContent());
 	verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
 	verify(userService, times(1)).unvoidUser(dumbledore);
 	verifyNoMoreInteractions(userService);

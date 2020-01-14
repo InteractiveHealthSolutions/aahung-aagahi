@@ -728,7 +728,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Override
     @CheckPrivilege(privilege = "Void User")
     @Transactional
-    public void unvoidUser(User obj) throws HibernateException, ValidationException, IOException {
+    public User unvoidUser(User obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -750,7 +750,8 @@ public class UserServiceImpl extends BaseService implements UserService {
 			}
 		}
 	    
-	    updateUser(obj);
+	    return updateUser(obj);
 	}
+	return obj;
     }
 }

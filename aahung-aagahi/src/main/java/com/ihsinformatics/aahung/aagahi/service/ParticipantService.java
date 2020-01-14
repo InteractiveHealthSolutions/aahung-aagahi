@@ -130,7 +130,7 @@ public interface ParticipantService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException;
+    Participant unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException;
 
     
 }

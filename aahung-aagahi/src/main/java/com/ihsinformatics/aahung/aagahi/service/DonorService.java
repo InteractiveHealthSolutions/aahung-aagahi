@@ -150,7 +150,7 @@ public interface DonorService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidProject(Project obj) throws HibernateException, ValidationException, IOException;
+    Project unvoidProject(Project obj) throws HibernateException, ValidationException, IOException;
     
     /**
      * Void {@link Donor} object
@@ -170,5 +170,5 @@ public interface DonorService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException;
+    Donor unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException;
 }

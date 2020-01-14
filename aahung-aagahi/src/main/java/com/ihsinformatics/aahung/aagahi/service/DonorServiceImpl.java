@@ -298,7 +298,7 @@ public class DonorServiceImpl extends BaseService implements DonorService {
     @Override
     @CheckPrivilege(privilege = "Void Project")
     @Transactional
-    public void unvoidProject(Project obj) throws HibernateException, ValidationException, IOException {
+    public Project unvoidProject(Project obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -306,8 +306,9 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 	    }
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
-	    updateProject(obj);
+	    return updateProject(obj);
 	}
+	return obj;
     }
     
     /*
@@ -346,7 +347,7 @@ public class DonorServiceImpl extends BaseService implements DonorService {
     @Override
     @CheckPrivilege(privilege = "Void Donor")
     @Transactional
-    public void unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException {
+    public Donor unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -369,7 +370,8 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 			}
 		}
 		
-		updateDonor(obj);
+		return updateDonor(obj);
 	}
+	return obj;
     }
 }

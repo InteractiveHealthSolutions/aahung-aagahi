@@ -347,7 +347,7 @@ public interface LocationService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidLocation(Location obj) throws HibernateException, ValidationException, IOException;
+    Location unvoidLocation(Location obj) throws HibernateException, ValidationException, IOException;
 
     
 }

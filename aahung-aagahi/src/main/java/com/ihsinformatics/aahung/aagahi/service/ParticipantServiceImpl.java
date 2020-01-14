@@ -266,7 +266,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
     @Override
     @CheckPrivilege(privilege = "Void Participant")
     @Transactional
-    public void unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException {
+    public Participant unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -299,7 +299,8 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 			}
 		}
 	    
-	    updateParticipant(obj);
+	    return updateParticipant(obj);
 	}
+	 return obj;
     }
 }
