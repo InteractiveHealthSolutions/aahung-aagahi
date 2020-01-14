@@ -71,7 +71,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperation(value = "Void Project")
     @DeleteMapping("/project/{uuid}")
-    public ResponseEntity<?> unvoidProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+    public ResponseEntity<?> voidProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete project: {}", uuid);
 	try {
 		Project project = uuid.matches(RegexUtil.UUID) ? service.getProjectByUuid(uuid)
@@ -83,7 +83,7 @@ public class ProjectController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
     
     @ApiOperation(value = "Restore Project")
@@ -95,11 +95,11 @@ public class ProjectController extends BaseController {
 				: service.getProjectById(Integer.parseInt(uuid));
 		if(project == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidProject(project);
+	    Project obj = service.unvoidProject(project);
+		return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Get Project By UUID")

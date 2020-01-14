@@ -409,5 +409,5 @@ public interface UserService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidUser(User obj) throws HibernateException, ValidationException, IOException;
+    User unvoidUser(User obj) throws HibernateException, ValidationException, IOException;
 }

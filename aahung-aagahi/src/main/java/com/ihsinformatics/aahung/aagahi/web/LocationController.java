@@ -160,7 +160,7 @@ public class LocationController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
     
     @ApiOperation(value = "Restore Location")
@@ -172,11 +172,11 @@ public class LocationController extends BaseController {
 				: service.getLocationById(Integer.parseInt(uuid));
 		if(location == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidLocation(location);
+	    Location obj = service.unvoidLocation(location);
+	    return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Delete a Location Attribute")

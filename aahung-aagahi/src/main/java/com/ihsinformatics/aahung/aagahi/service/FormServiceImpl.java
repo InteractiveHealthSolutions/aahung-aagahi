@@ -360,7 +360,7 @@ public class FormServiceImpl extends BaseService implements FormService {
     @Override
     @CheckPrivilege(privilege = "Void FormData")
     @Transactional
-    public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
+    public FormData unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -368,8 +368,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 	    }
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
 		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
-	    updateFormData(obj);
+	    return updateFormData(obj);
 	}
+	return obj;
     }
 
     /*

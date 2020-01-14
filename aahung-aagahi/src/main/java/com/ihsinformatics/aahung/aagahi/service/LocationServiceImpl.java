@@ -576,7 +576,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
     @Override
     @CheckPrivilege(privilege = "Void Location")
     @Transactional
-    public void unvoidLocation(Location obj) throws HibernateException, ValidationException, IOException {
+    public Location unvoidLocation(Location obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
@@ -651,7 +651,8 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 			}
 		}
 	    
-	    updateLocation(obj);
+	    return updateLocation(obj);
 	}
+	return obj;
     }
 }

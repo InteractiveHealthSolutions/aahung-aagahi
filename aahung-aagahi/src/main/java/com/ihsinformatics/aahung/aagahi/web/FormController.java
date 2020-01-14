@@ -405,11 +405,11 @@ public class FormController extends BaseController {
 				: service.getFormDataById(Integer.parseInt(uuid));
 		if(formData == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidFormData(formData);
+	    FormData obj = service.unvoidFormData(formData);
+	    return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Update existing FormData")
@@ -452,6 +452,6 @@ public class FormController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	formData.setReasonVoided(reasonVoided);
 	service.voidFormData(formData);
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
 }

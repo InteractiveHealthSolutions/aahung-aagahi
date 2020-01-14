@@ -111,7 +111,7 @@ public class ParticipantController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
     
     @ApiOperation(value = "Restore Participant")
@@ -123,11 +123,11 @@ public class ParticipantController extends BaseController {
 				: service.getParticipantById(Integer.parseInt(uuid));
 		if(participant == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidParticipant(participant);
+		Participant obj = service.unvoidParticipant(participant);
+	    return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Get Participant By UUID")

@@ -82,7 +82,7 @@ public class DonorController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
     }
     
     @ApiOperation(value = "Restore Donor")
@@ -94,11 +94,11 @@ public class DonorController extends BaseController {
 				: service.getDonorById(Integer.parseInt(uuid));
 		if(donor == null)
 			return noEntityFoundResponse(uuid);
-	    service.unvoidDonor(donor);
+	    Donor obj = service.unvoidDonor(donor);
+	    return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Get Donor By UUID")
