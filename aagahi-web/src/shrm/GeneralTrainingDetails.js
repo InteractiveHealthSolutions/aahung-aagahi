@@ -772,11 +772,12 @@ class GeneralTrainingDetails extends React.Component {
                                             <Card className="main-card mb-6">
                                                 <CardHeader>
                                                     <Row>
-                                                        <Col md="3">
+                                                        <Col md="6">
+                                                            <FormGroup className="warningBox">
+                                                                <Label for="facilitation_score" style={{ color: "#f57c00"}}><b>WARNING! This form is not editable. Please re-check data before submission.</b></Label>
+                                                            </FormGroup>
                                                         </Col>
-                                                        <Col md="2">
-                                                        </Col>
-                                                        <Col md="2">
+                                                        <Col md="1">
                                                         </Col>
                                                         <Col md="2">
                                                             <LoadingIndicator loading={this.state.loading} />

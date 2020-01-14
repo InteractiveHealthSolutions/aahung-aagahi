@@ -118,13 +118,13 @@ class StepDownTraining extends React.Component {
         this.scoreArray = [];
 
         this.formTypeId = 0;
-        this.csaRequiredFields = ["date_start", "district", "province", "school_id", "school_name", "monitor", "csa_mt_count",
+        this.csaRequiredFields = ["date_start", "district", "program_type", "province", "school_id", "school_name", "monitor", "csa_mt_count",
             "participant_name", "mt_csa_subject", "mt_csa_prompts", "mt_csa_understanding",
             "mt_csa_material_prep", "mt_csa_content_prep", "mt_csa_activity_time_allotment", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone",
             "mt_csa_impartial_opinions", "mt_csa_probing_style", "mt_csa_pts_engagement", "mt_csa_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"]
         this.csaDependantFields = [];
 
-        this.lsbeRequiredFields = ["date_start", "district", "province", "school_id", "school_name", "monitor", "lsbe_mt_count", "participant_name",
+        this.lsbeRequiredFields = ["date_start", "district", "program_type", "province", "school_id", "school_name", "monitor", "lsbe_mt_count", "participant_name",
             "mt_lsbe_subject", "mt_lsbe_prompts", "mt_lsbe_understanding", "mt_lsbe_material_prep", "mt_lsbe_content_prep",
             "mt_lsbe_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone", "mt_lsbe_impartial_opinions",
             "mt_lsbe_probing_style", "mt_lsbe_pts_engagement", "mt_lsbe_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"];
@@ -175,9 +175,6 @@ class StepDownTraining extends React.Component {
                 })
             }
 
-            this.setState({ program_type: "csa" });
-            this.programType = "csa";
-
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
                 if (this.fetchedForm !== null) {
@@ -214,6 +211,10 @@ class StepDownTraining extends React.Component {
                 else {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
+            }
+            else {
+                this.setState({ program_type: "csa" });
+                this.programType = "csa";
             }
             this.setState({
                 loading: false
@@ -961,7 +962,7 @@ class StepDownTraining extends React.Component {
         this.state.isLsbeSubjectHuman ? this.lsbeDependantFields.push("pts_understand_human_rights") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_human_rights");
         this.state.isLsbeSubjectGender ? this.lsbeDependantFields.push("mt_diff_sex_gender") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_diff_sex_gender");
         this.state.isLsbeSubjectGender ? this.lsbeDependantFields.push("pts_understand_gender_norm") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_gender_norm");
-        this.state.isLsbeSubjectSexual ? this.lsbeDependantFields.push("mt_def_sexual_health") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_def_sexual_health");
+        this.state.isLsbeSubjectSexual ? this.lsbeDependantFields.push("mt_def_sexual_health_lsbe") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_def_sexual_health_lsbe");
         this.state.isLsbeSubjectSexual ? this.lsbeDependantFields.push("pts_understand_health_links") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_health_links");
         this.state.isLsbeSubjectViolence ? this.lsbeDependantFields.push("mt_describe_violence_types") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_describe_violence_types");
         this.state.isLsbeSubjectViolence ? this.lsbeDependantFields.push("mt_describe_violence_impact") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_describe_violence_impact");
@@ -1254,7 +1255,7 @@ class StepDownTraining extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="program_type" >Type of Program</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type" disabled={this.editMode}>
                                                                                 <option value="csa">CSA</option>
                                                                                 <option value="lsbe">LSBE</option>
                                                                             </Input>
@@ -2618,40 +2619,40 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12" style={lsbeSexualStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="mt_def_sexual_health" >Master Trainer accurately defines sexual health</Label>
+                                                                            <Label for="mt_def_sexual_health_lsbe" >Master Trainer accurately defines sexual health</Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
+                                                                                            <Input type="radio" name="mt_def_sexual_health_lsbe" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health_lsbe")} />{' '}
                                                                                             Strongly Disagree
                                                                                 </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="mt_def_sexual_health" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
+                                                                                            <Input type="radio" name="mt_def_sexual_health_lsbe" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health_lsbe")} />{' '}
                                                                                             Disagree
                                                                                 </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="mt_def_sexual_health" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
+                                                                                            <Input type="radio" name="mt_def_sexual_health_lsbe" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health_lsbe")} />{' '}
                                                                                             Neither Agree nor Disagree
                                                                                 </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="mt_def_sexual_health" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
+                                                                                            <Input type="radio" name="mt_def_sexual_health_lsbe" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health_lsbe")} />{' '}
                                                                                             Agree
                                                                                 </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="mt_def_sexual_health" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
+                                                                                            <Input type="radio" name="mt_def_sexual_health_lsbe" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health_lsbe")} />{' '}
                                                                                             Strongly Agree
                                                                                 </Label>
                                                                                     </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["mt_def_sexual_health"]}</span>
+                                                                                    <span class="errorMessage">{this.state.errors["mt_def_sexual_health_lsbe"]}</span>
                                                                                 </Col>
                                                                             </FormGroup>
                                                                         </FormGroup>
