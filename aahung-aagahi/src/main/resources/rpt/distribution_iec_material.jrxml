@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="5600" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="5560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="22"/>
+	<property name="ireport.x" value="1738"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -31,7 +31,7 @@
     `distribution_of_communication_material`.`distribution_material_type_other`,
     `distribution_of_communication_material`.`annual_report_count`,
     `distribution_of_communication_material`.`aahung_profile_count`,
-    `distribution_of_communication_material`.`phamplet_count`,
+    `distribution_of_communication_material`.`pamphlet_count`,
     `distribution_of_communication_material`.`booklet_count`,
     `distribution_of_communication_material`.`report_count`,
     `distribution_of_communication_material`.`aahung_mugs_count`,
@@ -81,7 +81,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 	<field name="distribution_location_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="distribution_material_type" class="java.lang.String">
+	<field name="distribution_material_type" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="distribution_material_type_other" class="java.lang.String">
@@ -93,7 +93,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 	<field name="aahung_profile_count" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="phamplet_count" class="java.lang.Integer">
+	<field name="pamphlet_count" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="booklet_count" class="java.lang.Integer">
@@ -114,7 +114,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 	<field name="other_material_count" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="topic_covered" class="java.lang.String">
+	<field name="topic_covered" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="topic_covered_other" class="java.lang.String">
@@ -156,7 +156,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 	<field name="other_topic_count" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="event_attendant" class="java.lang.String">
+	<field name="event_attendant" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="event_attendant_other" class="java.lang.String">
@@ -278,7 +278,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[phamplet_count]]></text>
+				<text><![CDATA[pamphlet_count]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="2042" y="0" width="131" height="20" uuid="ec5919c1-d54d-4a4c-a9fb-794f7899eb02"/>
@@ -526,7 +526,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{phamplet_count}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pamphlet_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="2042" y="0" width="131" height="20" uuid="4ec792a6-1228-4b9e-9331-481c14235d8a"/>

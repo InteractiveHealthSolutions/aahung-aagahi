@@ -60,17 +60,35 @@ left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as
 
  where date(id.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
  find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city})
-group by id.location_id;]]>
+group by id.location_id order by institution_name;]]>
 	</queryString>
-	<field name="institution_id" class="java.lang.String"/>
-	<field name="institution_name" class="java.lang.String"/>
-	<field name="projects" class="java.lang.String"/>
-	<field name="donor_name" class="java.lang.String"/>
-	<field name="partnership_start_date" class="java.lang.String"/>
-	<field name="province" class="java.lang.String"/>
-	<field name="city" class="java.lang.String"/>
-	<field name="institution_type" class="java.lang.String"/>
-	<field name="student_count" class="java.lang.String"/>
+	<field name="institution_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="institution_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="projects" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="donor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="partnership_start_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="institution_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="student_count" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="trainings_gtd" class="java.lang.Long"/>
 	<field name="trainings_actd" class="java.lang.Long"/>
 	<field name="participants_trained_gtd" class="java.lang.Long"/>
@@ -78,9 +96,15 @@ group by id.location_id;]]>
 	<field name="secondary_beneficiaries_hcpr" class="java.math.BigDecimal"/>
 	<field name="secondary_beneficiaries_gsdtd" class="java.math.BigDecimal"/>
 	<field name="secondary_beneficiaries_acsdtd" class="java.math.BigDecimal"/>
-	<field name="partnership_end_date" class="java.lang.String"/>
-	<field name="partnership_years" class="java.lang.String"/>
-	<field name="end_partnership_reason" class="java.lang.String"/>
+	<field name="partnership_end_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="partnership_years" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="end_partnership_reason" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>

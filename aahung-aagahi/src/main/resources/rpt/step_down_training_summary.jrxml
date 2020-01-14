@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="1700" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1660" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.0f
 	<property name="ireport.x" value="382"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -71,26 +71,39 @@ topic_covered,
 topic_covered_other FROM srhm_amplify_change_step_down_training_details ) as t
 
 left join institution_detail id on id.location_id=t.location_id
-left join participant_detail pd on pd.person_id=t.participant_id
+left join participant_detail pd on pd.teacher_id=t.participant_id
 JOIN numbers n
 ON n.num <=  100
 
 where
 date(`form_date`) between date($P{start_date}) and date($P{end_date}) and
 find_in_set(t.`province`,$P{province}) and find_in_set(t.`city`,$P{city})
-group by t.uuid
-]]>
+group by t.uuid]]>
 	</queryString>
 	<field name="training_date" class="java.sql.Timestamp"/>
-	<field name="institution_name" class="java.lang.String"/>
-	<field name="teacher_name" class="java.lang.String"/>
-	<field name="province" class="java.lang.String"/>
-	<field name="city" class="java.lang.String"/>
-	<field name="topic_covered" class="java.lang.String"/>
-	<field name="topic_covered_other" class="java.lang.String"/>
+	<field name="institution_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="teacher_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="participant_by_type" class="java.lang.Long"/>
 	<field name="participant_by_sex" class="java.lang.Long"/>
-	<field name="participants_age_group" class="java.lang.String"/>
+	<field name="participants_age_group" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3200" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="3"/>
+	<property name="ireport.x" value="224"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -301,7 +301,7 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 				<textFieldExpression><![CDATA[$F{screening_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="700" y="0" width="175" height="20" uuid="c1406ad0-e527-48b0-8837-47fd030fa316"/>
+				<reportElement stretchType="RelativeToTallestObject" x="700" y="0" width="175" height="20" uuid="c1406ad0-e527-48b0-8837-47fd030fa316"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>

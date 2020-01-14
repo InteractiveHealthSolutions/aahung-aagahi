@@ -24,10 +24,10 @@
 subject_taught,education_level,pmn2.monitoring_score_pct as monitoring_score_pct_pmn1,pmn1.monitoring_score_pct as monitoring_score_pct_pmn2,smn2.monitoring_score_pct asmonitoring_score_pct_smn1,smn1.monitoring_score_pct as monitoring_score_pct_smn2,province,city,l.parent_orginization_name
 FROM aagahi.participant_detail pd
 left join training_detail as td on find_in_set(pd.teacher_id,td.participant_id)
-left join _lse_primary_monitoring_new as pmn1 on pmn1.participant_id=pd.person_id and pmn1.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn1.location_id order by date_created desc limit 0,1)
-left join _lse_secondary_monitoring_new as smn1 on smn1.participant_id=pd.person_id and smn1.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn1.location_id order by date_created desc limit 0,1)
-left join _lse_primary_monitoring_new as pmn2 on pmn2.participant_id=pd.person_id and pmn2.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn2.location_id order by date_created desc limit 1,1)
-left join _lse_secondary_monitoring_new as smn2 on smn2.participant_id=pd.person_id and smn2.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn2.location_id order by date_created desc limit 1,1)
+left join _lse_primary_monitoring as pmn1 on pmn1.participant_id=pd.person_id and pmn1.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn1.location_id order by date_created desc limit 0,1)
+left join _lse_secondary_monitoring as smn1 on smn1.participant_id=pd.person_id and smn1.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn1.location_id order by date_created desc limit 0,1)
+left join _lse_primary_monitoring as pmn2 on pmn2.participant_id=pd.person_id and pmn2.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn2.location_id order by date_created desc limit 1,1)
+left join _lse_secondary_monitoring as smn2 on smn2.participant_id=pd.person_id and smn2.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn2.location_id order by date_created desc limit 1,1)
 left join school_detail l on l.location_id=pd.location_id
 
  where
@@ -62,10 +62,10 @@ group by person_id order by teacher_name]]>
 	<field name="education_level" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="monitoring_score_pct_pmn1" class="java.math.BigDecimal"/>
-	<field name="monitoring_score_pct_pmn2" class="java.math.BigDecimal"/>
-	<field name="asmonitoring_score_pct_smn1" class="java.math.BigDecimal"/>
-	<field name="monitoring_score_pct_smn2" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct_pmn1" class="java.lang.Float"/>
+	<field name="monitoring_score_pct_pmn2" class="java.lang.Float"/>
+	<field name="asmonitoring_score_pct_smn1" class="java.lang.Float"/>
+	<field name="monitoring_score_pct_smn2" class="java.lang.Float"/>
 	<field name="province" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
