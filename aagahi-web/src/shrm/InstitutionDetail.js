@@ -224,7 +224,7 @@ class InstitutionDetails extends React.Component {
 
                         attrValueObj.forEach(async function (obj) {
 
-                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
                             arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
 
                         })

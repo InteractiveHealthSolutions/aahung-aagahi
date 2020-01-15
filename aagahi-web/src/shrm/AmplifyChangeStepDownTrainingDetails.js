@@ -354,7 +354,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
 
                 this.setState({ institution_name: e.locationName });
                 document.getElementById("institution_name").value = e.locationName;
-                let participants = await getParticipantsByLocation(e.uuid);
+                let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-09 13:45:43
+ * @Last Modified time: 2020-01-15 16:58:04
  */
 
 
@@ -287,7 +287,7 @@ class SchoolDetails extends React.Component {
                         attrValueObj.forEach(async function (obj) {
 
                             // definitionArr contains only one item because filter will return only one definition)
-                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
 
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
@@ -411,6 +411,18 @@ class SchoolDetails extends React.Component {
             else {
                 errorText = "invalid!";
                 this.errors[name] = errorText;
+            }
+        }
+
+        if(name === "girl_count" && this.isCoed) {
+            if(this.state.boy_count !== undefined && this.state.boy_count !== '') {
+                this.state.student_count = String(parseInt(e.target.value) + parseInt(this.state.boy_count));
+            }
+        }
+
+        if(name === "boy_count" && this.isCoed) {
+            if(this.state.girl_count !== undefined && this.state.girl_count !== '') {
+                this.state.student_count = String(parseInt(e.target.value) + parseInt(this.state.girl_count));
             }
         }
 
@@ -1252,13 +1264,13 @@ class SchoolDetails extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="school_level" id="school_level_primary" value="Primary" onChange={(e) => this.valueChange(e, "school_level")} />{' '}
+                                                                                    <Input type="radio" name="school_level" id="school_level_primary" value="Primary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode}/>{' '}
                                                                                     Primary
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary" onChange={(e) => this.valueChange(e, "school_level")} />{' '}
+                                                                                    <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode}/>{' '}
                                                                                     Secondary
                                                                             </Label>
                                                                             </FormGroup>
@@ -1352,16 +1364,6 @@ class SchoolDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                        <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter count"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                            </Row>
-                                                            <Row>
-
                                                                 <Col md="6" style={studentCoedCountStyle}>
                                                                     <FormGroup >
                                                                         <Label for="girl_count" >Approximate number of girls</Label> <span class="errorMessage">{this.state.errors["girl_count"]}</span>
@@ -1375,7 +1377,14 @@ class SchoolDetails extends React.Component {
                                                                         <Input type="number" value={this.state.boy_count} name="boy_count" id="boy_count" onChange={(e) => { this.inputChange(e, "boy_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter count"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-
+                                                            </Row>
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
+                                                                        <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} disabled={this.isCoed} placeholder="Enter count"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
                                                             </Row>
                                                         </TabPane>
                                                     </TabContent>

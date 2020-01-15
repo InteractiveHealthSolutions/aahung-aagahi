@@ -103,7 +103,6 @@ class GeneralTrainingDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
@@ -145,7 +144,7 @@ class GeneralTrainingDetails extends React.Component {
             let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
             console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     trainers: trainersArray
@@ -201,17 +200,6 @@ class GeneralTrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-    }
-
-    // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
-        this.setState({
-            [name]: e.target.value
-        });
-        // alert(e.target.name);
-        // alert(e.target.id);
-        // alert(e.target.value);
 
     }
 
@@ -310,7 +298,7 @@ class GeneralTrainingDetails extends React.Component {
                 var institutionUuid = e.uuid;
                 let self = this;
 
-                let participants = await getParticipantsByLocation(institutionUuid);
+                let participants = await getParticipantsByLocation(institutionUuid, false);
 
                 if (participants.length > 0) {
                     participants.forEach(function (obj) {

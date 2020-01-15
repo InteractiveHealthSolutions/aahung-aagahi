@@ -454,7 +454,7 @@ class HealthCareProviderReach extends React.Component {
                 document.getElementById("institution_name").value = e.locationName;
 
                 // alert(e.uuid);
-                let participants = await getParticipantsByLocation(e.uuid);
+                let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participant_id: '',

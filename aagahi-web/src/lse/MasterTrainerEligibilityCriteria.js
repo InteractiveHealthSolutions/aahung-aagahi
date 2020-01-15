@@ -338,7 +338,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             if (name === "school_id") {
 
                 this.setState({ school_name: e.locationName });
-                let participants = await getParticipantsByLocation(e.uuid);
+                let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,

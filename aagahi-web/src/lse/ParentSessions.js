@@ -130,7 +130,7 @@ class ParentSessions extends React.Component {
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
             console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     monitors: trainersArray
@@ -146,7 +146,7 @@ class ParentSessions extends React.Component {
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
 
-                if (this.fetchedForm !== null) {
+                // if (this.fetchedForm !== null) {
                     this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
                     this.setState({
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
@@ -175,10 +175,10 @@ class ParentSessions extends React.Component {
                     let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
                     this.autopopulateFields(attributes);
                     this.editUpdateDisplay();
-                }
-                else {
-                    throw new Error("Unable to get form data. Please see error logs for more details.");
-                }
+                // }
+                // else {
+                    // throw new Error("Unable to get form data. Please see error logs for more details.");
+                // }
             }
             this.setState({
                 loading: false
@@ -813,15 +813,15 @@ class ParentSessions extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="parent_session_conducted" id="yes" value="1" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} />{' '}
+                                                                                            <Input type="radio" name="parent_session_conducted" id="yes" value="1" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} disabled={this.editMode}/>{' '}
                                                                                             Yes
-                                                                                </Label>
+                                                                                        </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="parent_session_conducted" id="no" value="0" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} />{' '}
+                                                                                            <Input type="radio" name="parent_session_conducted" id="no" value="0" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} disabled={this.editMode}/>{' '}
                                                                                             No
-                                                                                </Label>
+                                                                                        </Label>
                                                                                     </FormGroup>
                                                                                     <span class="errorMessage">{this.state.errors["parent_session_conducted"]}</span>
                                                                                 </Col>
