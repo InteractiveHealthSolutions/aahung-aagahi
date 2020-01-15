@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -584,7 +585,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	    }
 	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    
 	    for (LocationAttribute attribute : obj.getAttributes()) {
 			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (Location voided)")){
@@ -593,7 +594,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 					attribute.setReasonVoided("");
 				 }
 				attribute.setReasonVoided(attribute.getReasonVoided() + "(Location unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				updateLocationAttribute(attribute);
 			}
 		}
@@ -606,7 +607,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 					form.setReasonVoided("");
 				 }
 				form.setReasonVoided(form.getReasonVoided() + "(Location unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				formService.updateFormData(form);
 			}
 		}
@@ -622,7 +623,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 				voidedReason = participant.getReasonVoided();
 						
 				participant.setReasonVoided(participant.getReasonVoided() + "(Location unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				participantService.updateParticipant(participant);
 				
 				Person person = participant.getPerson();
@@ -632,7 +633,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 						person.setReasonVoided("");
 					 }
 					person.setReasonVoided(person.getReasonVoided() + "(Participant unvoided on "
-						    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+						    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 					personService.updatePerson(person);
 				}
 			    
@@ -643,7 +644,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 							attribute.setReasonVoided("");
 						 }
 						attribute.setReasonVoided(attribute.getReasonVoided() + "(Participant unvoided on "
-							    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+							    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 						personService.updatePersonAttribute(attribute);
 					}
 				}

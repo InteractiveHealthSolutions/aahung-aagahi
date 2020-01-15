@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -305,7 +306,7 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 		obj.setReasonVoided("");
 	    }
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    return updateProject(obj);
 	}
 	return obj;
@@ -355,7 +356,7 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 	    }
 	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    
 	    List<Project> projects = projectRepository.findByDonor(obj);
 		for(Project project: projects){
@@ -365,7 +366,7 @@ public class DonorServiceImpl extends BaseService implements DonorService {
 					project.setReasonVoided("");
 				 }
 				project.setReasonVoided(project.getReasonVoided() + "(Donor unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				updateProject(project);
 			}
 		}

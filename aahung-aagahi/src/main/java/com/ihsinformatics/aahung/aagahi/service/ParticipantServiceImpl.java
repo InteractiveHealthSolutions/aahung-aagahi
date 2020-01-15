@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -274,7 +275,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	    }
 	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    
 	    Person person = obj.getPerson();
 	    if(Boolean.TRUE.equals(person.getIsVoided()) && person.getReasonVoided().equals(voidedReason + " (Participant voided)")){
@@ -283,7 +284,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 				person.setReasonVoided("");
 			 }
 			person.setReasonVoided(person.getReasonVoided() + "(Participant unvoided on "
-				    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+				    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 			personService.updatePerson(person);
 		}
 	    
@@ -294,7 +295,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 					attribute.setReasonVoided("");
 				 }
 				attribute.setReasonVoided(attribute.getReasonVoided() + "(Participant unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				personService.updatePersonAttribute(attribute);
 			}
 		}
