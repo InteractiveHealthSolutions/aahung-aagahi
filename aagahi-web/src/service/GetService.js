@@ -141,7 +141,7 @@ export const getAllDonors = async function () {
  * get donor by uuid, shortname or integer Id
  * 
  */
-export const getDonorByRegexValue = async function (content) {
+export const getDonorByRegexValue = async function (content, includeVoided) {
 
     console.log("GetService > calling getDonorByRegexValue()");
     try {
@@ -156,7 +156,17 @@ export const getDonorByRegexValue = async function (content) {
             }
         }
         let result = await getData(resourceName, content);
-        return result;
+        if(includeVoided) {
+            return result;
+        }
+        else {
+            if(result.isVoided) {
+                return null;
+            }
+            else {
+                return result;
+            }
+        }
     }
     catch (error) {
         return error;
@@ -167,14 +177,22 @@ export const getDonorByRegexValue = async function (content) {
  * get donor by uuid, shortname or integer Id
  * 
  */
-export const getDonorByName = async function (content) {
+export const getDonorByName = async function (content, includeVoided) {
 
     console.log("GetService > calling getDonorByName()");
     try {
         var resourceName = DONORS_LIST_BY_NAME;
         let result = await getData(resourceName, content);
         let array = [];
-        array = result.filter(donor => donor.isVoided === false);
+        result.forEach(function(obj) {
+            if (!includeVoided) {
+                if (!obj.isVoided)
+                    array.push(obj);
+            }
+            else {
+                array.push(obj);
+            }
+        })
         return array;
     }
     catch (error) {
@@ -201,7 +219,7 @@ export const getAllProjects = async function () {
 /**
  * content can be shortname or uuid
  */
-export const getProjectByRegexValue = async function (content) {
+export const getProjectByRegexValue = async function (content, includeVoided) {
 
     console.log("GetService > calling getProjectByRegexValue()");
     try {
@@ -217,7 +235,17 @@ export const getProjectByRegexValue = async function (content) {
             }
         }
         let result = await getData(resourceName, content);
-        return result;
+        if(includeVoided) {
+            return result;
+        }
+        else {
+            if(result.isVoided) {
+                return null;
+            }
+            else {
+                return result;
+            }
+        }
     }
     catch (error) {
         return error;
@@ -227,14 +255,22 @@ export const getProjectByRegexValue = async function (content) {
 /**
  * return projects array by name
  */
-export const getProjectsByName = async function (content) {
+export const getProjectsByName = async function (content, includeVoided) {
 
     console.log("GetService > getProjectsByName()");
     try {
         var resourceName = PROJECT_LIST_BY_NAME;
         let result = await getData(resourceName, content);
         let array = [];
-        array = result.filter(project => project.isVoided === false);
+        result.forEach(function(obj) {
+            if (!includeVoided) {
+                if (!obj.isVoided)
+                    array.push(obj);
+            }
+            else {
+                array.push(obj);
+            }
+        })
         return array;
     }
     catch (error) {
@@ -246,13 +282,20 @@ export const getProjectsByName = async function (content) {
  * returns array of locations holding id, uuid, identifier, name
  * content can be either short_name or uuid
  */
-export const getProjectsByDonor = async function (content) {
+export const getProjectsByDonor = async function (content, includeVoided) {
     console.log("GetService > calling getProjectsByDonor()");
 
     try {
         let result = await getData(PROJECT_LIST_BY_DONOR, content);
         let array = [];
-        array = result.filter(project => project.isVoided === false);
+        result.forEach(function(obj) {
+            if (!includeVoided) {
+                if (!obj.isVoided)
+                    array.push(obj);
+            }
+            else
+                array.push(obj);
+        })
         return array;
     }
     catch (error) {
@@ -280,14 +323,21 @@ export const getAllUsers = async function () {
 /**
  * return users array by name
  */
-export const getUsersByName = async function (content) {
+export const getUsersByName = async function (content, includeVoided) {
     console.log("GetService > getUsersByName()");
     try {
         var resourceName = USERS_LIST_BY_NAME;
         let result = await getData(resourceName, content);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+            if (!includeVoided) {
+                if (!obj.isVoided) {
+                    array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+                }
+            }
+            else {
+                array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+            }
         })
         return array;
     }
@@ -300,14 +350,21 @@ export const getUsersByName = async function (content) {
  * returns array of users holding id, uuid, identifier, name
  * content is role uuid
  */
-export const getUsersByRole = async function (content) {
+export const getUsersByRole = async function (content, includeVoided) {
     console.log("GetService > calling getUsersByRole()");
 
     try {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
         result.forEach(function (obj) {
-            array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+            if (!includeVoided) {
+                if (!obj.isVoided) {
+                    array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+                }
+            }
+            else {
+                array.push({ "id": obj.userId, "uuid": obj.uuid, "username": obj.username, "fullName": obj.fullName, "voided": obj.isVoided, "label": obj.username, "value": obj.userId, "roles": obj.userRoles, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+            }
         })
         return array;
     }
@@ -319,8 +376,7 @@ export const getUsersByRole = async function (content) {
 /**
  * Returns user object by UUID, username or integer ID
  */
-export const getUserByRegexValue = async function (content) {
-
+export const getUserByRegexValue = async function (content, includeVoided) {
     // for some reason it is not working from the method 'matchPattern' in AahungUtil class
     var regexpUsername = /^\w+(\.\w+)$/;
     var regUserId = /^\d+$/;
@@ -335,7 +391,15 @@ export const getUserByRegexValue = async function (content) {
         let result = await getData(resourceName, content);
         var userObject = null;
         if (result != null) {
-            userObject = { "id": result.userId, "uuid": result.uuid, "username": result.username, "fullName": result.fullName, "voided": result.isVoided, "label": result.username, "value": result.userId, "roles": result.userRoles, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName };
+
+            if (!includeVoided) {
+                if (!result.isVoided) {
+                    userObject = { "id": result.userId, "uuid": result.uuid, "username": result.username, "fullName": result.fullName, "voided": result.isVoided, "label": result.username, "value": result.userId, "roles": result.userRoles, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName };
+                }
+            }
+            else {
+                userObject = { "id": result.userId, "uuid": result.uuid, "username": result.username, "fullName": result.fullName, "voided": result.isVoided, "label": result.username, "value": result.userId, "roles": result.userRoles, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName };
+            }
         }
         return userObject;
     }
@@ -411,7 +475,6 @@ export const getLocationsByCategory = async function (content) {
  * 
  */
 export const getLocationsByParent = async function (content) {
-
     try {
         let result = await getData(LOCATION_LIST_BY_PARENT, content);
         return result;
@@ -469,21 +532,25 @@ export const getRoleByName = async function (content) {
 /**
  * return list of participant > content can be either lcoation uuid or shortname
  */
-export const getParticipantsByLocation = async function (content) {
+export const getParticipantsByLocation = async function (content, includeVoided) {
     console.log("GetService > calling getLocationsByCategory()");
 
     try {
         let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
         result.forEach(function (obj) {
-
             var participantType = '';
             var personAttrs = obj.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            if (!obj.isVoided) {
-                array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType });
 
+            if (!includeVoided) {
+                if (!obj.isVoided) {
+                    array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "voided": obj.isVoided, "participantType": participantType });
+                }
+            }
+            else {
+                array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "voided": obj.isVoided, "participantType": participantType });
             }
         })
         return array;
@@ -496,7 +563,7 @@ export const getParticipantsByLocation = async function (content) {
 /**
  * Returns participant object by identifier or UUID [used for searching]
  */
-export const getParticipantByRegexValue = async function (content) {
+export const getParticipantByRegexValue = async function (content, includeVoided) {
 
     var resourceName = PARTICIPANT;
     try {
@@ -513,12 +580,21 @@ export const getParticipantByRegexValue = async function (content) {
         }
         result = await getData(resourceName, content);
         let array = [];
-        if (!result.isVoided) {
+
+        if (result !== null && result !== []) {
             var participantType = '';
             var personAttrs = result.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            array.push({ "id": result.participantId, "value": result.identifier, "uuid": result.uuid, "fullName": result.person.firstName, "label": result.person.firstName, "personId": result.person.personId, "personUuid": result.person.uuid, "gender": result.person.gender, "dob": result.person.dob, "identifier": result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "participantType": participantType });
+
+            if (!includeVoided) {
+                if (!result.isVoided) {
+                    array.push({ "id": result.participantId, "value": result.identifier, "uuid": result.uuid, "fullName": result.person.firstName, "label": result.person.firstName, "personId": result.person.personId, "personUuid": result.person.uuid, "gender": result.person.gender, "dob": result.person.dob, "identifier": result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "voided": result.isVoided, "participantType": participantType });
+                }
+            }
+            else {
+                array.push({ "id": result.participantId, "value": result.identifier, "uuid": result.uuid, "fullName": result.person.firstName, "label": result.person.firstName, "personId": result.person.personId, "personUuid": result.person.uuid, "gender": result.person.gender, "dob": result.person.dob, "identifier": result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated": result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "voided": result.isVoided, "participantType": participantType });
+            }
         }
         return array;
     }
@@ -553,7 +629,7 @@ export const getPersonByIntegerId = async function (content) {
  * REQUIRED MEHOD BECAUSE PARTICIPANT IDENTIFIER HAS NO DIFFERENT REGEX THAN PARTICIPANT NAME; would result in ambiguity if getParticipantByRegexValue used for searching by name (like in location case)
  * Returns list of locations by location name
  */
-export const getParticipantsByName = async function (content) {
+export const getParticipantsByName = async function (content, includeVoided) {
 
     var resourceName = PARTICIPANT_LIST_BY_NAME;
     try {
@@ -564,8 +640,13 @@ export const getParticipantsByName = async function (content) {
             var personAttrs = obj.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            if (!obj.isVoided) {
-                array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType });
+            if (!includeVoided) {
+                if (!obj.isVoided) {
+                    array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "voided": obj.isVoided, "participantType": participantType });
+                }
+            }
+            else {
+                array.push({ "id": obj.participantId, "value": obj.identifier, "uuid": obj.uuid, "fullName": obj.person.firstName, "label": obj.person.firstName, "personId": obj.person.personId, "personUuid": obj.person.uuid, "gender": obj.person.gender, "dob": moment(obj.person.dob).format('ll'), "identifier": obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "voided": obj.isVoided, "participantType": participantType });
             }
         })
         return array;

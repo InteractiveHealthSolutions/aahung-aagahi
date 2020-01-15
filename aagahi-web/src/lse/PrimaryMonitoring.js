@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-09 17:07:23
+ * @Last Modified time: 2020-01-15 17:03:41
  */
 
 
@@ -247,7 +247,7 @@ class PrimaryMonitoring extends React.Component {
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     monitors: trainersArray
@@ -959,7 +959,7 @@ class PrimaryMonitoring extends React.Component {
             if (name === "school_id") {
 
                 this.setState({ loading: true, loadingMsg: "Fetching data..." });
-                let participants = await getParticipantsByLocation(e.uuid);
+                let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,

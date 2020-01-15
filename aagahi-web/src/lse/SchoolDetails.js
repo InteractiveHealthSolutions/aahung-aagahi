@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-09 17:20:00
+ * @Last Modified time: 2020-01-15 16:58:04
  */
 
 
@@ -287,7 +287,7 @@ class SchoolDetails extends React.Component {
                         attrValueObj.forEach(async function (obj) {
 
                             // definitionArr contains only one item because filter will return only one definition)
-                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
 
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});

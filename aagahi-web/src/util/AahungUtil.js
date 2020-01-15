@@ -1,3 +1,5 @@
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
 import moment from 'moment';
 import { getDistrictByValue, getProvinceByValue } from "../util/LocationUtil.js";
 export const apiUrl = 'http://ihs.ihsinformatics.com:9990/aahung-aagahi/api'; // for test server
@@ -113,6 +115,18 @@ export const getHandler = function (resourceName, subResource, parameter) {
 
 export const matchPattern = function (pattern, value) {
     return value.match(pattern) != value ? false : true;
+}
+
+export const showAlert = function (msg, status) {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.set('notifier', 'delay', 10);
+    alertify.set('notifier', 'position', 'bottom-right');
+    if (status === "SUCCESS") {
+        alertify.success('<p><b>' + msg + '</b></p>');
+    }
+    else {
+        alertify.error('<p><b>' + msg + '</b></p>');
+    }
 }
 
 export const clearCheckedFields = function () {

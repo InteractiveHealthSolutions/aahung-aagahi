@@ -129,7 +129,7 @@ class SrhrPolicy extends React.Component {
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     monitors: trainersArray

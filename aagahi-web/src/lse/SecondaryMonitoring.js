@@ -191,7 +191,7 @@ class SecondaryMonitoring extends React.Component {
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
             console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     monitors: trainersArray
@@ -680,7 +680,7 @@ class SecondaryMonitoring extends React.Component {
                     loadingMsg: "Fetching data..."
                 })
 
-                let participants = await getParticipantsByLocation(e.uuid);
+                let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
                     
                     this.setState({
