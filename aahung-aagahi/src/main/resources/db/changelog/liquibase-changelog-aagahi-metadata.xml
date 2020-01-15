@@ -1842,9 +1842,9 @@
 			UPDATE `element` SET `dataType` = 'JSON' WHERE (`element_id` = '64');
 		</sql>
 	</changeSet>
-	<changeSet author="rabbia.hassan" id="FORM_TYPE_FIX">
+	<!-- <changeSet author="rabbia.hassan" id="FORM_TYPE_FIX">
 		<sql endDelimiter=";">
 			UPDATE `aagahi`.`form_type` SET `description` = 'Primary Monitoring Form', `form_name` = 'Primary Monitoring Form', `short_name` = 'lse_primary_monitoring' WHERE (`form_type_id` = '27');
 		</sql>
-	</changeSet>
+	</changeSet> -->
 </databaseChangeLog>

@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -736,7 +737,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	    }
 	    String voidedReason = obj.getReasonVoided();
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    
 	    for (UserAttribute attribute : obj.getAttributes()) {
 			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (User voided)")){
@@ -745,7 +746,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 					attribute.setReasonVoided("");
 				 }
 				attribute.setReasonVoided(attribute.getReasonVoided() + "(User unvoided on "
-					    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 				updateUserAttribute(attribute);
 			}
 		}

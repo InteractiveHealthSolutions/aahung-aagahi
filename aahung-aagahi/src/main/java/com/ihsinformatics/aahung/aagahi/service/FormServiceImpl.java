@@ -346,7 +346,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		obj.setReasonRetired("");
 	    }
 	    obj.setReasonRetired(obj.getReasonRetired() + "(Unretired on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateRetired()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    updateFormType(obj);
 	}
     }
@@ -367,7 +367,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		obj.setReasonVoided("");
 	    }
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    return updateFormData(obj);
 	}
 	return obj;
