@@ -36,13 +36,15 @@ import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getLocationByRegexValue, getLocationsByCategory, getLocationsByParent } from '../service/GetService';
-import { getEntityUrlByName, matchPattern } from "../util/AahungUtil.js";
+import { voidData } from '../service/PostService';
+import { apiUrl, getEntityUrlByName, matchPattern, showAlert } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
+import UnvoidModal from "../alerts/UnvoidModal";
+import VoidModal from "../alerts/VoidModal";
+import CustomCheckBox from "../widget/CustomCheckBox";
 import CustomRadioButton from "../widget/CustomRadioButton";
 
 class LocationSearch extends React.Component {
-
-    modal = false;
 
     // widget IDs (and their states) are with underscore notation
     constructor(props) {
@@ -57,7 +59,17 @@ class LocationSearch extends React.Component {
                 { headerName: "Category", field: "category", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
-                { headerName: "Updated By", field: "updatedBy", sortable: true }],
+                { headerName: "Voided", field: "voided", sortable: true },
+                { headerName: "Updated By", field: "updatedBy", sortable: true },
+                {
+                    headerName: "Void",
+                    template: `<i class="fas fa-ban"></i>`
+                },
+                {
+                    headerName: "Unvoid",
+                    template: `<i class="fas fa-redo"></i>`
+                }
+                ],
                 rowData: []
             },
             parentOrganizations: [],
@@ -66,10 +78,16 @@ class LocationSearch extends React.Component {
             disableLocation: true,
             disableParent: true,
             hasData: false,
+            openModal: false,
+            modal: false,
+            includeVoided: false,
             searchValue: ""
 
         };
         this.errors = {};
+        this.selectedLocationId = '';
+        this.closeModal = this.closeModal.bind(this);
+        this.closeUnvoidModal = this.closeUnvoidModal.bind(this);
     }
 
     componentDidMount() {
@@ -112,15 +130,18 @@ class LocationSearch extends React.Component {
                 disableParent: true,
                 parent_organization: '' // widgetId and state name
             })
-
         }
         else if (name === "parent") {
-
             this.setState({
                 disableLocation: true,
                 disableParent: false,
                 location_name: '' // widgetId and state name
             })
+        }
+        else {
+            this.setState({
+                includeVoided: e.target.checked
+            });
         }
     }
 
@@ -132,16 +153,51 @@ class LocationSearch extends React.Component {
         });
     }
 
-    onSelectionChanged() {
+    closeModal() {
+        this.setState({
+            openModal: false
+        })
+    }
+
+    closeUnvoidModal() {
+        this.setState({
+            modal: false
+        })
+    }
+
+    onSelectionChanged(event) {
+        this.setState({
+            openModal: false,
+            modal: false
+        })
         var selectedRows = this.gridApi.getSelectedRows();
         let self = this;
-        selectedRows.forEach(function (selectedRow) {
-            var urlEntity = getEntityUrlByName(selectedRow.category.toLowerCase())[0];
-            self.props.history.push({
-                pathname: urlEntity.url,
-                state: { edit: true, locationId: selectedRow.locationId }
+        if (event.colDef.headerName === "Void") {
+            selectedRows.forEach(function (selectedRow) {
+                self.selectedLocationId = selectedRow.locationId;
             });
-        });
+            this.setState({
+                openModal: true
+            });
+        }
+        else if (event.colDef.headerName === "Unvoid") {
+            selectedRows.forEach(function (selectedRow) {
+                self.selectedLocationId = selectedRow.locationId;
+            });
+            this.setState({
+                modal: true
+            })
+        }
+        else {
+            selectedRows.forEach(function (selectedRow) {
+                var urlEntity = getEntityUrlByName(selectedRow.category.toLowerCase())[0];
+                self.props.history.push({
+                    pathname: urlEntity.url,
+                    state: { edit: true, locationId: selectedRow.locationId }
+                });
+            });
+        }
+
     }
 
     onChange = e => {
@@ -205,9 +261,17 @@ class LocationSearch extends React.Component {
 
     constructLocationList(fetchedLocations) {
         let array = [];
+        let self = this;
         if (fetchedLocations != null && fetchedLocations.length > 0) {
             fetchedLocations.forEach(function (obj) {
-                array.push({ "locationId": obj.locationId, "name": obj.locationName, "shortName": obj.shortName, "province": obj.stateProvince, "city": obj.cityVillage, "category": obj.category.definitionName, "dateCreated": moment(obj.dateCreated).format('LL'), "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+                if (!self.state.includeVoided) {
+                    if (!obj.isVoided) {
+                        array.push({ "locationId": obj.locationId, "name": obj.locationName, "shortName": obj.shortName, "province": obj.stateProvince, "city": obj.cityVillage, "category": obj.category.definitionName, "dateCreated": moment(obj.dateCreated).format('LL'), "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.fullName, "voided": obj.isVoided === true ? "True" : "False", "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+                    }
+                }
+                else {
+                    array.push({ "locationId": obj.locationId, "name": obj.locationName, "shortName": obj.shortName, "province": obj.stateProvince, "city": obj.cityVillage, "category": obj.category.definitionName, "dateCreated": moment(obj.dateCreated).format('LL'), "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.fullName, "voided": obj.isVoided === true ? "True" : "False", "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName });
+                }
             })
         }
 
@@ -217,6 +281,49 @@ class LocationSearch extends React.Component {
         this.setState({
             hasData: true
         })
+    }
+
+    voidObject = reasonVoided => {
+        console.log("in void");
+        voidData("location", this.selectedLocationId, reasonVoided)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if (!(String(responseData).includes("Error"))) {
+                        showAlert("Data voided successfully!", "SUCCESS");
+                        this.setState({
+                            openModal: false
+                        })
+                    }
+                    else if (String(responseData).includes("Error")) {
+                        showAlert("Unable to void data. Please see error logs for details.", "ERROR");
+                    }
+                }
+            );
+    }
+
+    // used fetch call directly here for this patch request. Axios was not working for some reason.
+    unvoidObject(event) {
+        event.preventDefault();
+        var requestUrl = apiUrl + "/location/" + this.selectedLocationId;
+        fetch(requestUrl, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': sessionStorage.getItem('auth_header'),
+            }
+        }).then(response => {
+            response.json().then(json => {
+                if (response.status === 200) { // ok: success
+                    showAlert("Data is restored successfully!", "SUCCESS");
+                    // let self = this;
+                    this.setState({
+                        modal: false
+                    })
+                }
+                else
+                    showAlert("Error occurred while restoring data. Please see error logs for details.", "ERROR");
+            });
+        });
     }
 
     // for autocomplete single select
@@ -239,12 +346,14 @@ class LocationSearch extends React.Component {
                             <MDBCol md="3">
                                 <h6>Search By (Location ID, Name, Parent Location)</h6>
                             </MDBCol>
-                            <MDBCol md="7">
+                            <MDBCol md="8">
                                 <div className="searchFilterDiv">
                                     <CustomRadioButton id="location" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")} />
                                     <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => { this.inputChange(e, "location_name") }} disabled={this.state.disableLocation} />
                                     <CustomRadioButton id="parent" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "parent")} />
                                     <Select id="parent_organization" name="parent_organization" className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} isDisabled={this.state.disableParent} />
+                                    <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
+                                    <label style={{ width: "50%" }}>Include voided</label>
                                 </div>
                             </MDBCol>
                             <MDBCol md="1">
@@ -258,7 +367,7 @@ class LocationSearch extends React.Component {
                     <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
                         <div style={{ marginBottom: "1em", display: locationTableDisplay }}>
                             <h4 style={{ display: "inline-block", float: "left" }}>Locations </h4>
-                            <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{ maxWidth: "15em", marginLeft: "83%" }} />
+                            <Input type="text" id="searchvalue" value={this.state.searchvalue} placeholder="Search..." onChange={this.onChange} style={{ maxWidth: "15em", marginLeft: "83%", borderColor: "orange" }} />
                         </div>
                         <div className="ag-theme-balham" style={{ height: '400px', width: '1250px', display: locationTableDisplay }}>
 
@@ -268,14 +377,18 @@ class LocationSearch extends React.Component {
                                 rowData={this.state.location.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
-                                onSelectionChanged={this.onSelectionChanged.bind(this)}
+                                onCellClicked={this.onSelectionChanged.bind(this)}
                                 pagination={true}
                                 paginationPageSize="10"
-                                enableColResize={true}>
+                                enableColResize={true}
+                                suppressCellSelection={true}>
                             </AgGridReact>
                         </div>
                     </Animated>
                 </MDBCardBody>
+
+                <VoidModal openModal={this.state.openModal} modalHeading="Void Location" handleSubmit={this.voidObject} closeModal={this.closeModal} {...this.props} />
+                <UnvoidModal modal={this.state.modal} modalHeading="Unvoid Location" handleSubmit={this.unvoidObject} objectType="location" closeModal={this.closeUnvoidModal} {...this.props} />
             </div>
         );
     }

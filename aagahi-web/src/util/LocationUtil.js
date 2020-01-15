@@ -147,6 +147,11 @@ export const location = {
     { id: 135, label: 'Kharmang', value: 'KMG', provinceId: 5 },
     { id: 136, label: 'Shigar', value: 'SHI', provinceId: 5 },
     { id: 137, label: 'Nagar', value: 'NAG', provinceId: 5 },
+    { id: 138, label: 'Other', value: 'Other', provinceId: 1 }, // added other option for all provinces
+    { id: 139, label: 'Other', value: 'Other', provinceId: 2 }, // added other option for all provinces
+    { id: 140, label: 'Other', value: 'Other', provinceId: 3 }, // added other option for all provinces
+    { id: 141, label: 'Other', value: 'Other', provinceId: 4 }, // added other option for all provinces
+    { id: 142, label: 'Other', value: 'Other', provinceId: 5 }, // added other option for all provinces
   ]
 };
 

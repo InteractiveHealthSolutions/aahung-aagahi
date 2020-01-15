@@ -316,7 +316,7 @@ class SchoolUpdate extends React.Component {
                         attrValueObj.forEach(async function (obj) {
 
                             // definitionArr contains only one item because filter will return only one definition
-                            let projectObj = await getProjectByRegexValue(obj.projectId);
+                            let projectObj = await getProjectByRegexValue(obj.projectId, false);
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
                             arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName })
                         })

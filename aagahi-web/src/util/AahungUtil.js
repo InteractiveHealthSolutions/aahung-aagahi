@@ -1,3 +1,5 @@
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
 import moment from 'moment';
 import { getDistrictByValue, getProvinceByValue } from "../util/LocationUtil.js";
 export const apiUrl = 'http://ihs.ihsinformatics.com:9990/aahung-aagahi/api'; // for test server
@@ -115,6 +117,18 @@ export const matchPattern = function (pattern, value) {
     return value.match(pattern) != value ? false : true;
 }
 
+export const showAlert = function (msg, status) {
+    alertify.set('notifier', 'position', 'top-center');
+    alertify.set('notifier', 'delay', 10);
+    alertify.set('notifier', 'position', 'bottom-right');
+    if (status === "SUCCESS") {
+        alertify.success('<p><b>' + msg + '</b></p>');
+    }
+    else {
+        alertify.error('<p><b>' + msg + '</b></p>');
+    }
+}
+
 export const clearCheckedFields = function () {
     //  clear all radio and checkboxes
     var els = document.querySelectorAll('input:checked');
@@ -215,12 +229,8 @@ export const loadFormState = function (formDataObj, stateObj) {
 
     let self = this;
     formDataObj.data.map(function (element, i) {
-        
-        console.log(element);
-            console.log(element.value);
             
         switch ((element.dataType).toLowerCase()) { 
-
             case 'string':
                 if (moment(element.value, 'LT', true).isValid()) { // just because of single case (for time) in Radio Appearance form
                     var time = element.value;

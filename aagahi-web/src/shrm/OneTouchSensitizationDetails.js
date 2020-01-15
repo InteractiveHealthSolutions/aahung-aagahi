@@ -158,7 +158,7 @@ class OneTouchSensitizationDetails extends React.Component {
             let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     trainers: trainersArray

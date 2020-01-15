@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +135,6 @@ public class DateTimeUtil {
 	    return null;
 	}
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-	simpleDateFormat.setTimeZone(TimeZone.getTimeZone("PKT"));
 	return simpleDateFormat.format(date);
     }
 

@@ -126,7 +126,7 @@ class CommsTrainingDetails extends React.Component {
             let role = await getRoleByName(Constants.COMMUNICATIONS_TRAINER_ROLE_NAME);
             console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
 
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({

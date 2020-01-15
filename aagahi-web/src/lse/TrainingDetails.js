@@ -130,7 +130,7 @@ class TrainingDetails extends React.Component {
             let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
             console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
+            let trainersArray = await getUsersByRole(role.uuid, false);
             if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
                     trainers: trainersArray
@@ -329,7 +329,7 @@ class TrainingDetails extends React.Component {
         if (schools != null && schools.length != 0) {
 
             for (let j = 0; j < schools.length; j++) {
-                let participants = await getParticipantsByLocation(schools[j].uuid);
+                let participants = await getParticipantsByLocation(schools[j].uuid, false);
                 if (participants.length > 0) {
                     participants.forEach(function (obj) {
                         self.participantList.push({ "id": obj.id, "value": obj.uuid, "uuid": obj.uuid, "fullName": obj.fullName, "label": obj.fullName, "personId": obj.personId, "gender": obj.gender, "identifier": obj.identifier, "locationName": obj.locationName, "locationId": obj.locationId });
