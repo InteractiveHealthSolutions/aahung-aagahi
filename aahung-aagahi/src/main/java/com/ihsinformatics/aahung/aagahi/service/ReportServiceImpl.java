@@ -19,7 +19,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +35,9 @@ import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -536,16 +541,14 @@ public class ReportServiceImpl extends BaseService {
      * @throws SQLException
      */
     public ResultSet getResultSet(String query, Connection conn) throws SQLException {
-		
-    	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
-    		RowSetFactory factory = RowSetProvider.newFactory();
-    		CachedRowSet crs = factory.createCachedRowSet();
-    		crs.populate(resultSet);
-    		return crs;
-    	}
-    	
+	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+	    RowSetFactory factory = RowSetProvider.newFactory();
+	    CachedRowSet crs = factory.createCachedRowSet();
+	    crs.populate(resultSet);
+	    return crs;
+	}
     }
-
+    
     /**
      * Returns data from given query as a List of String arrays
      * 
@@ -597,6 +600,60 @@ public class ReportServiceImpl extends BaseService {
 	}
 	resultSet.close();
 	return data;
+    }
+    
+    /**
+     * Returns data from given query as a {@link JSONArray} of {@link JSONObject}
+     * 
+     * @param query
+     * @return
+     * @throws SQLException
+     */
+    public JSONArray getTableDataAsJson(String query) throws SQLException, JSONException {
+	JSONArray json = new JSONArray();
+	ResultSet resultSet = getResultSet(query, dataSource.getConnection());
+	ResultSetMetaData metadata = resultSet.getMetaData();
+	while (resultSet.next()) {
+	    int numColumns = metadata.getColumnCount();
+	    JSONObject obj = new JSONObject();
+	    for (int i = 1; i < numColumns + 1; i++) {
+		String columnName = metadata.getColumnName(i);
+		String displayName = metadata.getColumnLabel(i);
+		switch (metadata.getColumnType(i)) {
+		case Types.ARRAY:
+		    obj.put(displayName, resultSet.getArray(columnName));
+		    break;
+		case Types.BIGINT:
+		case Types.INTEGER:
+		case Types.SMALLINT:
+		case Types.TINYINT:
+		    obj.put(displayName, resultSet.getInt(columnName));
+		    break;
+		case Types.BOOLEAN:
+		    obj.put(displayName, resultSet.getBoolean(columnName));
+		    break;
+		case Types.DATE:
+		case Types.TIMESTAMP:
+		    obj.put(displayName, resultSet.getDate(columnName));
+		    break;
+		case Types.DOUBLE:
+		case Types.FLOAT:
+		    obj.put(displayName, resultSet.getDouble(columnName));
+		    break;
+		case Types.NVARCHAR:
+		case Types.VARCHAR:
+		    obj.put(displayName, resultSet.getString(columnName));
+		    break;
+		case Types.BLOB:
+		    obj.put(displayName, resultSet.getBlob(columnName));
+		    break;
+		default:
+		    obj.put(displayName, resultSet.getString(columnName));
+		}
+	    }
+	    json.put(obj);
+	}
+	return json;
     }
 
     /**

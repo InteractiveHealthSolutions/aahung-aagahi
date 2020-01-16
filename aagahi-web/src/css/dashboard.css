@@ -1,0 +1,36 @@
+h1 {
+  color: rgb(63, 81, 181);
+  font-weight: bold;
+  text-align: center;
+}
+.buttons-right > button {
+  float: right;
+  margin: 5px;
+}
+.app-container {
+  padding: 25px;
+}
+.component-container {
+  padding: 10px;
+}
+
+.stats-value {
+  color: rgb(63, 81, 181);
+  font-size: 25px;
+  text-decoration-line: underline;
+  text-decoration-color: gray;
+  padding: 50px;
+}
+.stats-value-small {
+  color: rgb(63, 81, 181);
+  font-size: 20px;
+  padding: 5px;
+  text-align: left;
+}
+.stats-container {
+  text-align: center;
+}
+
+.filter-container {
+  text-align: left;
+}
