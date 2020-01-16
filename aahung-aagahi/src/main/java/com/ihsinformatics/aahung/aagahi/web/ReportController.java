@@ -285,11 +285,11 @@ public class ReportController extends BaseController {
     /* * * * * * * * * * * */
 
     @ApiOperation(value = "Get data for Partner School report/chart (ref: D1 - Partner Schools by Province, Tier, Program)")
-    @GetMapping(value = "/report/partnerschooldata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/partnerschooldata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getPartnerSchoolData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select ifnull(l.state_province, 'Unknown') as state_province, level_name.definition as school_level, tier_name.definition as school_tier, count(*) as total from location as l ");
+	    query.append("select ifnull(l.state_province, 'Unknown') as state_province, partnership.attribute_value as date_of_partnership, level_name.definition as school_level, tier_name.definition as school_tier, count(*) as total from location as l ");
 	    query.append("inner join location_attribute as partnership on partnership.location_id = l.location_id and partnership.attribute_type_id = 7 ");
 	    query.append("inner join location_attribute as level on level.location_id = l.location_id and level.attribute_type_id = 14 ");
 	    query.append("inner join location_attribute as tier on tier.location_id = l.location_id and tier.attribute_type_id = 16 ");
@@ -300,11 +300,12 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' and l.city_village = '" + cityVillage + "'");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by l.state_province, level_name.definition, tier_name.definition ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by l.state_province, partnership.attribute_value, level.attribute_value, tier.attribute_value ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -317,7 +318,7 @@ public class ReportController extends BaseController {
     public ResponseEntity<?> getPartnerSchoolDataByFiscalYear() throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select ifnull(l.state_province, 'Unknown') as state_province, (case partnership.attribute_value > 6 when 1 then year(partnership.attribute_value) else year(partnership.attribute_value) - 1 end) as fiscal_year, level_name.definition as school_level, count(*) as total from location as l\r\n");
+	    query.append("select ifnull(l.state_province, 'Unknown') as state_province, (case partnership.attribute_value > 6 when 1 then year(partnership.attribute_value) else year(partnership.attribute_value) - 1 end) as fiscal_year, level_name.definition as school_level, count(*) as total from location as l");
 	    query.append("inner join location_attribute as partnership on partnership.location_id = l.location_id and partnership.attribute_type_id = 7 ");
 	    query.append("inner join location_attribute as level on level.location_id = l.location_id and level.attribute_type_id = 14 ");
 	    query.append("inner join location_attribute as tier on tier.location_id = l.location_id and tier.attribute_type_id = 16 ");
@@ -334,11 +335,11 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for Teachers training summary (ref: D1 - Summary Teachers Trained)")
-    @GetMapping(value = "/report/teacherstrainingdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/teacherstrainingdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getTeachersTrainings(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select level_name.definition as school_level, tier_name.definition as school_tier, lse.program_type as program, count(*) as total from form_data as fd  ");
+	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, level_name.definition as school_level, tier_name.definition as school_tier, lse.program_type as program, count(*) as total from form_data as fd ");
 	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");
 	    query.append("inner join participant as p on p.person_id = pt.person_id ");
 	    query.append("inner join location as l on l.location_id = p.location_id ");
@@ -353,11 +354,12 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
+	    if (stateProvince != null) {
 		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by lse.program_type, level_name.definition, tier_name.definition ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by level_name.definition_id, tier_name.definition_id, l.state_province, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -366,21 +368,23 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for Training summary (ref: D1 - Trainings Summary)")
-    @GetMapping(value = "/report/trainingdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/trainingdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getTrainings(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select ifnull(td.province, 'Unknown') as state_province, upper(td.training_type) as training_type, count(*) as total from _lse_training_detail as td ");
+	    query.append("select ifnull(td.province, 'Unknown') as state_province, date(td.form_date) as form_date, upper(td.training_type) as training_type, count(*) as total from _lse_training_detail as td ");
+		query.append("select ifnull(td.province, 'Unknown') as state_province, upper(td.training_type) as training_type, count(*) as total from _lse_training_detail as td ");
 	    query.append("where td.form_type_id = 1 ");
 	    query.append("and date(td.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
+	    if (stateProvince != null) {
 		query.append("and td.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by td.training_type, td.province ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by td.province, date(td.form_date), td.training_type ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -389,11 +393,11 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for One Touch Training summary (ref: D1 - One-Touch Sessions Summary)")
-    @GetMapping(value = "/report/onetouchdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/onetouchdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getOneTouchSessionsData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select year(otd.form_date) as training_year, otd.session_topic, ");
+	    query.append("select ifnull(otd.province, 'Unknown') as state_province, year(otd.form_date) as training_year, otd.session_topic, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%teachers%' as teachers_attending, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%students%' as students_attending, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%parents%' as parents_attending, ");
@@ -405,11 +409,12 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and otd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by year(otd.form_date), otd.session_topic ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by otd.province, year(otd.form_date), otd.session_topic ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -418,7 +423,7 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for School Monitoring scores (ref: D1 - School Monitoring Scores by Province/D1 - School Monitoring Scores by District)")
-    @GetMapping(value = "/report/schoolmonitoringdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/schoolmonitoringdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getSchoolMonitoringData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
@@ -429,10 +434,9 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
+	    if (stateProvince != null) {
 		query.append("and l.state_province = '" + stateProvince + "' ");
-	    if (cityVillage != null)
-		query.append("and l.city_village = '" + cityVillage + "' ");
+	    }
 	    query.append("group by l.state_province, pm.form_date, pm.primary_grade, pm.program_type ");
 	    // Secondary monitoring
 	    query.append("union ");
@@ -442,10 +446,11 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
 	    query.append("group by l.state_province, sm.form_date, sm.secondary_grade ");	    
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -455,7 +460,7 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for Exit school planning (ref: D1 - Exit Planning)")
-    @GetMapping(value = "/report/exitschoolplanningdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/exitschoolplanningdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getExitSchoolPlanningData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
@@ -470,10 +475,11 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
 	    query.append("group by year(fd.form_date), l.state_province, l.city_village, srhr.srhr_policy_implemented, ps.parent_session_conducted ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -483,7 +489,7 @@ public class ReportController extends BaseController {
     }
 
     @ApiOperation(value = "Get data for Partner Institutions (ref: D2 - Partner Institutions by District)")
-    @GetMapping(value = "/report/partnerinstitutiondata", params = { "state_province", "city_village" })
+    @GetMapping(value = "/report/partnerinstitutiondata", params = { "state_province" ,"city_village" })
     public ResponseEntity<?> getPartnerInstitutionData(@RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
@@ -496,10 +502,11 @@ public class ReportController extends BaseController {
 	    // We join with location_attribute table, which combines all attribute_value elements into a JSON array
 	    query.append("inner join (select la.location_id, json_array(json_extract(attribute_value, '$[0].definitionId'), json_extract(attribute_value, '$[1].definitionId'), json_extract(attribute_value, '$[2].definitionId'), json_extract(attribute_value, '$[3].definitionId')) as institute_types from location_attribute as la where la.attribute_type_id = 8 and la.location_id) as b ");
 	    query.append("on b.location_id = l.location_id ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
 	    query.append("group by l.state_province, l.city_village ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -509,15 +516,15 @@ public class ReportController extends BaseController {
     }
 
     @ApiOperation(value = "Get data for SRHM Participant Training summary (ref: D2 - Participants Trained)")
-    @GetMapping(value = "/report/participanttrainingdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/participanttrainingdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getParticipantTrainingData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select d.definition as participant_type, per.gender, count(*) as total from form_data as fd ");
+	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, d.definition as participant_type, count(*) as total, per.gender as gender from form_data as fd ");
 	    query.append("inner join location as l on l.location_id = fd.location_id ");
 	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");
 	    query.append("inner join participant as p on p.person_id = pt.person_id ");
-	    query.append("inner join person as per on per.person_id = p.person_id ");
+	    query.append("inner join person as per on p.person_id = per.person_id "); 
 	    query.append("inner join person_attribute as pa on pa.person_id = p.person_id and pa.attribute_type_id = 10 ");
 	    query.append("inner join definition as d on d.definition_id = pa.attribute_value ");
 	    query.append("where fd.voided = 0 ");
@@ -526,11 +533,12 @@ public class ReportController extends BaseController {
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
 	    query.append("and fd.form_type_id = 17 ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by pa.attribute_value, per.gender ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.form_date, l.state_province, pa.attribute_value, per.gender ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -539,36 +547,40 @@ public class ReportController extends BaseController {
     }
 
     @ApiOperation(value = "Get data for Individuals reached through SRHM Activities (ref: D2 - Individuals Reached)")
-    @GetMapping(value = "/report/individualreachdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/individualreachdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getIndividualReachData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    // Healthcare provider reach
-	    query.append("select 'HCP' as activity_type, ");
+	    query.append("select 'HCP' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_health_care_provider_reach as fd ");
 	    query.append("where date(fd.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and fd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.province, fd.district, fd.form_date ");
 	    // Step down training
 	    query.append("union ");
-	    query.append("select 'Step Down' as activity_type, ");
+	    query.append("select 'Step Down' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_general_step_down_training_details as fd ");
 	    query.append("where date(fd.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and fd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.province, fd.district, fd.form_date ");
 	    // Amplify change step down training by Students
 	    query.append("union ");
-	    query.append("select 'AC - Students' as activity_type, ");
+	    query.append("select 'AC - Students' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_amplify_change_step_down_training_details as fd ");
 	    query.append("inner join participant as pt on pt.identifier = fd.participant_id ");
 	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 65 ");
@@ -576,13 +588,15 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and fd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.province, fd.district, fd.form_date ");
 	    // Amplify change step down training by Teachers
 	    query.append("union ");
-	    query.append("select 'AC - Teachers' as activity_type, ");
+	    query.append("select 'AC - Teachers' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_amplify_change_step_down_training_details as fd ");
 	    query.append("inner join participant as pt on pt.identifier = fd.participant_id ");
 	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 66 ");
@@ -590,10 +604,12 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and fd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.province, fd.district, fd.form_date ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -602,11 +618,11 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for SRHM Amplify Change Participant Training summary (ref: D2 - Amplify Change Trained Participants)")
-    @GetMapping(value = "/report/amplifychangeparticipantdata", params = { "from", "to", "state_province", "city_village" })
+    @GetMapping(value = "/report/amplifychangeparticipantdata", params = { "from", "to", "state_province","city_village"  })
     public ResponseEntity<?> getAmplifyChangeParticipantData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select d.definition as participant_type, per.gender, count(*) as total from form_data as fd "); 
+	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, d.definition as participant_type, count(*) as total, per.gender as gender from form_data as fd "); 
 	    query.append("inner join location as l on l.location_id = fd.location_id ");  
 	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");  
 	    query.append("inner join participant as p on p.person_id = pt.person_id ");  
@@ -619,11 +635,12 @@ public class ReportController extends BaseController {
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
 	    query.append("and fd.form_type_id = 17 ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and l.state_province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by pa.attribute_value, per.gender ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.form_date, l.state_province, pa.attribute_value, per.gender ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -663,6 +680,7 @@ public class ReportController extends BaseController {
 	    query.append("json_extract(platform_scores, '$[3].post_shares_count') as shares, ");
 	    query.append("json_extract(platform_scores, '$[3].post_boosted_count') as boosted_count from _comms_social_media_details ");
 	    query.append("where platform_scores is not null having platform is not null) as a on a.form_id = fd.form_id ");
+	    query.append("and fd.voided = 0 ");
 	    query.append("and date(fd.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
@@ -681,12 +699,15 @@ public class ReportController extends BaseController {
     public ResponseEntity<?> getRadioLiveCallData(@RequestParam("from") String from, @RequestParam("to") String to) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select dayname(fd.form_date) as day_name, sum(fd.listener_count) as listener_count, sum(fd.live_call_count) as live_call_count from _comms_radio_appearance as fd ");
+	    query.append("select dayname(fd.form_date) as day_name, fd.radio_channel_frequency, fd.radio_channel_name, ifnull(fd.city, 'Unknown') as city, sum(fd.listener_count) as listener_count, sum(fd.live_call_count) as live_call_count from _comms_radio_appearance as fd ");
+		
+		query.append("select dayname(fd.form_date) as day_name, sum(fd.listener_count) as listener_count, sum(fd.live_call_count) as live_call_count from _comms_radio_appearance as fd ");
+
 	    query.append("where date(fd.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    query.append("group by dayname(fd.form_date) ");
+	    query.append("group by fd.city, dayname(fd.form_date), fd.radio_channel_frequency, fd.radio_channel_name");
 	    query.append("order by weekday(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -696,20 +717,24 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for Cinema and Theatre (ref: D3 - Mobile Cinema/Theatres by District)")
-    @GetMapping(value = "/report/mobilecinemadata", params = { "from", "to", "state_province", "city_village"})
+    @GetMapping(value = "/report/mobilecinemadata", params = { "from", "to", "state_province","city_village"})
     public ResponseEntity<?> getMobileCinemaData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
-	    query.append("select ifnull(fd.district, 'Unknown') as city_village, fd.screening_type, count(*) as total from _comms_mobile_cinema_theatre_details as fd ");
+	    query.append("select ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, fd.screening_type, date(fd.form_date) as form_date, count(*) as total from _comms_mobile_cinema_theatre_details as fd ");
+		
+		query.append("select ifnull(fd.district, 'Unknown') as city_village, fd.screening_type, count(*) as total from _comms_mobile_cinema_theatre_details as fd ");
+
 	    query.append("where date(fd.form_date) between ");
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    if (stateProvince != null) 
-	    query.append("and l.state_province = '" + stateProvince + "' ");
+	    if (stateProvince != null) {
+		query.append("and fd.province = '" + stateProvince + "' ");
+	    }
 	    if (cityVillage != null)
-	    query.append("and l.city_village = '" + cityVillage + "' ");
-	    query.append("group by fd.district, fd.screening_type ");
+		    query.append("and l.city_village = '" + cityVillage + "' ");
+	    query.append("group by fd.province, fd.district, fd.screening_type, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
