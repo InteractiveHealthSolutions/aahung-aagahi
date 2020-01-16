@@ -84,6 +84,7 @@ class UserSearch extends React.Component {
         this.selectedUserId = '';
         this.closeModal = this.closeModal.bind(this);
         this.closeUnvoidModal = this.closeUnvoidModal.bind(this);
+        this.unvoidObject = this.unvoidObject.bind(this);
     }
 
     componentDidMount() {
