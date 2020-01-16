@@ -29,6 +29,7 @@ import document from "../img/document.svg";
 import admin from "../img/management.svg";
 import skills from "../img/skills.svg";
 import srhm from "../img/srhm.svg";
+import graph from "../img/graph.svg";
 import '../index.css';
 
 class MainPageLayout extends React.Component {
@@ -138,35 +139,35 @@ class MainPageLayout extends React.Component {
                             <RequirePrivilege
                                 privilegeName="View Administration Section"
                                 yes={() => (
-                                    <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Search</p></MDBBtn></Link>
+                                    <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={admin} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}>Search</p></MDBBtn></Link>
                                 )}
                             />
 
                             {/* <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
-                        <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin</p></MDBBtn></Link>
+                        <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold" style={{fontSize: "85%"}}>Admin</p></MDBBtn></Link>
                     )}
                     /> */}
 
                             <RequirePrivilege
                                 privilegeName="View LSE Section"
                                 yes={() => (
-                                    <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">LSE</p></MDBBtn></Link>
+                                    <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={skills} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}>LSE</p></MDBBtn></Link>
                                 )}
                             />
 
                             <RequirePrivilege
                                 privilegeName="View SRHM Section"
                                 yes={() => (
-                                    <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
+                                    <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={srhm} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}> SRHM</p></MDBBtn></Link>
                                 )}
                             />
 
                             <RequirePrivilege
                                 privilegeName="View Comms Section"
                                 yes={() => (
-                                    <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
+                                    <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={communication} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}> COMMS</p></MDBBtn></Link>
                                 )}
                             />
 
@@ -174,7 +175,7 @@ class MainPageLayout extends React.Component {
                             <RequirePrivilege
                                 privilegeName="View Reports Section"
                                 yes={() => (
-                                    <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Reports</p></MDBBtn></Link>
+                                    <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={document} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}>Reports</p></MDBBtn></Link>
                                 )}
                             />
 
@@ -182,11 +183,11 @@ class MainPageLayout extends React.Component {
                             <RequirePrivilege
                                 privilegeName="View Reports Section"
                                 yes={() => (
-                                    <Link to="/dashboard"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Dashboard</p></MDBBtn></Link>
+                                    <Link to="/dashboard"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={graph} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "84%"}}>Dashboard</p></MDBBtn></Link>
                                 )}
                             />
 
-                            {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
+                            {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                         </div>
                     </MDBContainer>
                     <MDBFooter color="grey lighten-1" >
