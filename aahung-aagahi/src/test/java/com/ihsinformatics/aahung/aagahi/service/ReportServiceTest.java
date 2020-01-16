@@ -15,8 +15,6 @@ package com.ihsinformatics.aahung.aagahi.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
@@ -32,28 +30,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
-import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 import com.mockrunner.mock.jdbc.MockConnection;
 import com.mockrunner.mock.jdbc.MockDataSource;
 import com.mockrunner.mock.jdbc.MockResultSet;
@@ -674,4 +669,33 @@ public class ReportServiceTest extends BaseServiceTest {
 	    List<String[]> data = reportService.getTableData("select * from privileges", null, null);
 	    assertFalse(data.isEmpty());
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#getTableDataAsJson()}.
+     * 
+     * @throws SQLException
+     */
+    @Test
+    public void testGetTableDataAsJson() throws SQLException, JSONException {
+
+	MockResultSet rs = new MockResultSet("rs");
+	rs.addColumn("user_id", new Object[] { 1, 2, 3 });
+	rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4",
+		"fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	rs.addColumn("username", new Object[] { "albus.dumbledore", "severus.snape", "nymphadora.tonks" });
+	rs.addColumn("full_name", new Object[] { "Albus Dumbledore", "Severus Snape", "Nymphadora Tonks" });
+	rs.addColumn("voided", new Object[] { false, false, false });
+	rs.addColumn("date_created", new Object[] { "2019-10-01", "2019-10-01", "2019-10-01" });
+	when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	JSONArray data = reportService.getTableDataAsJson("select * from privileges");
+	assertFalse(data.length() == 0);
+	for (int i = 0; i < data.length(); i++) {
+	    JSONObject obj = data.getJSONObject(i);
+	    assertNotNull(obj.getInt("user_id"));
+	    assertNotNull(obj.getString("uuid"));
+	    assertNotNull(obj.getBoolean("voided"));
+	}
+    }
+
 }

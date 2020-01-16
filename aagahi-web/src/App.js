@@ -37,7 +37,9 @@ import AmplifyChangeTrainingDetails from './shrm/AmplifyChangeTrainingDetails';
 import GeneralTrainingDetails from './shrm/GeneralTrainingDetails';
 import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
 import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
-import HealthCareProviderReach from './shrm/HealthCareProviderReach';
+import SrhrPolicy from './lse/SrhrPolicy';
+import DashboardMain from './dashboard/DashboardMain';
+import HealthCarePro7viderReach from './shrm/HealthCareProviderReach';
 import InstitutionDetail from './shrm/InstitutionDetail';
 import NayaQadamStepDownTraining from './shrm/NayaQadamStepDownTraining';
 import OneTouchSensitizationDetails from './shrm/OneTouchSensitizationDetails';
@@ -47,35 +49,37 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route path='/' exact={true} component={LoginPage} />
-          <SessionRoute path='/mainMenu' exact={true} component={MainMenu} />
-          <SessionRoute path='/srhmPage' component={SrhmMainPage} />
-          <SessionRoute path='/lsePage' component={LseMainPage} />
-          <SessionRoute path='/commsPage' component={CommsMainPage} />
-          <SessionRoute path='/reportNavPage' component={ReportsNav} />
-          <SessionRoute path='/adminPage' component={AdminMainPage} />
-          <SessionRoute path='/admin' component={AdminPage} />
-          <SessionRoute path='/addUser' component={AddUser} />
-          <SessionRoute path='/project' component={ProjectDetails} />
-          <SessionRoute path='/donor' component={DonorRegistration} />
-          <SessionRoute path='/schoolDetails' component={SchoolDetails} />
-          <SessionRoute path='/institutionDetails' component={InstitutionDetail} />
-          <SessionRoute path='/parentOrganizationRegistration' component={ParentOrganizationRegistration} />
-          <SessionRoute path='/lseTeacherParticipant' component={ParticipantDetail} />
-          <SessionRoute path='/srhmGeneralParticipant' component={GeneralParticipantDetail} />
-          <SessionRoute path='/srhmAcParticipant' component={AmplifyChangeParticipantDetail} />
-          <SessionRoute path='/stakeholderMeetings' component={StakeholderMeeting} />
-          <SessionRoute path='/radioAppearanceForm' component={RadioAppearance} />
-          <SessionRoute path='/socialMediaDetails' component={SocialMediaDetail} />
-          <SessionRoute path='/distributionCommunicationMaterial' component={DistributionCommunicationMaterial} />
-          <SessionRoute path='/trainingDetailsCommunications' component={CommsTrainingDetails} />
-          <SessionRoute path='/mobileCinemaTheatreDetails' component={MobileCinemaDetails} />
-          <SessionRoute path='/oneTouchSensitizationSessionDetails' component={OneTouchSensitizationDetails} />
-          <SessionRoute path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining} />
-          <SessionRoute path='/healthCareProviderReach' component={HealthCareProviderReach} />
-          <SessionRoute path='/srhrPolicy' component={SrhrPolicy} />
-          <SessionRoute path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails} />
-          <SessionRoute path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails} />
+          <Route path='/' exact={true} component={LoginPage}/>
+          <SessionRoute path='/mainMenu' exact={true} component={MainMenu}/>
+          <SessionRoute path='/srhmPage' component={SrhmMainPage}/>
+          <SessionRoute path='/lsePage' component={LseMainPage}/>
+          <SessionRoute path='/commsPage' component={CommsMainPage}/>
+          <SessionRoute path='/reportNavPage' component={ReportsNav}/>
+          <SessionRoute path='/reportPage' component={ReportMainPage}/>
+          <SessionRoute path='/adminPage' component={AdminMainPage}/>
+          <SessionRoute path='/admin' component={AdminPage}/>
+          <SessionRoute path='/addUser'  component={AddUser}/>
+          <SessionRoute path='/project'  component={ProjectDetails}/>
+          <SessionRoute path='/donor'  component={DonorRegistration}/>
+          <SessionRoute path='/schoolDetails'  component={SchoolDetails}/>
+          <SessionRoute path='/institutionDetails'  component={InstitutionDetail}/>
+          <SessionRoute path='/parentOrganizationRegistration'  component={ParentOrganizationRegistration}/>
+          <SessionRoute path='/lseTeacherParticipant'  component={ParticipantDetail}/>
+          <SessionRoute path='/srhmGeneralParticipant'  component={GeneralParticipantDetail}/>
+          <SessionRoute path='/srhmAcParticipant'  component={AmplifyChangeParticipantDetail}/>
+          <SessionRoute path='/stakeholderMeetings'  component={StakeholderMeeting}/>
+          <SessionRoute path='/radioAppearanceForm'  component={RadioAppearance}/>
+          <SessionRoute path='/socialMediaDetails'  component={SocialMediaDetail}/>
+          <SessionRoute path='/distributionCommunicationMaterial'  component={DistributionCommunicationMaterial}/>
+          <SessionRoute path='/trainingDetailsCommunications'  component={CommsTrainingDetails}/>
+          <SessionRoute path='/mobileCinemaTheatreDetails'  component={MobileCinemaDetails}/>
+          <SessionRoute path='/oneTouchSensitizationSessionDetails'  component={OneTouchSensitizationDetails}/>
+          <SessionRoute path='/nayaQadamStepDownTraining'  component={NayaQadamStepDownTraining}/>
+          <SessionRoute path='/healthCareProviderReach'  component={HealthCareProviderReach}/>
+          <SessionRoute path='/srhrPolicy' component={SrhrPolicy}/>
+          <SessionRoute path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
+          <SessionRoute path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+          <SessionRoute path='/dashboard' component={DashboardMain}/>
           <SessionRoute path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria} />
           <SessionRoute path='/mtMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation} />
           <SessionRoute path='/parentSessionsForm' component={ParentSessions} />
