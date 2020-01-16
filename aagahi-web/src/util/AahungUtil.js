@@ -343,3 +343,20 @@ export const resetFormState = function (fields, stateObj) {
 
     return stateObj;
 }
+
+/**
+ * Returns distinct values in given JSON data against provided key name
+ * 
+ * @param {*} data 
+ * @param {*} key 
+ */
+export const getUniqueValues = function(data, key) {
+    var uniqueValues = [];
+    for (var i = 0; i < data.length; i++) {
+        if (uniqueValues.indexOf(data[i][key]) === -1) {
+            uniqueValues.push(data[i][key]);
+        }
+    }
+    return uniqueValues;
+}
+

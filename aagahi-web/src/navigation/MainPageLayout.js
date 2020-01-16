@@ -178,6 +178,14 @@ class MainPageLayout extends React.Component {
                                 )}
                             />
 
+                            {/* /dashboard */}
+                            <RequirePrivilege
+                                privilegeName="View Reports Section"
+                                yes={() => (
+                                    <Link to="/dashboard"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold">Dashboard</p></MDBBtn></Link>
+                                )}
+                            />
+
                             {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                         </div>
                     </MDBContainer>
