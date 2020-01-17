@@ -158,7 +158,9 @@ class SrhrPolicy extends React.Component {
                             var radios = document.getElementsByName(element.key.shortName);
 
                             for (let i = 0; i < radios.length; i++) {
-                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                // Edits are painful!!
+                                // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
+                                if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
                                     var indicator = radios[i].id; // e.g "strongly_agree"
                                     var indicatorCode = getIndicatorCode(indicator);
@@ -375,22 +377,12 @@ class SrhrPolicy extends React.Component {
 
         try {
             if (name === "school_id") {
-
-                // this.locationObj = await getLocationByRegexValue(e.shortName);
-                // console.log(this.locationObj);
-                // if (this.locationObj != null && this.locationObj != undefined) {
-                //     this.setState({
-                //         school_name: this.locationObj.locationName
-                //     })
-                // }
-
                 this.setState({
                     school_name: e.locationName
                 })
                 let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
             }
-
         }
         catch (error) {
             console.log(error);
@@ -417,8 +409,31 @@ class SrhrPolicy extends React.Component {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
-                let attrValue = definition.shortname;
                 attributeValue = definition.definitionName;
+
+                if (attrTypeName === "school_sex") {
+                    var isEditAllowed = true;
+                    if(self.state.school_sex !== '' && self.state.school_sex !== undefined) {
+                        if(self.state.school_sex === "Girls")
+                            isEditAllowed = attributeValue === "Boys" ? false : true;
+                        else if (self.state.school_sex === "Boys")
+                            isEditAllowed = attributeValue !== "Boys" ? false : true;
+                        else
+                            isEditAllowed = attributeValue === "Boys" ? false : true;
+                    }
+                    if (!isEditAllowed) {
+                        // Edits are painful!! 
+                        // Handling the case where change of school_sex will have an impact on scoring questions (mhm questions) and eventually the cumulative score
+                        self.setState({
+                            modalHeading: "School can't be changed!",
+                            modalText: 'Selecting a school with a different value for "Classification of School by Sex" then the existing one will impact the scoring questions.',
+                            modal: !self.state.modal,
+                            school_id: {},
+                            school_name: ''
+                        });
+                        return;
+                    }
+                }
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-15 15:00:29
+ * @Last Modified time: 2020-01-17 11:18:49
  */
 
 import { apiUrl } from "../util/AahungUtil.js";
@@ -54,33 +54,6 @@ export const voidData = async function (objectType, uuid, reasonVoided) {
     console.log("DELETE: in voidData() method");
     let result = await voidObject(completeUrl);
     return result;
-}
-
-export const unvoidData = function (objectType, uuid) {
-
-    var resourceName = objectType === "user" ? USER
-        : objectType === "participant" ? PARTICIPANT
-            : objectType === "location" ? LOCATION
-                : objectType === "form" ? FORM_DATA
-                    : objectType === "donor" ? DONOR
-                        : objectType === "project" ? PROJECT
-                            : "";
-    var requestUrl = apiUrl + "/" + resourceName + "/" + uuid;
-    console.log("PATCH: in unvoidData() method");
-    // let result = unvoidObject(requestUrl);
-    unvoidObject(requestUrl)
-    .then(function(result){
-        console.log("printing result in unvoidData")
-        console.log(result)
-        return result;
-    })
-    .catch(function(error) {
-        alert("error occured");
-        return error;
-    })
-    // console.log("printing result in unvoidData")
-    // console.log(result)
-    // return result;
 }
 
 /**
@@ -196,29 +169,6 @@ function voidObject(requestUrl) {
         .catch((error) => {
             console.log(typeof error);
             return error;
-        });
-}
-
-// axios patch is not working
-function unvoidObject(requestUrl) {
-    console.log("in unvoidObject() method");
-    console.log(requestUrl);
-    fetch(requestUrl, {
-        method: 'PATCH',
-        headers: {
-            'Authorization': sessionStorage.getItem('auth_header'),
-        }
-    })
-        .then(function(response) {
-            response.json().then(function(json) {
-                // the status was ok and there is a json body
-                return Promise.resolve({ json: json, response: response });
-            }).catch(function(error) {
-                // the status was ok but there is no json body
-                console.log("printing error >>>>>>>")
-                console.log(response.status);
-                return Promise.resolve({ response: response });
-            });
         });
 }
 
