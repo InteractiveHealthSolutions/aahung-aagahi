@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-15 17:03:41
+ * @Last Modified time: 2020-01-17 13:35:54
  */
 
 
@@ -276,13 +276,18 @@ class PrimaryMonitoring extends React.Component {
                                     : ""));
                     }
 
+                    this.isCsa = this.state.program_type === "csa" ? true : false;
+                    this.isGender = this.state.program_type === "gender" ? true : false;
+
                     let self = this;
                     this.fetchedForm.data.map(function (element, i) {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
                             var radios = document.getElementsByName(element.key.shortName);
                             for (let i = 0; i < radios.length; i++) {
-                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                // Edits are painful!!
+                                // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
+                                if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
                                     var indicator = radios[i].id; // e.g "strongly_agree"
                                     var indicatorCode = getIndicatorCode(indicator);
@@ -308,9 +313,6 @@ class PrimaryMonitoring extends React.Component {
                     let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
                     this.autopopulateFields(attributes);
                     this.editUpdateDisplay();
-
-                    this.isCsa = this.state.program_type === "csa" ? true : false;
-                    this.isGender = this.state.program_type === "gender" ? true : false;
                 }
                 else {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
@@ -925,8 +927,8 @@ class PrimaryMonitoring extends React.Component {
                 })
             }
 
-            var cumulativeScore = parseInt(this.fctScore) + parseInt(this.genderMgmtScore);
-            var cumulativeTotalScore = parseInt(this.fctTotalScore) + parseInt(this.genderMgmtTotalScore);
+            var cumulativeScore = parseInt(this.genderFctScore) + parseInt(this.genderMgmtScore);
+            var cumulativeTotalScore = parseInt(this.genderFctTotalScore) + parseInt(this.genderMgmtTotalScore);
             var cumulativePercent = (cumulativeScore / cumulativeTotalScore) * 100;
             cumulativePercent = cumulativePercent.toFixed(2);
             this.setState({
@@ -1399,14 +1401,14 @@ class PrimaryMonitoring extends React.Component {
         const csaResourcesRequiredStyle = this.isCsaResourcesRequired ? {} : { display: 'none' };
         const genderResourcesRequiredStyle = this.isGenderResourcesRequired ? {} : { display: 'none' };
 
-        const csaOtherResourcesReqStyle = this.isCsaOtherResourcesRequired ? {} : { display: 'none' };
-        const genderOtherResourcesReqStyle = this.isGenderOtherResourcesRequired ? {} : { display: 'none' };
+        const csaOtherResourcesReqStyle = this.isCsaOtherResourcesRequired && this.isCsaResourcesRequired ? {} : { display: 'none' };
+        const genderOtherResourcesReqStyle = this.isGenderOtherResourcesRequired && this.isGenderResourcesRequired ? {} : { display: 'none' };
 
         const csaResourcesDeliveredStyle = this.isCsaResourcesDelivered ? {} : { display: 'none' };
         const genderResourcesDeliveredStyle = this.isGenderResourcesDelivered ? {} : { display: 'none' };
 
-        const csaOtherResourcesDelStyle = this.isCsaOtherResourcesDelivered ? {} : { display: 'none' };
-        const genderOtherResourcesDelStyle = this.isGenderOtherResourcesDelivered ? {} : { display: 'none' };
+        const csaOtherResourcesDelStyle = this.isCsaOtherResourcesDelivered && this.isCsaResourcesDelivered ? {} : { display: 'none' };
+        const genderOtherResourcesDelStyle = this.isGenderOtherResourcesDelivered && this.isGenderResourcesDelivered ? {} : { display: 'none' };
 
         const { selectedOption } = this.state;
 
@@ -1661,7 +1663,6 @@ class PrimaryMonitoring extends React.Component {
 
                                                                                 <Col >
                                                                                     <FormGroup check inline>
-                                                                                        {/* TODO: fill UUIDs */}
                                                                                         <Label check>
                                                                                             <Input type="radio" name="csa_flashcard_objective" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "csa_flashcard_objective")} />{' '}
                                                                                             Strongly Disagree
@@ -2262,7 +2263,7 @@ class PrimaryMonitoring extends React.Component {
                                                                     <Col md="8" style={exitTierStyle}>
                                                                         <FormGroup>
                                                                             <Label for="csa_mt_count">Number of Master Trainers leading CSA program</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
-                                                                            <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => { this.inputChange(e, "csa_mt_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
+                                                                            <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => { this.inputChange(e, "csa_mt_count") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -3478,7 +3479,7 @@ class PrimaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label>
-                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} ></Input>
+                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">

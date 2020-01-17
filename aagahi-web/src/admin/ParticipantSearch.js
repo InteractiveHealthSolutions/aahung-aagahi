@@ -86,6 +86,7 @@ class ParticipantSearch extends React.Component {
         };
         this.closeModal = this.closeModal.bind(this);
         this.closeUnvoidModal = this.closeUnvoidModal.bind(this);
+        this.unvoidObject = this.unvoidObject.bind(this);
         this.errors = {};
         this.selectedParticipantId = '';
     }
