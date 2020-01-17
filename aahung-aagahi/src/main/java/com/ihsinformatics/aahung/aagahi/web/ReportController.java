@@ -634,7 +634,7 @@ public class ReportController extends BaseController {
 	    query.append("date('" + from + "') ");
 	    query.append("and ");
 	    query.append("date('" + to + "') ");
-	    query.append("and fd.form_type_id = 17 ");
+	    query.append("and fd.form_type_id = 15 ");
 	    if (stateProvince != null) {
 		query.append("and l.state_province = '" + stateProvince + "' ");
 	    }
