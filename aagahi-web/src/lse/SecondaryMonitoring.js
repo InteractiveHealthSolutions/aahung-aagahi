@@ -129,7 +129,7 @@ class SecondaryMonitoring extends React.Component {
         this.exitTier = false;
 
         this.formTypeId = 0;
-        this.lsbeRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name",
+        this.lsbeRequiredFields = ["date_start", "school_id", "monitor", "class_sex", "participant_name",
             "participant_id", "secondary_grade", "class_students", "class_duration", "lsbe_level_monitored", "lsbe_chapter_revision",
             "lsbe_prompts", "lsbe_chapter_objective", "lsbe_teacher_understanding", "lsbe_material_preparation", "lsbe_teacher_preparation",
             "lsbe_activity_time_allotment", "lsbe_subject_comfort", "lsbe_nonjudmental_tone", "lsbe_impartial_opinions", "lsbe_discussion_probes",
@@ -226,7 +226,9 @@ class SecondaryMonitoring extends React.Component {
                         if (dataType === 'int') {
                             var radios = document.getElementsByName(element.key.shortName);
                             for (let i = 0; i < radios.length; i++) {
-                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                // Edits are painful!!
+                                // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
+                                if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
                                     var indicator = radios[i].id; // e.g "strongly_agree"
                                     var indicatorCode = getIndicatorCode(indicator);
@@ -811,7 +813,6 @@ class SecondaryMonitoring extends React.Component {
                             dataObj.lsbe_beyond_guide_new.values.push(String(this.state.lsbe_beyond_guide_new[i].value));
                         }
                     }
-
                     continue;
                 }
 

@@ -229,7 +229,9 @@ export const loadFormState = function (formDataObj, stateObj) {
 
     let self = this;
     formDataObj.data.map(function (element, i) {
-            
+            // if(element.key.shortName === "program_type") {
+            //     alert(element.value);
+            // }
         switch ((element.dataType).toLowerCase()) { 
             case 'string':
                 if (moment(element.value, 'LT', true).isValid()) { // just because of single case (for time) in Radio Appearance form
