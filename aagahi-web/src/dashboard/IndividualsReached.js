@@ -52,7 +52,7 @@ class IndividualsReached extends React.Component {
 
     render() {
         const seriesVisible = this.state.seriesVisible;
-        const activityType = getUniqueValues(this.data, 'activity_type');
+        const activityType = ['Health Care Provider Reach','General Step Down Training','Amplify Change Step Down'];
        
         let HCPTrained = [
             { name: 'Male', data: filterData(this.data, 'health_care_provider_reach','Sindh', 'male_count')},

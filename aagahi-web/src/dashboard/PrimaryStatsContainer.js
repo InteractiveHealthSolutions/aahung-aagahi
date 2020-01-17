@@ -27,21 +27,12 @@ export const PrimaryStatsContainer = () => (
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="col-lg-3 col-md-8 mb-6">
                 <div class="media white z-depth-1 rounded">
-                    <i class="fas fa-chart-pie fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
+                    <i class="fas fa-users fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
                     <div class="media-body p-1">
                         <p class="text-uppercase text-muted mb-1"><small>users</small></p>
                         <h5 class="font-weight-bold mb-0">{usersCount}</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="media white z-depth-1 rounded">
-                    <i class="fas fa-chart-pie fa-lg teal z-depth-1 p-4 rounded-left text-white mr-3"></i>
-                    <div class="media-body p-1">
-                        <p class="text-uppercase text-muted mb-1"><small>schools</small></p>
-                        <h5 class="font-weight-bold mb-0">{schoolCount}</h5>
                     </div>
                 </div>
             </div>

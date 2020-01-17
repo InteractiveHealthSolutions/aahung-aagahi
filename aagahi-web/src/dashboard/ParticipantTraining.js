@@ -92,7 +92,7 @@ class ParticipantTraining extends React.Component {
 
        
         
-        const colors = ['red', 'blue', 'orange', 'purple'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
 
 
         const crosshair = {

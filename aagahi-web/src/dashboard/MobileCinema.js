@@ -78,7 +78,7 @@ class MobileCinema extends React.Component {
             
         ];
         
-        const colors = ['#DC143C', '#FFA500'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#2F4F4F', '#d2d4d6'];
 
 
         const crosshair = {

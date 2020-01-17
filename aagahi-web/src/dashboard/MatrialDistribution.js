@@ -63,7 +63,7 @@ class MaterialDistribution extends React.Component {
         ];
         
         
-        const colors = ['red', 'blue','greeb'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32'];
 
 
         const crosshair = {

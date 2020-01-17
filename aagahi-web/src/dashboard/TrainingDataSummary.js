@@ -53,7 +53,8 @@ class TrainingDataSummary extends React.Component {
 
     render() {
         const seriesVisible = this.state.seriesVisible;
-        let trainingType = getUniqueValues(this.data, 'training_type');
+        let trainingType = ['Initial Training', 'MT Training', 'Refresher Training', 'Roll Out Step Down'];
+
 
         let initialTraining = [
             { name: 'Punjab', data: filterData(this.data, 'INITIAL_TRAINING', 'Punjab') },
