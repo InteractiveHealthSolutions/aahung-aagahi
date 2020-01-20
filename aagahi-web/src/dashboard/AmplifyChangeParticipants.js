@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { amplifyChangeParticipantData } from '../service/ReportService';
@@ -53,6 +54,8 @@ class AmplifyChangeParticipant extends React.Component {
     }
 
     render() {
+
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
 
@@ -92,6 +95,7 @@ class AmplifyChangeParticipant extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {studentData.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Student'}}

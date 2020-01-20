@@ -26,6 +26,8 @@ import {
     ChartLegend,
     ChartSeries,
     ChartTitle,
+    ChartTooltip,
+    ChartSeriesItemTooltip,
     ChartSeriesItem,
     ChartCategoryAxis,
     ChartCategoryAxisItem,
@@ -58,6 +60,8 @@ class TeachersTrainedSummaryChart extends React.Component {
     }
 
     render() {
+        const primaryToolTipRender = ({ point }) => (`Primary: ${point.value}`);
+        const secondaryToolTipRender = ({ point }) => (`Secondary: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let programs = getUniqueValues(this.data, 'program');
 
@@ -94,6 +98,7 @@ class TeachersTrainedSummaryChart extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={primaryToolTipRender} />
                 <ChartSeries>
                 {primary.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
@@ -103,6 +108,7 @@ class TeachersTrainedSummaryChart extends React.Component {
                     {secondary.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
                             data={item.data} visible={seriesVisible[index]} gap={2}>
+                            <ChartSeriesItemTooltip render={secondaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>

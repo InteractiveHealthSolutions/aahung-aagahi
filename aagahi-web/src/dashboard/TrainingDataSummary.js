@@ -27,8 +27,9 @@ import {
     ChartLegend,
     ChartSeries,
     ChartTitle,
-    ChartSeriesItem,
+    ChartTooltip,
     ChartSeriesItemTooltip,
+    ChartSeriesItem,
     ChartCategoryAxis,
     ChartCategoryAxisItem,
     ChartValueAxis,
@@ -52,6 +53,12 @@ class TrainingDataSummary extends React.Component {
     }
 
     render() {
+
+        const punjabTooltip = ({ point }) => (`Punjab: ${point.value}`);
+        const sindhTooltip = ({ point }) => (`Sindh: ${point.value}`);
+        const balochistanTooltip = ({ point }) => (`Balochistan: ${point.value}`);
+        const kpTooltip = ({ point }) => (`KP: ${point.value}`);
+        
         const seriesVisible = this.state.seriesVisible;
         let trainingType = ['Initial Training', 'MT Training', 'Refresher Training', 'Roll Out Step Down'];
 
@@ -108,6 +115,7 @@ class TrainingDataSummary extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={punjabTooltip} />
                 <ChartSeries>
                     {initialTraining.map((item, index) => (
                         <ChartSeriesItem type="column" 
@@ -118,18 +126,21 @@ class TrainingDataSummary extends React.Component {
                     {mtTraining.map((item, index) => (
                         <ChartSeriesItem type="column" 
                             data={item.data} visible={seriesVisible[index]} >
+                            <ChartSeriesItemTooltip render={sindhTooltip} />
                         </ChartSeriesItem>
                     ))}
 
                     {refresherTraining.map((item, index) => (
                         <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
+                            <ChartSeriesItemTooltip render={balochistanTooltip} />
                         </ChartSeriesItem>
                     ))}
                     
                     {rollOutStepDown.map((item, index) => (
                         <ChartSeriesItem type="column" 
                             data={item.data} visible={seriesVisible[index]}>
+                            <ChartSeriesItemTooltip render={kpTooltip} />
                         </ChartSeriesItem>
                     ))}
                     

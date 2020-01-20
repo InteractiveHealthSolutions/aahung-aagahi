@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { radioLiveCallData } from '../service/ReportService';
@@ -53,6 +54,7 @@ class RadioLiveCall extends React.Component {
     }
 
     render() {
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         let dayName = getUniqueValues(this.data, 'day_name');
@@ -105,6 +107,7 @@ class RadioLiveCall extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip}/>
                 <ChartSeries>
                     {listenerData.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'listener_count' }}

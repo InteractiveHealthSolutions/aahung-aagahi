@@ -88,7 +88,7 @@ class DashboardMain extends React.Component {
                                 </Form>
                             </Navbar>
                         <div className="row">
-                        <div class="col-md-12">
+                        <div class="col-md-10" style={{display: 'contents'}}>
                             <PrimaryStatsContainer />
                         </div>
                         </div>

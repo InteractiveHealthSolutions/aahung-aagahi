@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { individualReachData } from '../service/ReportService';
@@ -51,6 +52,9 @@ class IndividualsReached extends React.Component {
     }
 
     render() {
+
+        const defaultTooptip = ({ point }) => (`${point.series.name}: ${point.value}`);
+
         const seriesVisible = this.state.seriesVisible;
         const activityType = ['Health Care Provider Reach','General Step Down Training','Amplify Change Step Down'];
        
@@ -95,6 +99,7 @@ class IndividualsReached extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooptip} />
                 <ChartSeries>
                     {HCPTrained.map((item, index) => (
                         <ChartSeriesItem type="column"
