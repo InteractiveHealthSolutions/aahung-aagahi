@@ -691,3 +691,7 @@ code {
 body {
   font-family: 'Noto Sans', sans-serif;
 }
+
+.container {
+    max-width: 1333px !important;
+}
