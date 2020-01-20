@@ -28,6 +28,7 @@ import {
     ChartSeries,
     ChartTitle,
     ChartSeriesItem,
+    ChartTooltip,
     ChartSeriesItemTooltip,
     ChartCategoryAxis,
     ChartCategoryAxisItem,
@@ -53,6 +54,9 @@ class ParticipantTraining extends React.Component {
     }
 
     render() {
+
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         const participants = getUniqueValues(this.data, 'participant_type');
@@ -92,7 +96,7 @@ class ParticipantTraining extends React.Component {
 
        
         
-        const colors = ['red', 'blue', 'orange', 'purple'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
 
 
         const crosshair = {
@@ -106,7 +110,7 @@ class ParticipantTraining extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Pparticipant Training" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Participant Training" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={participants} startAngle={45}>
@@ -115,6 +119,7 @@ class ParticipantTraining extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {studentData.map((item, index) => (
                         <ChartSeriesItem type="bar" stack={{ group: 'Student'}}

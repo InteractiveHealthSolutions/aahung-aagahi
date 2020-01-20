@@ -20,7 +20,6 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import moment from 'moment';
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React, { Fragment } from "react";
@@ -28,13 +27,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllDonors } from "../service/GetService";
-import { saveProject } from "../service/PostService";
+import { getAllDonors, getProjectByRegexValue } from "../service/GetService";
+import { saveProject, updateProject } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-
-
 
 class ProjectDetails extends React.Component {
 
@@ -67,7 +65,8 @@ class ProjectDetails extends React.Component {
         this.editMode = false;
         this.projectId = '';
         this.requiredFields = ["donor_id"];
-
+        this.editMode = false;
+        this.fetchedProject = {};
     }
 
     componentDidMount() {
@@ -83,24 +82,53 @@ class ProjectDetails extends React.Component {
      * Loads data when the component is mounted
      */
     loadData = async () => {
+
         this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+        this.setState({
+            loading: true,
+            loadingMsg: 'Fetching Data...'
+        })
         try {
 
-            if (!this.editMode) {
-                let donorArray = await getAllDonors();
+            let donorArray = await getAllDonors();
 
-                if (donorArray != null && donorArray.length > 0) {
+            if (donorArray != null && donorArray.length > 0) {
+                this.setState({
+                    donors: donorArray
+                })
+            }
+
+            if (this.editMode) {
+                this.fetchedProject = await getProjectByRegexValue(String(this.props.location.state.projectId), true);
+                if (this.fetchedProject !== null) {
+                    this.projectId = this.fetchedProject.shortName;
                     this.setState({
-                        donors: donorArray
+                        project_name: this.fetchedProject.projectName,
+                        donor_id: { label: this.fetchedProject.donor.shortName, value: this.fetchedProject.donor.donorId, id: this.fetchedProject.donor.donorId },
+                        donor_name: this.fetchedProject.donor.donorName,
+                        grant_start_date: moment(this.fetchedProject.dateGrantBegin).format('YYYY-MM-DD'),
+                        grant_end_date: moment(this.fetchedProject.dateGrantEnd).format('YYYY-MM-DD')
                     })
                 }
+                else {
+                    throw new Error("Unable to get project details. Please see error logs for more details.");
+                }
             }
-            else {
-                // fill project detail form for editing
-            }
+
+            this.setState({
+                loading: false
+            })
         }
         catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -151,28 +179,22 @@ class ProjectDetails extends React.Component {
 
         event.preventDefault();
         if (this.handleValidation()) {
-
-            console.log("in submission");
-
             this.setState({
-                // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
-            this.beforeSubmit();
+            if (this.editMode) {
+                this.fetchedProject.projectName = this.state.project_name;
+                this.fetchedProject.shortName = this.projectId;
+                var donorObject = {};
+                donorObject['donorId'] = this.state.donor_id.id;
+                this.fetchedProject.donor = donorObject;
+                this.fetchedProject.dateGrantBegin = this.state.grant_start_date;
+                this.fetchedProject.dateGrantEnd = this.state.grant_end_date;
+                delete this.fetchedProject.createdBy;
+                delete this.fetchedProject.updatedBy;
 
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = {};
-            var donorObject = {};
-            donorObject['donorId'] = this.state.donor_id.id;
-            jsonData['donor'] = donorObject;
-            jsonData['projectName'] = data.get('project_name');
-            jsonData['shortName'] = this.projectId;
-            jsonData['dateGrantBegin'] = this.state.grant_start_date;
-            jsonData['dateGrantEnd'] = this.state.grant_end_date;
-
-            console.log(jsonData);
-            saveProject(jsonData)
+                updateProject(this.fetchedProject, this.fetchedProject.uuid)
                 .then(
                     responseData => {
                         console.log(responseData);
@@ -182,20 +204,16 @@ class ProjectDetails extends React.Component {
                                 loading: false,
                                 modalHeading: 'Success!',
                                 okButtonStyle: { display: 'none' },
-                                modalText: 'Data saved successfully.',
+                                modalText: 'Data updated successfully.',
                                 modal: !this.state.modal
                             });
 
-                            document.getElementById("projectForm").reset();
-                            // this.messageForm.reset();
-                            this.resetForm();
+                            this.resetForm(this.requiredFields);
                         }
                         else if (String(responseData).includes("Error")) {
-
                             var submitMsg = '';
-                            submitMsg = "Unable to submit project. \
-                        " + String(responseData);
-
+                            submitMsg = "Unable to update Donor details. \
+                            " + String(responseData);
                             this.setState({
                                 loading: false,
                                 modalHeading: 'Fail!',
@@ -207,6 +225,57 @@ class ProjectDetails extends React.Component {
                     }
                 );
 
+            }
+            else {
+                this.beforeSubmit();
+
+                const data = new FormData(event.target);
+                console.log(data);
+                var jsonData = {};
+                var donorObject = {};
+                donorObject['donorId'] = this.state.donor_id.id;
+                jsonData['donor'] = donorObject;
+                jsonData['projectName'] = data.get('project_name');
+                jsonData['shortName'] = this.projectId;
+                jsonData['dateGrantBegin'] = this.state.grant_start_date;
+                jsonData['dateGrantEnd'] = this.state.grant_end_date;
+
+                console.log(jsonData);
+                saveProject(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                document.getElementById("projectForm").reset();
+                                // this.messageForm.reset();
+                                this.resetForm();
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit project. \
+                            " + String(responseData);
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
+            }
         }
     }
 
@@ -310,7 +379,6 @@ class ProjectDetails extends React.Component {
     }
 
     render() {
-
         var formNavVisible = false;
         if (this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false;
@@ -399,9 +467,7 @@ class ProjectDetails extends React.Component {
                                                                             <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => { this.inputChange(e, "project_id") }} maxLength="200" placeholder="ID" disabled required />
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
-
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
@@ -429,19 +495,7 @@ class ProjectDetails extends React.Component {
                                                                     </div>
                                                                 </Col>
                                                             </Row>
-
-                                                            <Row>
-                                                                <Col    md="12" >
-                                                                <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
-                                                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                                                                        <StronglyDisagreeCheckBox id="disagree" name="abc" value="1" labelText="Strongly Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <DisagreeCheckBox id="agree" name="abc" value="1" labelText="Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <NeutralCheckBox id="agree" name="abc" value="1" labelText="Neither Agree nor Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <AgreeCheckBox id="agree" name="abc" value="1" labelText="Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <StronglyAgreeCheckBox id="agree" name="abc" value="1" labelText="Strongly Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                    </div>
-                                                                </Col>
-                                                            </Row> */}
+                                                             */}
 
                                                             </TabPane>
                                                         </TabContent>
@@ -450,16 +504,10 @@ class ProjectDetails extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
-
                                                 <CardHeader>
-
                                                     <Row>
                                                         <Col md="3">
                                                         </Col>
@@ -468,45 +516,23 @@ class ProjectDetails extends React.Component {
                                                         <Col md="2">
                                                         </Col>
                                                         <Col md="2">
-                                                            <LoadingIndicator loading={this.state.loading} />
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                            {/* </div> */}
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-                                    {/* </div> */}
-                                    {/* </div> */}
-
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }

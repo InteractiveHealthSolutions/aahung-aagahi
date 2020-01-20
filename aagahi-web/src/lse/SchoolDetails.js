@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-15 16:58:04
+ * @Last Modified time: 2020-01-20 11:44:25
  */
 
 
@@ -159,46 +159,49 @@ class SchoolDetails extends React.Component {
             if (this.editMode) {
 
                 this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
-                console.log("fetched location id is .................................");
-                console.log(this.fetchedLocation.locationId);
-                this.schoolId = this.fetchedLocation.shortName;
-                var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
-                var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
-                this.setState({
-                    school_name: this.fetchedLocation.locationName,
-                    province: { "value": province.value, "label": province.label },
-                    district: { "value": district.value, "label": district.label }
-
-                })
-                var fetchedParent = this.fetchedLocation.parentLocation;
-                var parent = {};
-                if (fetchedParent != undefined || fetchedParent != null) {
-                    parent = { "id": fetchedParent.locationId, "value": fetchedParent.locationName, "uuid": fetchedParent.uuid, "shortName": fetchedParent.shortName, "label": fetchedParent.shortName }
+                if(this.fetchedLocation !== null) {
+                    console.log("fetched location id is .................................");
+                    console.log(this.fetchedLocation.locationId);
+                    this.schoolId = this.fetchedLocation.shortName;
+                    var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                    var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
                     this.setState({
-                        parent_organization_id: parent,
-                        parent_organization_name: fetchedParent.locationName
+                        school_name: this.fetchedLocation.locationName,
+                        province: { "value": province.value, "label": province.label },
+                        district: { "value": district.value, "label": district.label }
+
                     })
-                }
+                    var fetchedParent = this.fetchedLocation.parentLocation;
+                    var parent = {};
+                    if (fetchedParent != undefined || fetchedParent != null) {
+                        parent = { "id": fetchedParent.locationId, "value": fetchedParent.locationName, "uuid": fetchedParent.uuid, "shortName": fetchedParent.shortName, "label": fetchedParent.shortName }
+                        this.setState({
+                            parent_organization_id: parent,
+                            parent_organization_name: fetchedParent.locationName
+                        })
+                    }
 
-                this.setState({
-                    point_person_name: this.fetchedLocation.primaryContactPerson,
-                    point_person_contact: this.fetchedLocation.primaryContact
-                })
-
-                if (this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
                     this.setState({
-                        point_person_email: this.fetchedLocation.email
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
                     })
-                }
-                if (this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
-                    this.isExtension = true;
-                    this.setState({
-                        extension: this.fetchedLocation.extension
-                    })
-                }
 
-                this.autopopulateFields(this.fetchedLocation.attributes);
-
+                    if (this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    if (this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
+                        this.isExtension = true;
+                        this.setState({
+                            extension: this.fetchedLocation.extension
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+                }
+                else {
+                    throw new Error("Unable to get school details. Please see error logs for more details.");
+                }
             }
             this.setState({
                 loading: false
@@ -206,6 +209,14 @@ class SchoolDetails extends React.Component {
         }
         catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -285,14 +296,9 @@ class SchoolDetails extends React.Component {
                     if ('projectId' in attrValueObj[0]) {
 
                         attrValueObj.forEach(async function (obj) {
-
                             // definitionArr contains only one item because filter will return only one definition)
                             let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
-                            // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
-
-                            // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
                             arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
-
                         })
                     }
 

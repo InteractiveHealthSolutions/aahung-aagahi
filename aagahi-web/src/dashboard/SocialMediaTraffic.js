@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { socialMediaTrafficData } from '../service/ReportService';
@@ -53,6 +54,8 @@ class SocialMediaTraffic extends React.Component {
     }
 
     render() {
+
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         let dayName = getUniqueValues(this.data, 'day_name');
@@ -94,6 +97,7 @@ class SocialMediaTraffic extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip}/>
                 <ChartSeries>
                     {myData.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: dayNameStr}}

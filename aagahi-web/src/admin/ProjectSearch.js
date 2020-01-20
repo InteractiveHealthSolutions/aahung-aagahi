@@ -333,7 +333,7 @@ class ProjectSearch extends React.Component {
                             <MDBCol md="3">
                                 <h7>Search By (Project ID, Name, Donor)</h7>
                             </MDBCol>
-                            <MDBCol md="7">
+                            <MDBCol md="8">
                                 <div className="searchFilterDiv">
                                     <CustomRadioButton id="project" name="filter" value={this.state.project} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "project")} />
                                     <Input className="searchFilter" id="project_name" placeholder="Project Name or ID" value={this.state.project_name} onChange={(e) => { this.inputChange(e, "project_name") }} disabled={this.state.disableProject} />

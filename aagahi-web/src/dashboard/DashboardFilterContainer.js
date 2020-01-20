@@ -23,6 +23,8 @@
 import React from "react";
 import { Button } from '@progress/kendo-react-buttons';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import DatePicker from "react-datepicker";
+
 
 const provinces = [
     { label: 'Unknown', value: 1 },
@@ -43,15 +45,22 @@ class DashboardFilterContainer extends React.Component {
         // TODO
     }
 
+    handleDate(date, name) {
+        this.setState({
+          [name]: date
+        });
+      };
+    
+
     render() {
         return (
             <div class="card">
-                <h5 class="card-header h5">Filter Data</h5>
+                <h5 class="card-header h5" style={{color:'black'}}>Filter Data</h5>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-2">Province</div>
-                        <div class="col-sm-2">From date</div>
-                        <div class="col-sm-2">To date</div>
+                        <div class="col-sm-2" style={{color:'black'}}>Province</div>
+                        <div class="col-sm-2" style={{color:'black'}}>From date</div>
+                        <div class="col-sm-2" style={{color:'black'}}>To date</div>
                         <div class="col-sm-2"></div>
                     </div>
                     <div class="row">
@@ -59,10 +68,26 @@ class DashboardFilterContainer extends React.Component {
                             <ReactMultiSelectCheckboxes multiple="true" options={provinces} />
                         </div>
                         <div class="col-md-2">
-                            <input placeholder="Starting date" type="text" id="startingDate" class="form-control datepicker" />
+                        <DatePicker className="dateBox"
+                                //   selected={this.state.start_date}
+                                //   onChange={(date) => this.handleDate(date, "start_date")}
+                                //   selectsStart
+                                //   startDate={this.state.start_date}
+                                //   endDate={this.state.end_date}
+                                  placeholderText="Start Date"
+                                  id="startingDate"
+                                />
                         </div>
                         <div class="col-md-2">
-                            <input placeholder="Ending date" type="text" id="endingDate" class="form-control datepicker" />
+                        <DatePicker className="dateBox"
+                                //   selected={this.state.start_date}
+                                //   onChange={(date) => this.handleDate(date, "end_date")}
+                                //   selectsStart
+                                //   startDate={this.state.start_date}
+                                //   endDate={this.state.end_date}
+                                  placeholderText="End Date"
+                                  id="endingDate"
+                                />
                         </div>
                         <div class="col-md-2">
                             <Button onClick={this.handleRefresh}>Refresh</Button>

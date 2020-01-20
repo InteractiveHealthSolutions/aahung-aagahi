@@ -25,10 +25,12 @@ import {
     Chart,
     ChartLegend,
     ChartSeries,
+    ChartTooltip,
     ChartTitle,
     ChartSeriesItem,
     ChartCategoryAxis,
     ChartCategoryAxisItem,
+    ChartSeriesItemTooltip,
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
@@ -49,6 +51,8 @@ class PartnerSchoolsChart extends React.Component {
     }
 
     render() {
+        const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
+        const secondaryToolTipRender = ({ point }) => (`Secondary - ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let provinces = getUniqueValues(this.data, 'state_province');
         let primary = [
@@ -73,7 +77,7 @@ class PartnerSchoolsChart extends React.Component {
 
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }} onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Partner Schools by Date (Primary-Secondary)" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Partner Schools Geographic Summary" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" orientation="horizontal" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={provinces} startAngle={45}>
@@ -82,15 +86,18 @@ class PartnerSchoolsChart extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip/>
                 <ChartSeries>
                     {primary.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
                             data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                            <ChartSeriesItemTooltip render={primaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
                     {secondary.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
                             data={item.data} visible={seriesVisible[index]} gap={2}>
+                            <ChartSeriesItemTooltip render={secondaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
 

@@ -64,7 +64,7 @@ class DonorSearch extends React.Component {
                     headerName: "Unvoid",
                     template: `<i class="fas fa-redo"></i>`
                 }
-            ],
+                ],
                 rowData: []
             },
             donor_shortname: '',  // widget IDs (and their states) are with underscore notation
@@ -304,7 +304,6 @@ class DonorSearch extends React.Component {
 
     // for autocomplete single select
     async handleChange(e, name) {
-
         this.setState({
             [name]: e
         });
@@ -313,7 +312,6 @@ class DonorSearch extends React.Component {
     render() {
 
         const donorTableDisplay = this.state.hasData ? "block" : "none";
-
         return (
             <div>
                 <MDBCardHeader style={{ backgroundColor: "#025277", color: "white" }}><h5><b>Donor Search</b></h5></MDBCardHeader>
@@ -323,7 +321,7 @@ class DonorSearch extends React.Component {
                             <MDBCol md="3">
                                 <h7>Search By (Donor ID, Name)</h7>
                             </MDBCol>
-                            <MDBCol md="7">
+                            <MDBCol md="8">
                                 <div className="searchFilterDiv">
                                     <CustomRadioButton id="donor_shortname" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "shortname")} />
                                     <Input className="searchFilter" id="donor_shortname" placeholder="Short Name" value={this.state.donor_shortname} onChange={(e) => { this.inputChange(e, "donor_shortname") }} disabled={this.state.disableShortname} />

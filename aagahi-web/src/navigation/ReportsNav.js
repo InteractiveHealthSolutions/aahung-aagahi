@@ -18,6 +18,7 @@ import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location } fro
 import { getReportByComponent, getReportByName } from "../util/ReportsListUtil.js";
 var serverAddress = apiUrl;
 
+
 class ReportsNav extends Component {
 
   constructor(props) {
@@ -490,7 +491,7 @@ class ReportsNav extends Component {
                   <MDBNavbarBrand>
                     <strong className="white-text">Aahung - Reports Dashboard</strong>
                   </MDBNavbarBrand>
-                  <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00", marginLeft: "63%" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+                  <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00", marginLeft: "70%" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
                 </MDBNavbar>
                 <MDBContainer id="containerID">
                   <MDBRow>
@@ -576,7 +577,7 @@ class ReportsNav extends Component {
 
                     <MDBCol md="8" >
 
-                      <MDBTable>
+                      <MDBTable style={{marginLeft: '15%'}}>
                         <MDBTableBody>
                           <tr>
                             <td><Input type="select" id="viewAs" style={{ width: "18rem", marginLeft: "27rem" }} value={this.state.view_as} onChange={(e) => this.valueChange(e, "view_as")} className="form-control" disabled={this.state.isDumps}>
@@ -771,7 +772,7 @@ class ReportsNav extends Component {
                         <Select id="form_type" name="form_type" value={this.state.form_type} styles={{ fontWeight: '600' }} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} required />
                                     </td>
 
-                                    <td><br /><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={this.downloadFormData}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
+                                    <td><br /><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={this.downloadFormData} style={{marginLeft: '5%'}} >Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
                                   </tr>
                                   <tr className="textWeight">
                                     <td>Users</td>

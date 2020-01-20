@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { materialDistributionData } from '../service/ReportService';
@@ -52,6 +53,7 @@ class MaterialDistribution extends React.Component {
     }
 
     render() {
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const distributions = getUniqueValues(this.data, 'distribution_location');
 
@@ -63,7 +65,7 @@ class MaterialDistribution extends React.Component {
         ];
         
         
-        const colors = ['red', 'blue','greeb'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32'];
 
 
         const crosshair = {
@@ -86,6 +88,7 @@ class MaterialDistribution extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip}/>
                 <ChartSeries>
                     {chartData.map((item, index) => (
                         <ChartSeriesItem type="bar"

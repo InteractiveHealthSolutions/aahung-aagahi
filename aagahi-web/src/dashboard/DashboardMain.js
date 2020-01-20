@@ -25,6 +25,7 @@ import '../css/dashboard.css';
 import 'bootstrap-4-grid/css/grid.min.css';
 import { Button } from '@progress/kendo-react-buttons';
 import { savePDF } from '@progress/kendo-react-pdf';
+import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBCol, MDBContainer, MDBIcon, MDBMask, MDBNav, MDBNavbar, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBRow, MDBTabContent, MDBTable, MDBTableBody, MDBTableHead, MDBTabPane, MDBView } from "mdbreact";
 import '@progress/kendo-theme-material/dist/all.css';
 import { PieChartContainer, GridContainer } from './DashboardDataContainer';
 import { PrimaryStatsContainer } from './PrimaryStatsContainer';
@@ -73,129 +74,101 @@ class DashboardMain extends React.Component {
 
     render() {
         return (
-            <div className="bootstrap-wrapper">
-                 <Navbar bg="dark" variant="dark">
-                <Navbar.Brand href="#home">Aagahi Dashboard</Navbar.Brand>
-                    <Nav className="mr-auto">
-                        
-                    </Nav>
-                    <Form inline>
-                        <Button variant="outline-info" onClick={this.handlePDFExport}>Export PDF</Button>
-                    </Form>
-                </Navbar>
-
-                <div className="app-container container" ref={(el) => this.appContainer = el}>
-                    {/* <div className="row">
-                        { <div class="col-md-6">
-                            <h1>Aagahi Dashboard</h1>
-                        </div> }
-                        <div class="col-md-4">
-                            <Button >Export PDF</Button>
-                        </div>
-                    </div> */}
-                    <div className="row">
-                    <div class="col-md-12">
+            <div id="apppage2">
+                <MDBView>
+                    <MDBMask className="gradient">
+                        <div>
+                        <div className="bootstrap-wrapper">
+                            <Navbar style={{backgroundColor:"rgba(82, 42, 113, 1)"}}>
+                            <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
+                                <Nav className="mr-auto"></Nav>
+                                <Form inline>
+                                    {/* <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button> */}
+                                    <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+                                </Form>
+                            </Navbar>
+                        <div className="row">
+                        <div class="col-md-10" style={{display: 'contents'}}>
                             <PrimaryStatsContainer />
                         </div>
-                    </div>
-
-                    <TabStrip selected={this.state.selected} onSelect={this.handleSelect}>
-                        <TabStripTab title="LSE">
-                        <div className="row">
-                            <h1>-LSE</h1>
                         </div>
 
-                    <div className="row">
-                        <DashboardFilterContainer />
-                    </div>
-
-
-                    <div class="component-container">
-                        <div class="row">
-                            <div class="col">
-                                <PartnerSchoolsChart />
-                            </div>
-                            <div class="col">
-                                <PartnerSchoolsByYearChart />
-                            </div>
-                            <div class="w-100">
-                            <div class="col">
-                                <TeachersTrainedSummaryChart />
-                            </div>
-                            </div>
-                            <div class="col">
-                                <TrainingDataSummary />
-                            </div>
-                            <div class="col">
-                                <ExitPlanning />
-                            </div>
-                            <div class="w-100"></div>
-                            <div class="col">
-                                <GridContainer />
-                            </div>
-                        </div>
-                    </div>
+                    <TabStrip style={{color: "white", fontWeight: "bold", width: "100%;"}} selected={this.state.selected} onSelect={this.handleSelect}>
+                        <TabStripTab style={{width:"33%"}} title="LSE">
+                            <DashboardFilterContainer />
+                                <div class="component-container">
+                                    <div class="row">
+                                        <div class="col" style={{marginBottom: '12px'}}>
+                                            <PartnerSchoolsChart />
+                                        </div>
+                                        <div class="col" style={{marginBottom: '12px'}}>
+                                            <PartnerSchoolsByYearChart />
+                                        </div>
+                                        <div class="w-100">
+                                            <div class="col" style={{marginBottom: '12px'}}>
+                                                <TeachersTrainedSummaryChart />
+                                            </div>
+                                        </div>
+                                        <div class="col" style={{marginBottom: '12px'}}>
+                                            <TrainingDataSummary />
+                                        </div>
+                                        <div class="col" style={{marginBottom: '12px'}}>
+                                            <ExitPlanning />
+                                        </div>
+                                    </div>
+                                </div>
                         </TabStripTab>
-                        <TabStripTab title="SRHM" style={{width: '100%'}}>
-                            
-                        <div class="component-container">
-                                <h1>-SRHM</h1>
-                            </div>
-
-                            <div className="row">
-                                <DashboardFilterContainer />
-                            </div>
-
-                            <div class="col">
-                                <div class="w-100">   
+                        <TabStripTab title="SRHM">
+                            <DashboardFilterContainer />
+                            <div class="component-container">
+                            <div class="row">                            
+                                <div class="col" style={{marginBottom: '12px'}}>
                                     <IndividualsReached />
                                 </div>
-                                <div class="w-100">   
+                                <div class="col" style={{marginBottom: '12px'}}>   
                                     <ParticipantTraining />
                                 </div>
-                                <div class="w-100">   
+                            </div>
+                            <div class="row">
+                                <div class="col" style={{marginBottom: '12px'}}>   
                                     <PartnerInstitutions />
                                 </div>
-                                <div class="w-100">   
+                                <div class="col" style={{marginBottom: '12px'}}>  
                                     <AmplifyChangeParticipant />
                                 </div>
                             </div>
+                            </div>
                         </TabStripTab>
                         <TabStripTab title="COMMS">
-
-                        <div class="component-container">
-                                
-                        <h1>-COMMS</h1>
-                            <div class="row">
-                                <DashboardFilterContainer />
-                            </div>
-
-                            <div class="row">
-                            <div class="col">   
-                                    <SocialMediaTraffic />
+                            <DashboardFilterContainer />
+                            <div class="component-container">
+                                <div class="row">
+                                    <div class="col" style={{marginBottom: '12px'}}>   
+                                        <SocialMediaTraffic />
+                                    </div>
+                                    <div class="col" style={{marginBottom: '12px'}}>   
+                                        <RadioLiveCall />
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="col" style={{marginBottom: '12px'}}>   
+                                            <MobileCinema />
+                                        </div>
+                                        <div class="col" style={{marginBottom: '12px'}}>   
+                                            <MaterialDistribution />
+                                        </div>
+                                        <div class="col">   
+                                            {/* <CommunicationsTraining /> */}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col">   
-                                    <RadioLiveCall />
-                                </div>
-                                <div class="w-100">
-                                <div class="col">   
-                                    <MobileCinema />
-                                </div>
-
-                                <div class="col">   
-                                    <MaterialDistribution />
-                                </div>
-                                <div class="col">   
-                                    {/* <CommunicationsTraining /> */}
-                                </div>
-
-                                </div>
-                            </div>
                             </div>
                         </TabStripTab>
                     </TabStrip>
-                </div>
+                    </div>
             </div>
+            </MDBMask>
+          </MDBView>
+        </div>
         );
     }
 }

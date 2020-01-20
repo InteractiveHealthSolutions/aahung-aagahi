@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:23:48
+ * @Last Modified time: 2020-01-20 12:07:07
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -19,14 +19,14 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { saveDonor } from "../service/PostService";
+import { getDonorByRegexValue } from '../service/GetService';
+import { saveDonor, updateDonor } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
@@ -57,7 +57,8 @@ class DonorRegistration extends React.Component {
         this.editMode = false;
         this.jsonData = {};
         this.formRef = React.createRef();
-
+        this.editMode = false;
+        this.fetchedDonor = {};
     }
 
     componentDidMount() {
@@ -75,15 +76,40 @@ class DonorRegistration extends React.Component {
     loadData = async () => {
 
         this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+        this.setState({
+            loading: true,
+            loadingMsg: 'Fetching Data...'
+        })
 
         try {
 
             if (this.editMode) {
-                // fill donor form for editing
+                this.fetchedDonor = await getDonorByRegexValue(String(this.props.location.state.donorId), true);
+                if (this.fetchedDonor !== null) {
+                    this.setState({
+                        donor_name: this.fetchedDonor.donorName,
+                        donor_id: this.fetchedDonor.shortName
+                    })
+                }
+                else {
+                    throw new Error("Unable to get donor details (this may be a voided record). Please see error logs for more details.");
+                }
             }
+
+            this.setState({
+                loading: false
+            })
         }
         catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -91,7 +117,6 @@ class DonorRegistration extends React.Component {
         e.preventDefault();
         e.returnValue = true;
     }
-
 
     cancelCheck = () => {
         this.resetForm();
@@ -105,7 +130,6 @@ class DonorRegistration extends React.Component {
         });
 
         if (name === "donor_id") {
-
             this.setState({
                 donor_name: e.shortName
             })
@@ -119,21 +143,23 @@ class DonorRegistration extends React.Component {
             [name]: e.target.value
         });
 
-        if (name === "donor_name" && (e.target.value != null && e.target.value != '')) {
-            var name = e.target.value;
-            var shortName = name.match(/\b(\w)/g);
-            if (shortName != null) {
-                shortName = shortName.join('').toUpperCase();
-                console.log(shortName);
+        if (!this.editMode) {
+            if (name === "donor_name" && (e.target.value != null && e.target.value != '')) {
+                var name = e.target.value;
+                var shortName = name.match(/\b(\w)/g);
+                if (shortName != null) {
+                    shortName = shortName.join('').toUpperCase();
+                    console.log(shortName);
+                    this.setState({
+                        donor_id: shortName
+                    })
+                }
+            }
+            else {
                 this.setState({
-                    donor_id: shortName
+                    donor_id: ''
                 })
             }
-        }
-        else {
-            this.setState({
-                donor_id: ''
-            })
         }
     }
 
@@ -145,63 +171,103 @@ class DonorRegistration extends React.Component {
 
         event.preventDefault();
         this.setState({
-            // form_disabled: true,
-            loading: true
+            loading: true,
+            loadingMsg: "Saving trees..."
         })
+        if (this.editMode) {
 
-        const data = new FormData(event.target);
-        console.log(data);
-        var jsonData = {};
-        jsonData['donorName'] = data.get('donor_name');
-        jsonData['shortName'] = data.get('donor_id');
+            this.fetchedDonor.donorName = this.state.donor_name;
+            this.fetchedDonor.shortName = this.state.donor_id;
+            delete this.fetchedDonor.createdBy;
+            delete this.fetchedDonor.updatedBy;
 
-        console.log(jsonData);
-        saveDonor(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if (!(String(responseData).includes("Error"))) {
+            updateDonor(this.fetchedDonor, this.fetchedDonor.uuid)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
 
-                        this.setState({
-                            loading: false,
-                            modalHeading: 'Success!',
-                            okButtonStyle: { display: 'none' },
-                            modalText: 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
 
-                        this.resetForm();
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if (String(responseData).includes("Error")) {
+                            var submitMsg = '';
+                            submitMsg = "Unable to update Donor details. \
+                            " + String(responseData);
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                    else if (String(responseData).includes("406")) {
+                );
+        }
+        else {
 
-                        var submitMsg = '';
-                        submitMsg = "Data already exists. \
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = {};
+            jsonData['donorName'] = data.get('donor_name');
+            jsonData['shortName'] = data.get('donor_id');
+            console.log(jsonData);
+
+            saveDonor(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm();
+                        }
+                        else if (String(responseData).includes("406")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Data already exists. \
                         " + String(responseData);
 
-                        this.setState({
-                            loading: false,
-                            modalHeading: 'Fail!',
-                            okButtonStyle: { display: 'none' },
-                            modalText: submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                    else if (String(responseData).includes("Error")) {
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                        else if (String(responseData).includes("Error")) {
 
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit donor. \
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit donor. \
                         " + String(responseData);
 
-                        this.setState({
-                            loading: false,
-                            modalHeading: 'Fail!',
-                            okButtonStyle: { display: 'none' },
-                            modalText: submitMsg,
-                            modal: !this.state.modal
-                        });
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
+        }
     }
 
     toggle = () => {
@@ -294,31 +360,21 @@ class DonorRegistration extends React.Component {
                                                                     <Col md="6" >
                                                                         <FormGroup >
                                                                             <Label for="donor_id" >Donor ID</Label>
-                                                                            <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => { this.inputChange(e, "donor_id") }} maxLength="50" placeholder="Donor ID" required />
+                                                                            <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => { this.inputChange(e, "donor_id") }} maxLength="50" placeholder="Donor ID" required disabled={this.editMode} />
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
-
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-
-
                                                 </CardBody>
                                             </Card>
                                         </Col>
                                     </Row>
-
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
-
                                                 <CardHeader>
-
                                                     <Row>
                                                         <Col md="3">
                                                         </Col>
@@ -327,46 +383,20 @@ class DonorRegistration extends React.Component {
                                                         <Col md="2">
                                                         </Col>
                                                         <Col md="2">
-                                                            <LoadingIndicator loading={this.state.loading} />
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick={this.cancelCheck} >Clear</Button>
-                                                            {/* </div> */}
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-                                    {/* </div> */}
-                                    {/* </div> */}
-                                    <CustomModal
-                                        modal={this.modal}
-                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                        ModalHeader="Leave Page Confrimation!"
-                                    ></CustomModal>
-
-                                    <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                            <MDBModalBody>
-                                                {this.state.modalText}
-                                            </MDBModalBody>
-                                            <MDBModalFooter>
-                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                            </MDBModalFooter>
-                                        </MDBModal>
-                                    </MDBContainer>
-
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>

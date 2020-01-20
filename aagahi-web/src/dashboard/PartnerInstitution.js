@@ -34,7 +34,8 @@ import {
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
+    ChartCategoryAxisCrosshairTooltip,
+    ChartTooltip
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { partnerInstitutionData } from '../service/ReportService';
@@ -53,6 +54,8 @@ class PartnerInstitutions extends React.Component {
     }
 
     render() {
+
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         const locations = getUniqueValues(this.data, 'state_province');
@@ -89,7 +92,7 @@ class PartnerInstitutions extends React.Component {
         ];
        
         
-        const colors = ['red', 'blue', 'orange', 'purple'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
 
 
         const crosshair = {
@@ -112,6 +115,7 @@ class PartnerInstitutions extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {sindhData.map((item, index) => (
                         <ChartSeriesItem type="column" stack={{ group: 'Sindh'}}
