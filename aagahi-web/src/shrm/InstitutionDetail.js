@@ -130,35 +130,38 @@ class InstitutionDetails extends React.Component {
             if (this.editMode) {
 
                 this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
-                console.log("fetched location id is .................................");
-                console.log(this.fetchedLocation.locationId);
-                this.institutionId = this.fetchedLocation.shortName;
-                var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
-                var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
-                this.setState({
-                    institution_name: this.fetchedLocation.locationName,
-                    province: { "value": province.value, "label": province.label },
-                    district: { "value": district.value, "label": district.label }
-
-                })
-
-                this.setState({
-                    point_person_name: this.fetchedLocation.primaryContactPerson,
-                    point_person_contact: this.fetchedLocation.primaryContact
-                })
-
-                if (this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                if (this.fetchedLocation !== null) {
+                    this.institutionId = this.fetchedLocation.shortName;
+                    var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                    var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
                     this.setState({
-                        point_person_email: this.fetchedLocation.email
+                        institution_name: this.fetchedLocation.locationName,
+                        province: { "value": province.value, "label": province.label },
+                        district: { "value": district.value, "label": district.label }
                     })
-                }
-                if (this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
-                    this.isExtension = true;
+
                     this.setState({
-                        extension: this.fetchedLocation.extension
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
                     })
+
+                    if (this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    if (this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
+                        this.isExtension = true;
+                        this.setState({
+                            extension: this.fetchedLocation.extension
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+
                 }
-                this.autopopulateFields(this.fetchedLocation.attributes);
+                else {
+                    throw new Error("Unable to get school details. Please see error logs for more details.");
+                }
 
             }
             this.setState({
@@ -968,7 +971,7 @@ class InstitutionDetails extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
                         </div>
