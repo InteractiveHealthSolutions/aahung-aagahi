@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-17 11:18:49
+ * @Last Modified time: 2020-01-20 13:10:00
  */
 
 import { apiUrl } from "../util/AahungUtil.js";
@@ -25,7 +25,6 @@ const PARTICIPANT = "participant";
  * saves user object
  */
 export const saveUser = async function (jsonData) {
-
     var requestUrl = apiUrl + "/" + USER;
     let result = await post(requestUrl, jsonData);
     return result;
@@ -40,7 +39,6 @@ export const updateUser = async function (jsonData, uuid) {
 }
 
 export const voidData = async function (objectType, uuid, reasonVoided) {
-
     var resourceName = objectType === "user" ? USER
         : objectType === "participant" ? PARTICIPANT
             : objectType === "location" ? LOCATION
@@ -60,9 +58,16 @@ export const voidData = async function (objectType, uuid, reasonVoided) {
  * saves donor object
  */
 export const saveDonor = async function (jsonData) {
-
     var requestUrl = apiUrl + "/" + DONOR;
     let result = await post(requestUrl, jsonData);
+    return result;
+}
+
+export const updateDonor = async function (jsonData, uuid) {
+    var requestUrl = apiUrl + "/" + DONOR + "/" + uuid;
+    console.log("POST: in updateDonor() method");
+    console.log(jsonData);
+    let result = await put(requestUrl, jsonData);
     return result;
 }
 
@@ -70,7 +75,6 @@ export const saveDonor = async function (jsonData) {
  * saves project object
  */
 export const saveProject = async function (jsonData) {
-
     var requestUrl = apiUrl + "/" + PROJECT;
     let result = await post(requestUrl, jsonData);
     console.log("in saveProject method");
@@ -78,8 +82,18 @@ export const saveProject = async function (jsonData) {
     return result;
 }
 
-export const saveLocation = async function (jsonData) {
+/**
+ * updates (edits) project object
+ */
+export const updateProject = async function (jsonData, uuid) {
+    var requestUrl = apiUrl + "/" + PROJECT + "/" + uuid;
+    console.log("POST: in updateProject() method");
+    console.log(jsonData);
+    let result = await put(requestUrl, jsonData);
+    return result;
+}
 
+export const saveLocation = async function (jsonData) {
     var requestUrl = apiUrl + "/" + LOCATION;
     console.log("POST: in saveLocation() method");
     let result = await post(requestUrl, jsonData);
@@ -102,7 +116,6 @@ export const updateParticipant = async function (jsonData, uuid) {
 }
 
 export const saveParticipant = async function (jsonData) {
-
     var requestUrl = apiUrl + "/" + PARTICIPANT;
     console.log("POST: in saveLocation() method");
     let result = await post(requestUrl, jsonData);
@@ -110,7 +123,6 @@ export const saveParticipant = async function (jsonData) {
 }
 
 export const saveFormData = async function (jsonData) {
-
     console.log("POST: in saveFormData() method");
     var requestUrl = apiUrl + "/" + FORM_DATA_STREAM;
     console.log(requestUrl);
@@ -129,7 +141,6 @@ export const updateFormData = async function (jsonData) {
 }
 
 export const saveLocationAttributes = async function (jsonData) {
-
     console.log("POST: in saveLocationAttributes() method");
     var requestUrl = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
     console.log(jsonData);
