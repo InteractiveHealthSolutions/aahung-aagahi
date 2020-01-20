@@ -49,11 +49,15 @@ import net.sf.jasperreports.engine.JRException;
 public class ReportController extends BaseController {
 	
 	String provinceFilter = "and find_in_set(l.state_province, '<stateProvince>') ";
+	String formDataProvinceFilter = "and find_in_set(fd.province, '<stateProvince>') ";
 	String provincePlaceholder = "<stateProvince>";
 	String districtFilter = "and find_in_set(l.city_village, '<cityVillage>') ";
+	String formDataDistrictFilter = "and find_in_set(fd.district, '<cityVillage>') ";
 	String districtPlaceholder = "<cityVillage>";
 	
-	String dateFilter = "date('<from>') and date('<to>') ";
+	String dateFilterToFrom = "date('<from>') and date('<to>') ";
+	String andDateFilter = "and date(fd.form_date) between ";
+	String whereDateFilter = "where date(fd.form_date) between ";
 	String dateFromPlaceholder = "<from>";
 	String dateToPlaceholder = "<to>";
 	
@@ -62,6 +66,19 @@ public class ReportController extends BaseController {
 	String schoolLevelDefinition = "inner join definition as level_name on level_name.definition_id = level.attribute_value ";
 	String schoolTierDefinition = "inner join definition as tier_name on tier_name.definition_id = tier.attribute_value ";
 
+	String locationJoinFormData = "inner join location as l on l.location_id = fd.location_id ";
+	String formParticipntJoinFormData = "inner join form_participant as pt on pt.form_id = fd.form_id ";
+	String participantJoinPerson = "inner join participant as p on p.person_id = pt.person_id ";
+	
+	String formDataVoidClause = "where fd.voided = 0 ";
+	
+	String union = "union ";
+	String where = "where ";
+	
+	String downloadingData = "Downloading data.";
+	
+	
+	
     @Autowired
     private FormService formService;
     
@@ -71,21 +88,6 @@ public class ReportController extends BaseController {
     @Autowired
     private ReportServiceImpl service;
     
-    /*@ApiOperation(value = "Get results from SQL query")
-    @GetMapping(value = "/report/query")
-    public ResponseEntity<?> queryData(@RequestParam("query") String query) throws HibernateException {
-	try {
-	    List<String[]> data = service.getTableData(query);
-	    if (!data.isEmpty()) {
-		return ResponseEntity.ok().body(data);
-	    } else {
-		return noContent(query);
-	    }
-	} catch (SQLException e) {
-	    return exceptionFoundResponse(query, e);
-	}
-    }*/
-
 
     @ApiOperation(value = "Download FormData as CSV by UUID/Name/Short Name of the FormType")
     @GetMapping("/report/form/{uuid}")
@@ -97,7 +99,7 @@ public class ReportController extends BaseController {
 	    String fileName = "formdata-" + uuid + ".csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -109,7 +111,7 @@ public class ReportController extends BaseController {
 	    String fileName = "definitions.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -121,7 +123,7 @@ public class ReportController extends BaseController {
 	    String fileName = "donors.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -133,7 +135,7 @@ public class ReportController extends BaseController {
 	    String fileName = "elements.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -145,7 +147,7 @@ public class ReportController extends BaseController {
 	    String fileName = "locations.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -157,7 +159,7 @@ public class ReportController extends BaseController {
 	    String fileName = "projects.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
 
@@ -169,7 +171,7 @@ public class ReportController extends BaseController {
 	    String fileName = "users.csv";
 	    return downloadResponse(filePath, fileName);
 	} catch (IOException e) {
-	    return exceptionFoundResponse("Downloading data.", e);
+	    return exceptionFoundResponse(downloadingData, e);
 	}
     }
     
@@ -182,7 +184,7 @@ public class ReportController extends BaseController {
 		String fileName = name+".csv";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
-		return exceptionFoundResponse("Downloading data.", e);
+		return exceptionFoundResponse(downloadingData, e);
 	} 
     }
     
@@ -195,7 +197,7 @@ public class ReportController extends BaseController {
 		String fileName = name+".html";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
-		return exceptionFoundResponse("Downloading data.", e);
+		return exceptionFoundResponse(downloadingData, e);
 	} 
     }
     
@@ -208,7 +210,7 @@ public class ReportController extends BaseController {
 		String fileName = name+".xls";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
-		return exceptionFoundResponse("Downloading data.", e);
+		return exceptionFoundResponse(downloadingData, e);
 	} 
     }
     
@@ -221,7 +223,7 @@ public class ReportController extends BaseController {
     	String fileName = name+".pdf";
     	return downloadResponse(filePath, fileName);	
     } catch (JRException | SQLException | IOException e) {
-    	return exceptionFoundResponse("Downloading data.", e);
+    	return exceptionFoundResponse(downloadingData, e);
     }
     }
 
@@ -311,7 +313,7 @@ public class ReportController extends BaseController {
 	    query.append(schoolTierDefinition);
 	    query.append("where l.voided = 0 ");
 	    query.append("and date(partnership.attribute_value) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
@@ -351,18 +353,18 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, level_name.definition as school_level, tier_name.definition as school_tier, lse.program_type as program, count(*) as total from form_data as fd ");
-	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");
-	    query.append("inner join participant as p on p.person_id = pt.person_id ");
+	    query.append(formParticipntJoinFormData);
+	    query.append(participantJoinPerson);
 	    query.append("inner join location as l on l.location_id = p.location_id ");
 	    query.append(schoolLevelAttribute);
 	    query.append(schoolTierAttribute);
 	    query.append(schoolLevelDefinition);
 	    query.append(schoolTierDefinition);
 	    query.append("inner join _lse_training_detail as lse on lse.form_id = fd.form_id ");
-	    query.append("where fd.voided = 0 ");
+	    query.append(formDataVoidClause);
 	    query.append("and fd.form_type_id = 1 ");
-	    query.append("and date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
@@ -383,7 +385,7 @@ public class ReportController extends BaseController {
 	    query.append("select ifnull(td.province, 'Unknown') as state_province, date(td.form_date) as form_date, upper(td.training_type) as training_type, count(*) as total from _lse_training_detail as td ");
 	    query.append("where td.form_type_id = 1 ");
 	    query.append("and date(td.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append("and find_in_set(td.province, '" + stateProvince + "') ");
 	    if (cityVillage != null)
@@ -410,7 +412,7 @@ public class ReportController extends BaseController {
 	    query.append("json_extract(event_attendant, '$.values') like '%other%' as others_attending, ");
 	    query.append("count(*) as total from _lse_one_touch_session_detail as otd ");
 	    query.append("where date(otd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append("and find_in_set(otd.province, '" + stateProvince + "') ");
 	    if (cityVillage != null)
@@ -432,18 +434,18 @@ public class ReportController extends BaseController {
 	    query.append("select 'Primary' as school_level, ifnull(l.state_province, 'Unknown') as state_province, ifnull(l.city_village, 'Unknown') as city_village, date(pm.form_date) as form_date, upper(pm.primary_grade) as class_grade, upper(pm.program_type) as program_type, count(*) as total from _lse_primary_monitoring as pm ");
 	    query.append("inner join location as l on l.location_id = pm.location_id ");
 	    query.append("where date(pm.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append("and find_in_set(l.state_province, '" + stateProvince + "') ");
 	    if (cityVillage != null) 
 	    	query.append("and find_in_set(l.city_village, '" + cityVillage + "') ");
 	    query.append("group by l.state_province, pm.form_date, pm.primary_grade, pm.program_type ");
 	    // Secondary monitoring
-	    query.append("union ");
+	    query.append(union);
 	    query.append("select 'Secondary' as school_level, ifnull(l.state_province, 'Unknown') as state_province, ifnull(l.city_village, 'Unknown') as city_village, date(sm.form_date) as form_date, upper(sm.secondary_grade) as class_grade, 'LSBE' as program_type, count(*) as total from _lse_secondary_monitoring as sm ");
 	    query.append("inner join location as l on l.location_id = sm.location_id ");
 	    query.append("where date(sm.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
@@ -462,14 +464,14 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select year(fd.form_date) as year, ifnull(l.state_province, 'Unknown') as state_province, ifnull(l.city_village, 'Unknown') as district, srhr.srhr_policy_implemented, ps.parent_session_conducted, count(*) as total from form_data as fd ");
-	    query.append("inner join location as l on l.location_id = fd.location_id ");
+	    query.append(locationJoinFormData);
 	    query.append("inner join location_attribute as la on la.location_id = fd.location_id and la.attribute_type_id = 19 ");
 	    query.append("inner join _lse_srhr_policy as srhr on srhr.form_id = fd.form_id ");
 	    query.append("inner join _lse_parent_sessions as ps on ps.location_id = l.location_id ");
-	    query.append("where fd.voided = 0 ");
+	    query.append(formDataVoidClause);
 	    query.append("and la.attribute_value = 26 ");
-	    query.append("and date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
@@ -514,15 +516,15 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, d.definition as participant_type, count(*) as total, per.gender as gender from form_data as fd ");
-	    query.append("inner join location as l on l.location_id = fd.location_id ");
-	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");
-	    query.append("inner join participant as p on p.person_id = pt.person_id ");
+	    query.append(locationJoinFormData);
+	    query.append(formParticipntJoinFormData);
+	    query.append(participantJoinPerson);
 	    query.append("inner join person as per on p.person_id = per.person_id "); 
 	    query.append("inner join person_attribute as pa on pa.person_id = p.person_id and pa.attribute_type_id = 10 ");
 	    query.append("inner join definition as d on d.definition_id = pa.attribute_value ");
-	    query.append("where fd.voided = 0 ");
-	    query.append("and date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(formDataVoidClause);
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    query.append("and fd.form_type_id = 17 ");
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
@@ -540,54 +542,55 @@ public class ReportController extends BaseController {
     @GetMapping(value = "/report/individualreachdata")
     public ResponseEntity<?> getIndividualReachData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
+		String groupByClause = "group by fd.province, fd.district, fd.form_date ";
 	    StringBuilder query = new StringBuilder();
 	    // Healthcare provider reach
 	    query.append("select 'HCP' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_health_care_provider_reach as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append("and find_in_set(fd.province, '" + stateProvince + "') ");
+	    	query.append(formDataProvinceFilter);
 	    if (cityVillage != null)
-	    	query.append("and find_in_set(fd.district, '" + cityVillage + "') ");
-	    query.append("group by fd.province, fd.district, fd.form_date ");
+	    	query.append(formDataDistrictFilter);
+	    query.append(groupByClause);
 	    // Step down training
-	    query.append("union ");
+	    query.append(union);
 	    query.append("select 'Step Down' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_general_step_down_training_details as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append("and find_in_set(fd.province, '" + stateProvince + "') ");
+	    	query.append(formDataProvinceFilter);
 	    if (cityVillage != null)
-	    	query.append("and find_in_set(fd.district, '" + cityVillage + "') ");
-	    query.append("group by fd.province, fd.district, fd.form_date ");
+	    	query.append(formDataDistrictFilter);
+	    query.append(groupByClause);
 	    // Amplify change step down training by Students
-	    query.append("union ");
+	    query.append(union);
 	    query.append("select 'AC - Students' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_amplify_change_step_down_training_details as fd ");
 	    query.append("inner join participant as pt on pt.identifier = fd.participant_id ");
 	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 65 ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append("and find_in_set(fd.province, '" + stateProvince + "') ");
+	    	query.append(formDataProvinceFilter);
 	    if (cityVillage != null)
-	    	query.append("and find_in_set(fd.district, '" + cityVillage + "') ");
-	    query.append("group by fd.province, fd.district, fd.form_date ");
+	    	query.append(formDataDistrictFilter);
+	    query.append(groupByClause);
 	    // Amplify change step down training by Teachers
-	    query.append("union ");
+	    query.append(union);
 	    query.append("select 'AC - Teachers' as activity_type, ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, date(fd.form_date) as form_date, ");
 	    query.append("sum(ifnull(fd.male_count, 0)) as male_count, sum(ifnull(fd.female_count, 0)) as female_count, sum(ifnull(fd.other_sex_count, 0)) as other_sex_count from _srhm_amplify_change_step_down_training_details as fd ");
 	    query.append("inner join participant as pt on pt.identifier = fd.participant_id ");
 	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 66 ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append("and find_in_set(fd.province, '" + stateProvince + "') ");
+	    	query.append(formDataProvinceFilter);
 	    if (cityVillage != null)
-	    	query.append("and find_in_set(fd.district, '" + cityVillage + "') ");
-	    query.append("group by fd.province, fd.district, fd.form_date ");
+	    	query.append(formDataDistrictFilter);
+	    query.append(groupByClause);
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
@@ -601,15 +604,15 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, d.definition as participant_type, count(*) as total, per.gender as gender from form_data as fd "); 
-	    query.append("inner join location as l on l.location_id = fd.location_id ");  
-	    query.append("inner join form_participant as pt on pt.form_id = fd.form_id ");  
-	    query.append("inner join participant as p on p.person_id = pt.person_id ");  
+	    query.append(locationJoinFormData);  
+	    query.append(formParticipntJoinFormData);  
+	    query.append(participantJoinPerson);  
 	    query.append("inner join person as per on p.person_id = per.person_id "); 
 	    query.append("inner join person_attribute as pa on pa.person_id = p.person_id and pa.attribute_type_id = 10 ");  
 	    query.append("inner join definition as d on d.definition_id = pa.attribute_value ");  
-	    query.append("where fd.voided = 0 ");
-	    query.append("and date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(formDataVoidClause);
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    query.append("and fd.form_type_id = 15 ");
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
@@ -637,27 +640,27 @@ public class ReportController extends BaseController {
 	    query.append("json_extract(platform_scores, '$[0].post_likes_count') as likes, ");
 	    query.append("json_extract(platform_scores, '$[0].post_shares_count') as shares, ");
 	    query.append("json_extract(platform_scores, '$[0].post_boosted_count') as boosted_count from _comms_social_media_details ");
-	    query.append("where " + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
-	    query.append("union ");
+	    query.append(where + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
+	    query.append(union);
 	    query.append("select form_id, replace(json_extract(platform_scores, '$[1].post_platform'), '\"', '') as platform, ");
 	    query.append("json_extract(platform_scores, '$[1].post_likes_count') as likes, ");
 	    query.append("json_extract(platform_scores, '$[1].post_shares_count') as shares, ");
 	    query.append("json_extract(platform_scores, '$[1].post_boosted_count') as boosted_count from _comms_social_media_details ");
-	    query.append("where " + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
-	    query.append("union ");
+	    query.append(where + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
+	    query.append(union);
 	    query.append("select form_id, replace(json_extract(platform_scores, '$[2].post_platform'), '\"', '') as platform, ");
 	    query.append("json_extract(platform_scores, '$[2].post_likes_count') as likes, ");
 	    query.append("json_extract(platform_scores, '$[2].post_shares_count') as shares, ");
 	    query.append("json_extract(platform_scores, '$[2].post_boosted_count') as boosted_count from _comms_social_media_details ");
-	    query.append("where " + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
-	    query.append("union ");
+	    query.append(where + platformScoresNotNullFilter + " "); //"platform_scores is not null having platform is not null"
+	    query.append(union);
 	    query.append("select form_id, replace(json_extract(platform_scores, '$[3].post_platform'), '\"', '') as platform, ");
 	    query.append("json_extract(platform_scores, '$[3].post_likes_count') as likes, ");
 	    query.append("json_extract(platform_scores, '$[3].post_shares_count') as shares, ");
 	    query.append("json_extract(platform_scores, '$[3].post_boosted_count') as boosted_count from _comms_social_media_details ");
-	    query.append("where " + platformScoresNotNullFilter + ") as a on a.form_id = fd.form_id "); //"platform_scores is not null having platform is not null"
-	    query.append("and date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(where + platformScoresNotNullFilter + ") as a on a.form_id = fd.form_id "); //"platform_scores is not null having platform is not null"
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    query.append("group by dayname(fd.form_date), a.platform ");
 	    query.append("order by weekday(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
@@ -673,8 +676,8 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select dayname(fd.form_date) as day_name, fd.radio_channel_frequency, fd.radio_channel_name, ifnull(fd.city, 'Unknown') as city, sum(fd.listener_count) as listener_count, sum(fd.live_call_count) as live_call_count from _comms_radio_appearance as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    query.append("group by fd.city, dayname(fd.form_date), fd.radio_channel_frequency, fd.radio_channel_name ");
 	    query.append("order by weekday(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
@@ -690,12 +693,12 @@ public class ReportController extends BaseController {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select ifnull(fd.province, 'Unknown') as state_province, ifnull(fd.district, 'Unknown') as city_village, fd.screening_type, date(fd.form_date) as form_date, count(*) as total from _comms_mobile_cinema_theatre_details as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append("and find_in_set(fd.province, '" + stateProvince + "') ");
+	    	query.append(formDataProvinceFilter);
 	    if (cityVillage != null)
-	    	query.append("and find_in_set(fd.district, '" + cityVillage + "') ");
+	    	query.append(formDataDistrictFilter);
 	    query.append("group by fd.province, fd.district, fd.screening_type, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -731,8 +734,8 @@ public class ReportController extends BaseController {
 	    query.append("sum(ifnull(fd.maternal_health_count, 0)) as maternal_health_count, ");
 	    query.append("sum(ifnull(fd.other_topic_count, 0)) as other_topic_count, ");
 	    query.append("count(*) as total from _comms_distribution_of_communication_material as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    query.append("group by fd.partner_components, fd.distribution_location, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -756,8 +759,8 @@ public class ReportController extends BaseController {
 	    query.append("ifnull(fd.screenwriter_count, 0) as screenwriter_count, ");
 	    query.append("ifnull(fd.other_media_count, 0) as other_media_count, ");
 	    query.append("ifnull(fd.other_attendant_count, 0) as other_attendant_count from _comms_training_details_communications as fd ");
-	    query.append("where date(fd.form_date) between ");
-	    query.append(dateFilter.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append(whereDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
