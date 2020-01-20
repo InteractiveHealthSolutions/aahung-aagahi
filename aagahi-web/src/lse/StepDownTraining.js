@@ -187,10 +187,12 @@ class StepDownTraining extends React.Component {
                     this.fetchedForm.data.map(function (element, i) {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
+                            
                             var radios = document.getElementsByName(element.key.shortName);
-
-                            for (let i = 0; i < radios.length; i++) {
-                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                            for (let i = 0; i < radios.length; i++) { 
+                                // Edits are painful!!
+                                // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
+                                if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
                                     var indicator = radios[i].id; // e.g "strongly_agree"
                                     var indicatorCode = getIndicatorCode(indicator);
@@ -752,34 +754,18 @@ class StepDownTraining extends React.Component {
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if (element != null) {
-
-                        // if(fields[i] === "mt_def_sexual_health") {
-                            // alert(fields[i]);
-                        // }
                         if (element.offsetParent != null) { // this line is for checking if the element is visible on page
                             // alert("it's visible:   >>> value: " + element.value);
-
-                            // if(fields[i] === "mt_def_sexual_health") {
-                                // alert("it is visible = " + fields[i]);
-                            // }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                         else if (this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
-
-                            // if(fields[i] === "mt_def_sexual_health") {
-                                // alert("it is not a Dependent question = " + fields[i]);
-                            // }
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
                         if (this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
-                            // if(fields[i] === "mt_def_sexual_health") {
-                                // alert("filling in states = " + fields[i]);
-                                // alert(this.state[fields[i]]);
-                            // }
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
@@ -1084,7 +1070,8 @@ class StepDownTraining extends React.Component {
 
         // in order to update the state of previous values (above), explicitly changing state of another variables. Yes, it Strange!
         this.setState({
-            program_type: "csa"
+            program_type: "csa",
+            school_level: ""
         })
         this.programType = "csa";
         this.toggleTab('1');

@@ -88,6 +88,7 @@ class LocationSearch extends React.Component {
         this.selectedLocationId = '';
         this.closeModal = this.closeModal.bind(this);
         this.closeUnvoidModal = this.closeUnvoidModal.bind(this);
+        this.unvoidObject = this.unvoidObject.bind(this);
     }
 
     componentDidMount() {
