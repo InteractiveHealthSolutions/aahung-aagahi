@@ -9,7 +9,6 @@ import DistributionCommunicationMaterial from './comms/DistributionCommunication
 import MobileCinemaDetails from './comms/MobileCinemaDetails';
 import RadioAppearance from './comms/RadioAppearance';
 import SocialMediaDetail from './comms/SocialMediaDetail';
-// import './App.css';
 import LoginPage from './login/LoginPage';
 import MasterTrainerEligibilityCriteria from './lse/MasterTrainerEligibilityCriteria';
 import MasterTrainerMockSessionEvaluation from './lse/MasterTrainerMockSessionEvaluation';
@@ -30,7 +29,6 @@ import CommsMainPage from './navigation/CommsMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import MainMenu from './navigation/MainMenu';
 import ReportsNav from './navigation/ReportsNav';
-import ReportMainPage from './navigation/ReportMainPage';
 import SrhmMainPage from './navigation/SrhmMainPage';
 import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
 import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
@@ -55,7 +53,6 @@ class App extends Component {
           <SessionRoute path='/lsePage' component={LseMainPage}/>
           <SessionRoute path='/commsPage' component={CommsMainPage}/>
           <SessionRoute path='/reportNavPage' component={ReportsNav}/>
-          <SessionRoute path='/reportPage' component={ReportMainPage}/>
           <SessionRoute path='/adminPage' component={AdminMainPage}/>
           <SessionRoute path='/admin' component={AdminPage}/>
           <SessionRoute path='/addUser'  component={AddUser}/>

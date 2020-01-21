@@ -722,28 +722,34 @@ class SecondaryMonitoring extends React.Component {
         let count = 0;
         locationAttributes.forEach(async function (obj) {
             let attrTypeName = obj.attributeType.shortName;
-            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION" && attrTypeName === "school_tier") {
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 attributeValue = definition.definitionName;
-                if(self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
-                    // Edits are painful!! 
-                    // Handling the case where change of tier will have an impact on scoring questions and everntually the cumulative score
-                    self.setState({
-                        modalHeading: 'Tier mismatch error!',
-                        modalText: 'You can not select a school which has a different tier from the school which was saved earlier.',
-                        modal: !self.state.modal,
-                        school_id: {},
-                        school_name: ''
-                    });
-                    return;
+                if (attrTypeName === "school_tier") {
+                    if(self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
+                        // Edits are painful!! 
+                        // Handling the case where change of tier will have an impact on scoring questions and everntually the cumulative score
+                        self.setState({
+                            modalHeading: 'Tier mismatch error!',
+                            modalText: 'You can not select a school which has a different tier from the school which was saved earlier.',
+                            modal: !self.state.modal,
+                            school_id: {},
+                            school_name: ''
+                        });
+                        return;
+                    }
+                    self.newTier = attributeValue === "New" ? true : false;
+                    self.runningTier = attributeValue === "Running" ? true : false;
+                    self.exitTier = attributeValue === "Exit" ? true : false;
+                    self.setState({ [attrTypeName]: attributeValue });
                 }
-                
-                self.setState({ [attrTypeName]: attributeValue });
-                self.newTier = attributeValue === "New" ? true : false;
-                self.runningTier = attributeValue === "Running" ? true : false;
-                self.exitTier = attributeValue === "Exit" ? true : false;
+
+                if (attrTypeName === "school_sex" && !self.editMode) {
+                    self.setState({ class_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : "girls" });
+                    self.setState({ school_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : attributeValue === "Co-ed" ? "coed" : "" });
+                }
             }
         })
 

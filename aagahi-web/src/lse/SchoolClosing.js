@@ -21,6 +21,7 @@
 // Contributors: Tahira Niazi
 
 import moment from 'moment';
+import { MDBIcon } from 'mdbreact';
 import React, { Fragment } from "react";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -646,10 +647,8 @@ class SchoolClosing extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                            {/* </div> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
 
