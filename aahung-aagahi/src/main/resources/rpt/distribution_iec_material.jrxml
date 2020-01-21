@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="5600" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="5560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="1738"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -445,238 +445,238 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="0" y="0" width="101" height="20" uuid="c803a505-0cee-483d-a8fa-072b16ff799e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="101" height="20" uuid="c803a505-0cee-483d-a8fa-072b16ff799e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="101" y="0" width="177" height="20" uuid="efa54ff1-5a81-4706-9aa8-ea4f7a1feeea"/>
+				<reportElement stretchType="RelativeToTallestObject" x="101" y="0" width="177" height="20" uuid="efa54ff1-5a81-4706-9aa8-ea4f7a1feeea"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{partner_components}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="278" y="0" width="115" height="20" uuid="cab3a848-60a0-4644-9c6a-286552a7922f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="278" y="0" width="115" height="20" uuid="cab3a848-60a0-4644-9c6a-286552a7922f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="393" y="0" width="108" height="20" uuid="07402349-1ab4-4077-a617-0c1bd992c547"/>
+				<reportElement stretchType="RelativeToTallestObject" x="393" y="0" width="108" height="20" uuid="07402349-1ab4-4077-a617-0c1bd992c547"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="501" y="0" width="171" height="20" uuid="fb4e69db-f0b5-4f0e-b159-e30cf7c583c7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="501" y="0" width="171" height="20" uuid="fb4e69db-f0b5-4f0e-b159-e30cf7c583c7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distribution_location}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="672" y="0" width="214" height="20" uuid="d2248e85-383a-4217-9f3c-adc03b7d570b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="672" y="0" width="214" height="20" uuid="d2248e85-383a-4217-9f3c-adc03b7d570b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distribution_location_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="886" y="0" width="212" height="20" uuid="eb8bd5f3-5561-4277-998f-f8c6919f9b22"/>
+				<reportElement stretchType="RelativeToTallestObject" x="886" y="0" width="212" height="20" uuid="eb8bd5f3-5561-4277-998f-f8c6919f9b22"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distribution_location_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="1098" y="0" width="216" height="20" uuid="15431d2e-b618-4eb5-8886-c0c260f5dd2f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1098" y="0" width="216" height="20" uuid="15431d2e-b618-4eb5-8886-c0c260f5dd2f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distribution_material_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="1314" y="0" width="245" height="20" uuid="ff6d6d30-03ba-499a-8dc3-ce70f286a3c9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1314" y="0" width="245" height="20" uuid="ff6d6d30-03ba-499a-8dc3-ce70f286a3c9"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distribution_material_type_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="1559" y="0" width="169" height="20" uuid="0b349c15-2ae6-4ef8-b107-684166b54e7c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1559" y="0" width="169" height="20" uuid="0b349c15-2ae6-4ef8-b107-684166b54e7c"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{annual_report_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="1728" y="0" width="170" height="20" uuid="d85591db-bdf2-4117-95b9-af686e4cea18"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1728" y="0" width="170" height="20" uuid="d85591db-bdf2-4117-95b9-af686e4cea18"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_profile_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="1898" y="0" width="144" height="20" uuid="86d84817-01f3-4b03-a4bd-14970ca08054"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1898" y="0" width="144" height="20" uuid="86d84817-01f3-4b03-a4bd-14970ca08054"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pamphlet_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2042" y="0" width="131" height="20" uuid="4ec792a6-1228-4b9e-9331-481c14235d8a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2042" y="0" width="131" height="20" uuid="4ec792a6-1228-4b9e-9331-481c14235d8a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{booklet_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2173" y="0" width="131" height="20" uuid="c06ae6ca-8902-4f64-93c2-82308a341b05"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2173" y="0" width="131" height="20" uuid="c06ae6ca-8902-4f64-93c2-82308a341b05"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{report_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2304" y="0" width="172" height="20" uuid="b8a60b3d-2460-4224-9ee4-247ef280c9ad"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2304" y="0" width="172" height="20" uuid="b8a60b3d-2460-4224-9ee4-247ef280c9ad"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_mugs_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2476" y="0" width="179" height="20" uuid="8501ab32-dbda-42f8-828e-44d0e86c7cb2"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2476" y="0" width="179" height="20" uuid="8501ab32-dbda-42f8-828e-44d0e86c7cb2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_folders_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2656" y="0" width="200" height="20" uuid="cde1488b-0763-48d0-8ba1-7c87d557e20d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2656" y="0" width="200" height="20" uuid="cde1488b-0763-48d0-8ba1-7c87d557e20d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_notebooks_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="2856" y="0" width="176" height="20" uuid="09b11627-67de-459e-b17b-e7fc60e3c5dd"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2856" y="0" width="176" height="20" uuid="09b11627-67de-459e-b17b-e7fc60e3c5dd"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_material_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3032" y="0" width="145" height="20" uuid="54b45aa6-c33e-4e75-aed0-aed60d6199b8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3032" y="0" width="145" height="20" uuid="54b45aa6-c33e-4e75-aed0-aed60d6199b8"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3177" y="0" width="167" height="20" uuid="dac2c626-2dd7-4502-a7e3-82e543a960b2"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3177" y="0" width="167" height="20" uuid="dac2c626-2dd7-4502-a7e3-82e543a960b2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3344" y="0" width="158" height="20" uuid="926efa41-f3fb-46f1-a052-71afa6232ad1"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3344" y="0" width="158" height="20" uuid="926efa41-f3fb-46f1-a052-71afa6232ad1"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_info_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3502" y="0" width="247" height="20" uuid="65411ca0-7b01-4e4a-b9a4-b98b19732b95"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3502" y="0" width="247" height="20" uuid="65411ca0-7b01-4e4a-b9a4-b98b19732b95"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aahung_branding_material_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3749" y="0" width="160" height="20" uuid="77a60329-038c-4e47-aed3-ce391f3a563c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3749" y="0" width="160" height="20" uuid="77a60329-038c-4e47-aed3-ce391f3a563c"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nikkah_nama_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="3909" y="0" width="131" height="20" uuid="6cfa1adc-da76-4c1c-88b2-96d694579e8a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3909" y="0" width="131" height="20" uuid="6cfa1adc-da76-4c1c-88b2-96d694579e8a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{puberty_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4040" y="0" width="92" height="20" uuid="c7b6c80b-ae69-4126-8b2c-db2a848e30e6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4040" y="0" width="92" height="20" uuid="c7b6c80b-ae69-4126-8b2c-db2a848e30e6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rti_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4132" y="0" width="118" height="20" uuid="89ea5b37-c159-4bbc-9f0f-c16e9b70ae8e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4132" y="0" width="118" height="20" uuid="89ea5b37-c159-4bbc-9f0f-c16e9b70ae8e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ungei_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4250" y="0" width="99" height="20" uuid="1b68fa4b-8616-423c-8c50-7a2fd3754576"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4250" y="0" width="99" height="20" uuid="1b68fa4b-8616-423c-8c50-7a2fd3754576"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sti_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4349" y="0" width="168" height="20" uuid="c9aee9c2-21ca-46f1-b168-517342271bd6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4349" y="0" width="168" height="20" uuid="c9aee9c2-21ca-46f1-b168-517342271bd6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sexual_health_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4517" y="0" width="174" height="20" uuid="b9019bad-d4e2-4da7-9e9a-1b3d12bfa6a6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4517" y="0" width="174" height="20" uuid="b9019bad-d4e2-4da7-9e9a-1b3d12bfa6a6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{premarital_info_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4691" y="0" width="104" height="20" uuid="ed5581e3-6269-401b-a32d-8f84f712f9da"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4691" y="0" width="104" height="20" uuid="ed5581e3-6269-401b-a32d-8f84f712f9da"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pac_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4795" y="0" width="184" height="20" uuid="96f16729-1e9d-4f99-b7de-d2800e943753"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4795" y="0" width="184" height="20" uuid="96f16729-1e9d-4f99-b7de-d2800e943753"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{maternal_health_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="4979" y="0" width="153" height="20" uuid="065366df-402d-41f1-934f-9383ba311d0f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="4979" y="0" width="153" height="20" uuid="065366df-402d-41f1-934f-9383ba311d0f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_topic_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="5132" y="0" width="174" height="20" uuid="8f2db026-df2e-4b9d-9835-9c49ba556e6b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="5132" y="0" width="174" height="20" uuid="8f2db026-df2e-4b9d-9835-9c49ba556e6b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement x="5306" y="0" width="183" height="20" uuid="bea7f85d-3bc6-4555-ab0f-ef772fdcce50"/>
+				<reportElement stretchType="RelativeToTallestObject" x="5306" y="0" width="183" height="20" uuid="bea7f85d-3bc6-4555-ab0f-ef772fdcce50"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>

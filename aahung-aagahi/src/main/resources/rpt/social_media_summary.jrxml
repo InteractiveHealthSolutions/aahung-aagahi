@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2400" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2360" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="1685"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -202,7 +202,7 @@ REGEXP concat('[[:<:]]', SUBSTRING_INDEX( $P{post_platform}, ',',1), '[[:>:]]|[[
 			<staticText>
 				<reportElement x="900" y="0" width="167" height="20" uuid="943113d3-a21c-4d83-83eb-8c3773b1d648"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[post_platform_other]]></text>
 			</staticText>
@@ -303,7 +303,7 @@ REGEXP concat('[[:<:]]', SUBSTRING_INDEX( $P{post_platform}, ',',1), '[[:>:]]|[[
 			<textField>
 				<reportElement x="900" y="0" width="167" height="20" uuid="fdae9308-1ad2-4801-b942-483f19d749bf"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{post_platform_other}]]></textFieldExpression>
 			</textField>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="4300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="4260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="3468"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -42,7 +42,7 @@ sd.location_id,
 	sd.`school_level`,
 count(distinct td.form_id) as number_of_training,
 COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)) AS teacher_trained,
-if(td.training_type='mt_training', COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)),0) AS master_trainer,
+ifnull(mtc.c1,0) AS master_trainer,
 pmn.cnt as monitoring_visit_p,
  smn.cnt as monitoring_visit_s,
 ps.parent_session_conducted,
@@ -64,6 +64,7 @@ FROM `aagahi`.`school_detail` sd
 left join training_detail as td on find_in_set(sd.location_id,td.school_id)
  left join (select location_id,count( distinct form_id)as cnt from _lse_primary_monitoring group by location_id) as pmn on sd.location_id=pmn.location_id
  left join (select location_id,count( distinct form_id)as cnt from _lse_secondary_monitoring group by location_id) as smn on sd.location_id=smn.location_id
+ left join (SELECT school_id,COUNT(distinct(pt.person_id)) as c1 FROM aagahi.training_detail td inner join form_participant as pt on pt.form_id = td.form_id where training_type='mt_training' group by school_id) as mtc on sd.location_id=mtc.school_id
 left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id and pmn1.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 2,1)
 left join _lse_primary_monitoring as pmn2 on sd.location_id=pmn2.location_id and pmn2.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 1,1)
 left join _lse_primary_monitoring as pmn3 on sd.location_id=pmn3.location_id and pmn3.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 0,1)
@@ -149,12 +150,12 @@ group by sd.location_id order by sd.school_name;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="form_date_1" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct_1" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct_1" class="java.lang.Double"/>
 	<field name="form_date_2" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct_2" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct_2" class="java.lang.Double"/>
 	<field name="form_date_3" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct_3" class="java.math.BigDecimal"/>
-	<field name="diff_monitoring" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct_3" class="java.lang.Double"/>
+	<field name="diff_monitoring" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>

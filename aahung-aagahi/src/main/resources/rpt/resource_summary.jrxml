@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="5100" pageHeight="850" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="5060" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="5300" pageHeight="850" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="5260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -44,7 +44,7 @@
         smn1.other_resource_required_type,
         smn1.other_resource_required_count,
         pmn1.csa_guide_delivered_count,
-        pmn1.csa_guide_delivered_count,
+        pmn1.gender_guide_delivered_count,
         pmn1.csa_book_delivered_count,
         pmn1.csa_other_delivered_type,
         pmn1.csa_other_delivered_count,
@@ -61,24 +61,16 @@
 FROM `aagahi`.`school_detail` sd
 
 
-left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id  and pmn1.date_created=(select date_created from _lse_primary_monitoring where location_id=pmn1.location_id  order by date_created desc limit 0,1)
-left join _lse_secondary_monitoring as smn1 on sd.location_id=smn1.location_id  and smn1.date_created=(select date_created from _lse_secondary_monitoring where location_id=smn1.location_id  order by date_created desc limit 0,1)
+left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id
+left join _lse_secondary_monitoring as smn1 on sd.location_id=smn1.location_id
 where date(sd.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
 find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{school_level})
-group by sd.location_id order by school_name;]]>
+ order by school_name;]]>
 	</queryString>
-	<field name="school_id" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="school_name" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="province" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="city" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="school_id" class="java.lang.String"/>
+	<field name="school_name" class="java.lang.String"/>
+	<field name="province" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
 	<field name="school_tier" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -119,6 +111,9 @@ group by sd.location_id order by school_name;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="csa_guide_delivered_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="gender_guide_delivered_count" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="csa_book_delivered_count" class="java.lang.Integer">
@@ -306,67 +301,74 @@ group by sd.location_id order by school_name;]]>
 				<text><![CDATA[csa_guide_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3154" y="0" width="197" height="20" uuid="9b16e6fc-ccbf-4020-8f82-6efb92dddc3e"/>
+				<reportElement x="3398" y="0" width="197" height="20" uuid="9b16e6fc-ccbf-4020-8f82-6efb92dddc3e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[csa_book_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3351" y="0" width="189" height="20" uuid="77cdf86e-06c3-4934-8db6-258992437ef4"/>
+				<reportElement x="3595" y="0" width="189" height="20" uuid="77cdf86e-06c3-4934-8db6-258992437ef4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[csa_other_delivered_type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3540" y="0" width="206" height="20" uuid="292c1be1-9da3-47fc-abdc-1fa6cb10abf7"/>
+				<reportElement x="3784" y="0" width="206" height="20" uuid="292c1be1-9da3-47fc-abdc-1fa6cb10abf7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[csa_other_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3746" y="0" width="199" height="20" uuid="03c02778-16e0-4caf-9cb5-5e8edff649ad"/>
+				<reportElement x="3990" y="0" width="199" height="20" uuid="03c02778-16e0-4caf-9cb5-5e8edff649ad"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[wb1_boys_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3945" y="0" width="197" height="20" uuid="d6e19938-38d9-4f19-9646-50355520d80a"/>
+				<reportElement x="4189" y="0" width="197" height="20" uuid="d6e19938-38d9-4f19-9646-50355520d80a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[wb1_girls_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4142" y="0" width="208" height="20" uuid="131fc8de-8884-4a64-af5f-272b8eadb2d1"/>
+				<reportElement x="4386" y="0" width="208" height="20" uuid="131fc8de-8884-4a64-af5f-272b8eadb2d1"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[wb2_boys_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4350" y="0" width="197" height="20" uuid="698c41f1-0ae2-4170-8756-7e5de51b7e1b"/>
+				<reportElement x="4594" y="0" width="197" height="20" uuid="698c41f1-0ae2-4170-8756-7e5de51b7e1b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[wb2_girls_delivered_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4547" y="0" width="232" height="20" uuid="8f9b8524-d3fc-4bf4-b1e3-6471a3b6f052"/>
+				<reportElement x="4791" y="0" width="232" height="20" uuid="8f9b8524-d3fc-4bf4-b1e3-6471a3b6f052"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[other_resource_delivered_type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4779" y="0" width="235" height="20" uuid="1ace63ab-e394-4a0a-9ff8-002a181ef9be"/>
+				<reportElement x="5023" y="0" width="235" height="20" uuid="1ace63ab-e394-4a0a-9ff8-002a181ef9be"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[other_resource_delivered_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3154" y="0" width="244" height="20" uuid="3f7039f2-adfd-4b2a-a322-9e0f246d23d9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[gender_guide_delivered_count]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -505,67 +507,74 @@ group by sd.location_id order by school_name;]]>
 				<textFieldExpression><![CDATA[$F{csa_guide_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3154" y="0" width="197" height="20" uuid="13aee0c1-b9d2-432a-a483-bd4b078367c9"/>
+				<reportElement x="3398" y="0" width="197" height="20" uuid="13aee0c1-b9d2-432a-a483-bd4b078367c9"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{csa_book_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3351" y="0" width="189" height="20" uuid="3f18b44a-f0ec-4caf-9f8d-a7f0b1d59750"/>
+				<reportElement x="3595" y="0" width="189" height="20" uuid="3f18b44a-f0ec-4caf-9f8d-a7f0b1d59750"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{csa_other_delivered_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3540" y="0" width="206" height="20" uuid="462cc026-a81f-4a33-87a4-046c57298a00"/>
+				<reportElement x="3784" y="0" width="206" height="20" uuid="462cc026-a81f-4a33-87a4-046c57298a00"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{csa_other_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3746" y="0" width="199" height="20" uuid="240d5952-9850-4ee4-b757-ff7a60ea7a5e"/>
+				<reportElement x="3990" y="0" width="199" height="20" uuid="240d5952-9850-4ee4-b757-ff7a60ea7a5e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wb1_boys_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3945" y="0" width="197" height="20" uuid="2fc60620-4ae1-4232-9e0d-887a96b8e6da"/>
+				<reportElement x="4189" y="0" width="197" height="20" uuid="2fc60620-4ae1-4232-9e0d-887a96b8e6da"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wb1_girls_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="4142" y="0" width="208" height="20" uuid="fdb33ec0-cd90-4d71-9e47-69b743b2f3bc"/>
+				<reportElement x="4386" y="0" width="208" height="20" uuid="fdb33ec0-cd90-4d71-9e47-69b743b2f3bc"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wb2_boys_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="4350" y="0" width="197" height="20" uuid="9574691d-8626-4933-8e8c-5d1eecff72d7"/>
+				<reportElement x="4594" y="0" width="197" height="20" uuid="9574691d-8626-4933-8e8c-5d1eecff72d7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wb2_girls_delivered_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="4547" y="0" width="232" height="20" uuid="44e88a9c-fbdb-41e2-897b-5a02c6e6d6de"/>
+				<reportElement x="4791" y="0" width="232" height="20" uuid="44e88a9c-fbdb-41e2-897b-5a02c6e6d6de"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_resource_delivered_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="4779" y="0" width="235" height="20" uuid="a801e327-1f44-4789-88d9-c12ebc3a8a05"/>
+				<reportElement x="5023" y="0" width="235" height="20" uuid="a801e327-1f44-4789-88d9-c12ebc3a8a05"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_resource_delivered_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3154" y="0" width="244" height="20" uuid="c9478741-463d-4e6a-bb66-e4038705c15d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gender_guide_delivered_count}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

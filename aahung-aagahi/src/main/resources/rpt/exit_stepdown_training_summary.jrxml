@@ -26,15 +26,14 @@
 		<defaultValueExpression><![CDATA["Primary"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT sdtm.form_date,school_name,teacher_name,teacher_id,mt_eligibility_score_pct,mt_mock_score_pct,d.definition as school_level,d1.definition as program_type,
-if(csa_mt_count is not null,csa_mt_count,lsbe_mt_count) as mt_count,don.username,sdtm.monitor,mt_sd_training_score_pct
+		<![CDATA[SELECT sdtm.form_date,school_name,teacher_name,teacher_id,mt_eligibility_score_pct,mt_mock_score_pct,sd.school_level,d1.definition as program_type,
+if(csa_mt_count is not null,csa_mt_count,lsbe_mt_count) as mt_count,don.username as monitor_by,mt_sd_training_score_pct
 FROM aagahi.lse_step_down_training_monitoring sdtm
 left join school_detail sd on sd.location_id=sdtm.location_id
 left join participant_detail pd on pd.person_id=sdtm.participant_id
 left join _lse_mt_eligibility_criteria_assessment mteca on mteca.participant_id=sdtm.participant_id
 left join _lse_mt_mock_session_evaluation mtmse on mtmse.participant_id=sdtm.participant_id
-left join definition d on d.definition_id=sdtm.school_level
-left join definition d1 on d1.definition_id=sdtm.program_type
+left join definition d1 on d1.short_name=sdtm.program_type
 left join (SELECT t1.form_id,(SELECT
                 GROUP_CONCAT(`users`.`username`
                         SEPARATOR ',')
@@ -65,22 +64,19 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 	<field name="teacher_id" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="mt_eligibility_score_pct" class="java.math.BigDecimal">
+	<field name="mt_eligibility_score_pct" class="java.lang.Float">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="mt_mock_score_pct" class="java.math.BigDecimal">
+	<field name="mt_mock_score_pct" class="java.lang.Float">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="school_level" class="java.lang.String"/>
+	<field name="school_level" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="program_type" class="java.lang.String"/>
 	<field name="mt_count" class="java.lang.Long"/>
-	<field name="username" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="monitor" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="mt_sd_training_score_pct" class="java.math.BigDecimal">
+	<field name="monitor_by" class="java.lang.String"/>
+	<field name="mt_sd_training_score_pct" class="java.lang.Float">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -112,7 +108,7 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="2000" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1854" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -185,17 +181,10 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[username]]></text>
+				<text><![CDATA[monitor_by]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1636" y="0" width="100" height="20" uuid="ee87cdf6-12a9-4ad0-bf34-c04d4aa76556"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[monitor]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1736" y="0" width="198" height="20" uuid="8e44260a-2cec-46e5-89fc-dd072291b995"/>
+				<reportElement x="1636" y="0" width="198" height="20" uuid="8e44260a-2cec-46e5-89fc-dd072291b995"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
@@ -206,7 +195,7 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 	<detail>
 		<band height="27" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="21" width="2000" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="21" width="1854" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -279,17 +268,10 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{monitor_by}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1636" y="0" width="100" height="20" uuid="e4598e4d-d62a-4683-9a83-eb0e984263a3"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{monitor}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="1736" y="0" width="198" height="20" uuid="ac337f78-8e70-4371-9715-aecd0857e184"/>
+				<reportElement x="1636" y="0" width="198" height="20" uuid="ac337f78-8e70-4371-9715-aecd0857e184"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
