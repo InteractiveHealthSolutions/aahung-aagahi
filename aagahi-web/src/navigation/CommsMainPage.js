@@ -218,7 +218,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/socialMediaDetails">
-                  <b>Social Media Details</b>
+                  Social Media Details
                   </Link>
                   
                   </NavText>
@@ -228,7 +228,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/distributionMaterial">
-                  <b>Distribution of Communication Material</b>
+                  Distribution of Communication Material
                   </Link>
                   
                   </NavText>
@@ -238,7 +238,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/trainingDetailsComms">
-                  <b>Training Details Form - Communications</b>
+                  Training Details Form - Communications
                   </Link>
                   
                   </NavText>
@@ -247,7 +247,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/radioAppearance">
-                  <b>Radio Appearance Form</b>
+                  Radio Appearance Form
                   </Link>
                   </NavText>
               </NavItem>
@@ -255,9 +255,8 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/mobileCinemaDetails">
-                  <b>Mobile Cinema/Theatre Details Form</b>
+                  Mobile Cinema/Theatre Details Form
                   </Link>
-                  
                   </NavText>
               </NavItem>
               

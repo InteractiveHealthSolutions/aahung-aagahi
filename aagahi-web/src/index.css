@@ -692,6 +692,10 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
-.container {
+#containerId { /* reports page */
     max-width: 1333px !important;
+}
+
+.container { /* applies to all containers */
+  max-width: 1150px !important;
 }
