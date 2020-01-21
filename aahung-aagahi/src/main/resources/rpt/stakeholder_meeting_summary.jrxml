@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="1700" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1660" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    `stakeholder_meetings`.`form_date`,
+    `stakeholder_meetings`.`province`,
+    `stakeholder_meetings`.`city`,
+    `stakeholder_meetings`.`meeting_venue`,
+    (SELECT
+                GROUP_CONCAT(`users`.`username`
+                        SEPARATOR ',')
+            FROM
+                users
+            WHERE
+                FIND_IN_SET(users.user_id,`stakeholder_meetings`.`aahung_staff`))
+    as `aahung_staff`,
+    `stakeholder_meetings`.`event_attendant`,
+    `stakeholder_meetings`.`event_attendant_other`,
+    `stakeholder_meetings`.`meeting_purpose`,
+    `stakeholder_meetings`.`session_topic`,
+    `stakeholder_meetings`.`session_topic_other`
+FROM `aagahi`.`stakeholder_meetings`
+
+ where
+date(form_date) between date($P{start_date}) and date($P{end_date}) and
+ find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+ order by form_date]]>
+	</queryString>
+	<field name="form_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="meeting_venue" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="aahung_staff" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="event_attendant" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="event_attendant_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="meeting_purpose" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="session_topic" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="session_topic_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="474" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Stakeholder Meeting Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="36" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report will provide information on stakeholder meetings conducted by LSE]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="1a750aec-42af-4004-bbb2-b8e5caa19b9f"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1600" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="151" height="20" uuid="ecbb6e18-9fa3-4ec7-adad-ef84f438488d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[form_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="151" y="0" width="145" height="20" uuid="448df8f9-a103-47b8-87cc-4b531cbd780c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[province]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="0" width="120" height="20" uuid="eca02c5a-4249-4cf1-a1da-61f82ced15a8"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[city]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="416" y="0" width="148" height="20" uuid="0ddeb243-68e5-4b22-bd8d-798b6792740e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[meeting_venue]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="564" y="0" width="134" height="20" uuid="5404bb4e-a70b-47ea-ad62-48ffdf05d532"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[aahung_staff]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="698" y="0" width="163" height="20" uuid="df9178d6-6bc7-4a61-b9f7-81ce40c699da"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[event_attendant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="861" y="0" width="196" height="20" uuid="01801a17-2a99-40f2-8d04-8088fa4a974a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[event_attendant_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1057" y="0" width="154" height="20" uuid="a57f0c09-8870-47e4-94fc-fa21c48a6933"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[meeting_purpose]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1211" y="0" width="126" height="20" uuid="9d2b6993-117c-470a-a09a-0f0204962215"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[session_topic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1337" y="0" width="165" height="20" uuid="e52d298c-86c5-4326-b132-a5d80bb2fc4f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[session_topic_other]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="21" width="1600" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="151" height="20" uuid="3264fd69-ce1b-4ff2-be09-e70cd052118f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="151" y="0" width="145" height="20" uuid="088399c2-e7f2-41e8-bfcc-44fc1340c1d6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="296" y="0" width="120" height="20" uuid="c6f80519-86d4-43bb-b2f3-40f2d89c4ec0"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="416" y="0" width="148" height="20" uuid="7cb1a875-7502-4676-a33c-f1f479cf42d1"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{meeting_venue}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="564" y="0" width="134" height="20" uuid="cea1012e-caf5-4af0-afde-cf97302e0b05"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aahung_staff}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="698" y="0" width="163" height="20" uuid="efed5451-c272-4da1-912e-bed3a401cbba"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""+$F{event_attendant}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="861" y="0" width="196" height="20" uuid="5ceb1ece-b84c-4102-991c-ba5246d1ecc7"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1057" y="0" width="154" height="20" uuid="4b0bc470-8c95-4bcb-b623-92f8ade39345"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{meeting_purpose}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1211" y="0" width="126" height="20" uuid="4c22726f-aec4-4aaa-bede-b85745be6457"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{session_topic}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1337" y="0" width="165" height="20" uuid="2acadcd6-c8a2-48e9-926f-177e83c4138a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{session_topic_other}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

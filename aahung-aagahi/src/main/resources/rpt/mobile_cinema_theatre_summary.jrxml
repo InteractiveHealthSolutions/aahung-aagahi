@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3200" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    `comms_mobile_cinema_theatre_details`.`form_date`,
+    `comms_mobile_cinema_theatre_details`.`province`,
+    `comms_mobile_cinema_theatre_details`.`city`,
+    `comms_mobile_cinema_theatre_details`.`screening_type`,
+    `comms_mobile_cinema_theatre_details`.`topic_covered`,
+    `comms_mobile_cinema_theatre_details`.`topic_covered_other`,
+    `comms_mobile_cinema_theatre_details`.`performance_title`,
+    `comms_mobile_cinema_theatre_details`.`participants_sex`,
+    `comms_mobile_cinema_theatre_details`.`female_count`,
+    `comms_mobile_cinema_theatre_details`.`male_count`,
+    `comms_mobile_cinema_theatre_details`.`other_sex_count`,
+    `comms_mobile_cinema_theatre_details`.`participants_age_group`,
+    `comms_mobile_cinema_theatre_details`.`age_5_to_10_count`,
+    `comms_mobile_cinema_theatre_details`.`age_11_to_15_count`,
+    `comms_mobile_cinema_theatre_details`.`age_16_to_20_count`,
+    `comms_mobile_cinema_theatre_details`.`age_21_to_49_count`,
+    `comms_mobile_cinema_theatre_details`.`age_50_plus_count`,
+
+(if(female_count is null,0,female_count)+if(male_count is null,0,male_count)+if(other_sex_count is null,0,other_sex_count)) as total_participant
+
+FROM aagahi.comms_mobile_cinema_theatre_details
+ where
+date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+
+ order by form_date;]]>
+	</queryString>
+	<field name="form_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="screening_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="performance_title" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participants_sex" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="female_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="male_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="other_sex_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participants_age_group" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age_5_to_10_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age_11_to_15_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age_16_to_20_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age_21_to_49_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age_50_plus_count" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_participant" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="513" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Mobile Cinema/ Theatre Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report will provide information on mobile cinemas]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="3150" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="175" height="20" uuid="0af3157a-8d18-4018-a6d7-be56e7eb2593"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[form_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="175" y="0" width="175" height="20" uuid="e0bc9aa5-0a88-448f-bd5a-d2da973e6a54"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[province]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="175" height="20" uuid="acc1ef58-e2f0-4f6b-8ac7-80fc9d0c3f95"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[city]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="0" width="175" height="20" uuid="e45c3cae-bc5f-4822-9746-211957762412"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[screening_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="0" width="175" height="20" uuid="8236e7ba-6f5a-45c8-b0dd-21eeb88db1bf"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="875" y="0" width="175" height="20" uuid="5f56c55c-0c43-4e9b-8eb3-857f5067fbde"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1050" y="0" width="175" height="20" uuid="f98614ce-10a2-4d8c-ba39-91b39acd2d9d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[performance_title]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1225" y="0" width="175" height="20" uuid="efdac314-2139-40ab-8a56-15fafbfb1d10"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_sex]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1400" y="0" width="175" height="20" uuid="85058654-8a59-4d7a-8fab-b679f5fe5462"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[female_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1575" y="0" width="175" height="20" uuid="4769087a-1bcf-44ad-99ef-06c6b3b090f6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[male_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1750" y="0" width="175" height="20" uuid="cc9ebd9b-c711-4b93-b584-358e290350da"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[other_sex_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1925" y="0" width="175" height="20" uuid="80da77ac-f571-42b5-ac43-6f9da5efa16c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_age_group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2100" y="0" width="175" height="20" uuid="2726408d-c709-4950-a4b7-8f692a2fb23f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age_5_to_10_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2275" y="0" width="175" height="20" uuid="0ca621e6-5bff-4fde-b3ee-ecaecb4e5a3b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age_11_to_15_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2450" y="0" width="175" height="20" uuid="a2362d56-4289-459c-b5ec-acc98ef50f79"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age_16_to_20_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2625" y="0" width="175" height="20" uuid="25574e93-b131-4a18-9097-6c746552bb76"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age_21_to_49_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2800" y="0" width="175" height="20" uuid="b1268783-afb4-4f24-be0d-8087649fadfc"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age_50_plus_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2975" y="0" width="175" height="20" uuid="46a80f14-56d0-4238-80e7-b6b03ff7fadd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[total_participant]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="3150" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="175" height="20" uuid="72923a82-c568-451b-b0dc-cd176400fa55"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="175" y="0" width="175" height="20" uuid="bb16a94c-3c80-4d48-85de-7b30a9a02659"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="175" height="20" uuid="58a09406-a511-423f-95bf-b3c1b00510e0"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="525" y="0" width="175" height="20" uuid="63e01f00-f832-4d70-90d7-01f4d7062a0d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{screening_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="700" y="0" width="175" height="20" uuid="c1406ad0-e527-48b0-8837-47fd030fa316"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="875" y="0" width="175" height="20" uuid="4cab48a1-61e4-451d-a680-04785eeac940"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1050" y="0" width="175" height="20" uuid="15f2bd13-1de4-4360-8254-ce77a27fddca"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{performance_title}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1225" y="0" width="175" height="20" uuid="90cf3789-4271-4b20-a8fb-7b3963bc02c8"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1400" y="0" width="175" height="20" uuid="82fa41c6-eb75-4ce5-b16e-57046f2d5d79"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{female_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1575" y="0" width="175" height="20" uuid="8a639bca-8a38-426b-b42d-c4ca97e1d079"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{male_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1750" y="0" width="175" height="20" uuid="cc1c4860-8a0c-4dc3-beae-3da837aa48be"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{other_sex_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1925" y="0" width="175" height="20" uuid="19712297-1628-4b51-ab8a-dc2a05aaaca4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2100" y="0" width="175" height="20" uuid="0abbbd75-d5ae-4ab6-8ea0-ec4b36fd47f1"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age_5_to_10_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2275" y="0" width="175" height="20" uuid="8658a484-3b3d-478a-877e-437b7edf5ea9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age_11_to_15_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2450" y="0" width="175" height="20" uuid="252c4ac3-acbd-47f6-90cc-549f93818204"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age_16_to_20_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2625" y="0" width="175" height="20" uuid="dfd5f691-3fb3-4f2c-8db4-f621c245907b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age_21_to_49_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2800" y="0" width="175" height="20" uuid="4dc51047-8a0c-410f-b091-68957807206d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age_50_plus_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="2975" y="0" width="175" height="20" uuid="de2d3392-0eee-4d4f-a2ea-0ac244b22203"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_participant}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
