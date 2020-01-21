@@ -275,7 +275,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	}
 	postPart.append("'' as blank ");
 	postPart.append("from form_data ");
-	postPart.append("where 1=1 ");
+	postPart.append("where 1=1 and voided=0 ");
 	postPart.append("and form_type_id=");
 	postPart.append(formType.getFormTypeId());
 	StringBuilder prePart = new StringBuilder("insert into ");
