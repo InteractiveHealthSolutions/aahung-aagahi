@@ -17,7 +17,8 @@ export const reports = [
     { id: 16, shortName: 'social_media_summary', name: 'Social Media Summary', component: "comms", filters: ["post_platform"], description: "This report provides information on social media activity." },
     { id: 17, shortName: 'SRHM_training_summary', name: 'SRHM Trainings Summary', component: "srhm", filters: [], description: "This report provides information on trainings conducted by SRHM." },
     { id: 18, shortName: 'stakeholder_meeting_summary', name: 'Stakeholder Meeting Summary', component: "lse", filters: [], description: "This report provides information on stakeholder meetings conducted by LSE." },
-    { id: 19, shortName: 'step_down_training_summary', name: 'Step Down Training Summary', component: "srhm", filters: [], description: "This report provides information on step down trainings conducted for SRHM activities." }
+    { id: 19, shortName: 'step_down_training_summary', name: 'Step Down Training Summary', component: "srhm", filters: [], description: "This report provides information on step down trainings conducted for SRHM activities." },
+    { id: 20, shortName: 'resource_summary', name: 'Resource Summary', component: "lse", filters: ["school_level"], description: "This report provides information on LSE resources distributed to partner schools." }
 ];
 
 /**

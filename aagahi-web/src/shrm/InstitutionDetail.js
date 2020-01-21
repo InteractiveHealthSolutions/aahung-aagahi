@@ -22,6 +22,7 @@
 // Contributors: Tahira Niazi
 
 import moment from 'moment';
+import { MDBIcon } from 'mdbreact';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
@@ -963,8 +964,8 @@ class InstitutionDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

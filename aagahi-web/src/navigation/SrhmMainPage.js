@@ -314,7 +314,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/generalStepDownTrainingDetails">
-                  <b>General Step Down Training Details</b>
+                  General Step Down Training Details
                   </Link>
                   
                   </NavText>

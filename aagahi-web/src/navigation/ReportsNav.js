@@ -493,10 +493,10 @@ class ReportsNav extends Component {
                   </MDBNavbarBrand>
                   <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00", marginLeft: "70%" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
                 </MDBNavbar>
-                <MDBContainer id="containerID">
+                <MDBContainer id="containerId">
                   <MDBRow>
                     <MDBCol md="4">
-                      <MDBCard style={{ width: "23rem", marginTop: "1rem", overflow: "auto", maxHeight: "450px", height: "700px" }}>
+                      <MDBCard style={{ width: "23rem", marginTop: "1rem", overflow: "auto", maxHeight: "36rem", height: "700px" }}>
                         <MDBCardHeader style={{ backgroundColor: "#522A71", color: "white" }}>Filters</MDBCardHeader>
                         <MDBCardBody>
                           <div id="topFilterDiv" style={filterDivStyle}>
@@ -539,11 +539,6 @@ class ReportsNav extends Component {
                               District/City:
                       <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
                             </div>
-
-                            {/* <div style={{marginTop: "1rem"}}>
-                      
-                    </div> */}
-
                           </div>
 
                           <div style={cautionDivStyle}>
@@ -636,7 +631,7 @@ class ReportsNav extends Component {
                         </MDBNav>
                       </MDBCard>
 
-                      <MDBTabContent style={{ marginTop: "1rem", overflow: "auto", maxHeight: "300px" }} className="card" activeItem={this.state.activeItemJustified}>
+                      <MDBTabContent style={{ marginTop: "1rem", overflow: "auto", maxHeight: "26em" }} className="card" activeItem={this.state.activeItemJustified}>
                         {/* LSE */}
                         <RequirePrivilege
                           privilegeName="View LSE Reports"

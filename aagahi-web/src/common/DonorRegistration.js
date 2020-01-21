@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-20 12:07:07
+ * @Last Modified time: 2020-01-21 13:35:08
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -20,6 +20,7 @@
 // Contributors: Tahira Niazi
 
 import React, { Fragment } from "react";
+import { MDBIcon } from 'mdbreact';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -386,8 +387,8 @@ class DonorRegistration extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick={this.cancelCheck} >Clear</Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

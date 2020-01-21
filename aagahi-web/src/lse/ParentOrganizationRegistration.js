@@ -21,6 +21,7 @@
 // Contributors: Tahira Niazi
 
 import React, { Fragment } from "react";
+import { MDBIcon } from 'mdbreact';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -744,15 +745,11 @@ class ParentOrganizationRegistration extends React.Component {
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-
                                                 </CardBody>
                                             </Card>
                                         </Col>
                                     </Row>
 
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
@@ -770,26 +767,20 @@ class ParentOrganizationRegistration extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                            {/* </div> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
