@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -367,7 +368,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		obj.setReasonVoided("");
 	    }
 	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
-		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(Calendar.getInstance().getTime()) + ")");
 	    return updateFormData(obj);
 	}
 	return obj;
