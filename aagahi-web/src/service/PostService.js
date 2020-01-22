@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-20 13:10:00
+ * @Last Modified time: 2020-01-21 14:43:29
  */
 
 import { apiUrl } from "../util/AahungUtil.js";
@@ -33,7 +33,6 @@ export const saveUser = async function (jsonData) {
 export const updateUser = async function (jsonData, uuid) {
     var requestUrl = apiUrl + "/" + USER + "/" + uuid;
     console.log("POST: in updateUser() method");
-    console.log(jsonData);
     let result = await put(requestUrl, jsonData);
     return result;
 }
@@ -66,7 +65,6 @@ export const saveDonor = async function (jsonData) {
 export const updateDonor = async function (jsonData, uuid) {
     var requestUrl = apiUrl + "/" + DONOR + "/" + uuid;
     console.log("POST: in updateDonor() method");
-    console.log(jsonData);
     let result = await put(requestUrl, jsonData);
     return result;
 }
@@ -76,9 +74,8 @@ export const updateDonor = async function (jsonData, uuid) {
  */
 export const saveProject = async function (jsonData) {
     var requestUrl = apiUrl + "/" + PROJECT;
+    console.log("POST: in saveProject() method");
     let result = await post(requestUrl, jsonData);
-    console.log("in saveProject method");
-    console.log(requestUrl);
     return result;
 }
 
@@ -88,7 +85,6 @@ export const saveProject = async function (jsonData) {
 export const updateProject = async function (jsonData, uuid) {
     var requestUrl = apiUrl + "/" + PROJECT + "/" + uuid;
     console.log("POST: in updateProject() method");
-    console.log(jsonData);
     let result = await put(requestUrl, jsonData);
     return result;
 }
@@ -110,14 +106,13 @@ export const updateLocation = async function (jsonData, uuid) {
 export const updateParticipant = async function (jsonData, uuid) {
     var requestUrl = apiUrl + "/" + PARTICIPANT + "/" + uuid;
     console.log("POST: in updateParticipant() method");
-    console.log(jsonData);
     let result = await put(requestUrl, jsonData);
     return result;
 }
 
 export const saveParticipant = async function (jsonData) {
     var requestUrl = apiUrl + "/" + PARTICIPANT;
-    console.log("POST: in saveLocation() method");
+    console.log("POST: in saveParticipant() method");
     let result = await post(requestUrl, jsonData);
     return result;
 }
@@ -125,17 +120,13 @@ export const saveParticipant = async function (jsonData) {
 export const saveFormData = async function (jsonData) {
     console.log("POST: in saveFormData() method");
     var requestUrl = apiUrl + "/" + FORM_DATA_STREAM;
-    console.log(requestUrl);
-    console.log(jsonData);
     let result = await post(requestUrl, jsonData);
-    console.log(requestUrl);
     return result;
 }
 
 export const updateFormData = async function (jsonData) {
     var requestUrl = apiUrl + "/" + FORM_DATA_STREAM;
     console.log("POST: in updateFormData() method");
-    console.log(jsonData);
     let result = await put(requestUrl, jsonData);
     return result;
 }
@@ -143,9 +134,7 @@ export const updateFormData = async function (jsonData) {
 export const saveLocationAttributes = async function (jsonData) {
     console.log("POST: in saveLocationAttributes() method");
     var requestUrl = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
-    console.log(jsonData);
     let result = await post(requestUrl, jsonData);
-    console.log(requestUrl);
     return result;
 }
 
@@ -186,8 +175,6 @@ function voidObject(requestUrl) {
 function put(requestUrl, jsonData) {
     console.log("in PUT method");
     console.log(requestUrl);
-    console.log("json data >>>>>>>>>");
-    console.log(jsonData);
     return axios.put(requestUrl, jsonData, {
         'headers': {
             'Authorization': sessionStorage.getItem('auth_header'),

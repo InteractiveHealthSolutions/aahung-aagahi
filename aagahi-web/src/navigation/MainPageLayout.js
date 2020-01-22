@@ -143,13 +143,6 @@ class MainPageLayout extends React.Component {
                                 )}
                             />
 
-                            {/* <RequirePrivilege
-                    privilegeName="View Administration Section"
-                    yes={() => (
-                        <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold" style={{fontSize: "85%"}}>Admin</p></MDBBtn></Link>
-                    )}
-                    /> */}
-
                             <RequirePrivilege
                                 privilegeName="View LSE Section"
                                 yes={() => (
@@ -171,7 +164,6 @@ class MainPageLayout extends React.Component {
                                 )}
                             />
 
-                            {/* /reportPage */}
                             <RequirePrivilege
                                 privilegeName="View Reports Section"
                                 yes={() => (
@@ -179,15 +171,12 @@ class MainPageLayout extends React.Component {
                                 )}
                             />
 
-                            {/* /dashboard */}
                             <RequirePrivilege
-                                privilegeName="View Reports Section"
+                                privilegeName="View Dashboard Section"
                                 yes={() => (
                                     <Link to="/dashboard"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={graph} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "84%"}}>Dashboard</p></MDBBtn></Link>
                                 )}
                             />
-
-                            {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                         </div>
                     </MDBContainer>
                     <MDBFooter color="grey lighten-1" >
