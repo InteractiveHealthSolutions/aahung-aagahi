@@ -81,7 +81,7 @@ public class FormData extends DataEntity {
 
     @Column(name = "form_date", nullable = false)
     @Temporal(TemporalType.DATE)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd", timezone = "PKT")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     private Date formDate;
 
     @Column(name = "reference_id", nullable = false, unique = true, length = 255)
