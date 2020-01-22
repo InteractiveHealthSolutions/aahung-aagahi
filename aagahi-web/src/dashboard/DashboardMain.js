@@ -69,6 +69,9 @@ class DashboardMain extends React.Component {
      * Handle export to PDF. All the content inside appContainer div will be exported as is
      */
     handlePDFExport = () => {
+        // event.preventDefault();
+        alert("calling handlePDFExport()")
+    // handlePDFExport = () => {
         savePDF(ReactDOM.findDOMNode(this.appContainer), { paperSize: 'auto' });
     }
 
@@ -83,7 +86,7 @@ class DashboardMain extends React.Component {
                             <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
                                 <Nav className="mr-auto"></Nav>
                                 <Form inline>
-                                    {/* <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button> */}
+                                    <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button>
                                     <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
                                 </Form>
                             </Navbar>
