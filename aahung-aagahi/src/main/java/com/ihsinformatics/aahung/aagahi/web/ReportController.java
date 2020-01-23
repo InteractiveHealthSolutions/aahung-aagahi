@@ -270,7 +270,7 @@ public class ReportController extends BaseController {
 	    query.append("where l.voided = 0 ");
 	    query.append("group by l.category ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
-	    return ResponseEntity.ok().body(data);
+	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
 	    return exceptionFoundResponse("Executing getLocationCountByCategory", e);
 	}
@@ -284,7 +284,7 @@ public class ReportController extends BaseController {
 	    query.append("where l.voided = 0 ");
 	    query.append("group by l.state_province ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
-	    return ResponseEntity.ok().body(data);
+	    return ResponseEntity.ok().body(data.toString());
 	} catch (SQLException | JSONException e) {
 	    return exceptionFoundResponse("Executing getLocationCountByStateProvince", e);
 	}
