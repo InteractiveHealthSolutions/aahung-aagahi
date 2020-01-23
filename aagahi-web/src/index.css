@@ -579,7 +579,7 @@ code {
 
 #form_component, #form_type {
   margin-right: 5% !important;
-  width: 50% !important;
+  width: 50%;
   margin-left: 1% !important;
   font-size: 80% !important;
 }
@@ -595,9 +595,14 @@ code {
 }
 
 #firstDateDiv, #secondDateDiv {
-  margin-right: 10% !important;
   display: inline-flex !important;
-  width: 40%;
+  width: 33%;
+}
+#secondDateDiv{
+  margin-right: 1% !important;
+}
+#firstDateDiv{
+  margin-right: 8% !important;
 }
 
 /* Styling multi select widget */
@@ -698,4 +703,7 @@ body {
 
 .container { /* applies to all containers */
   max-width: 1150px !important;
+}
+.secondaryFilComp{
+  width: 32% !important;
 }

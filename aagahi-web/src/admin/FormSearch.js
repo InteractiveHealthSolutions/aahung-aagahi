@@ -357,13 +357,13 @@ class FormSearch extends React.Component {
                 <MDBCardHeader style={{ backgroundColor: "#025277", color: "white" }}><h5><b>Form Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                     <div id="filters" className="searchParams">
-                        <MDBRow style={{ marginTop: "-1%" }}>
+                        <MDBRow style={{ marginTop: '-1%', width: '115%' }}>
                             <MDBCol md="3" style={{display:'flex !important'}}>
                                 <h6>Search By (Date Range, Component, Form Type)</h6>
                             </MDBCol>
                             <MDBCol md="8">
-                                <div className="flexClass">
-                                <div id="dateRangeDiv">
+                                <div className="flexClass" style={{marginBottom:'-2%'}}>
+                                <div id="dateRangeDiv" style={{display: 'flex'}}>
 
                                     <div id="firstDateDiv">
                                         <Label>Start Date:    </Label><span className="required">*</span>
@@ -391,9 +391,9 @@ class FormSearch extends React.Component {
                                         />
                                         {/* <i color="secondary" class="far fa-calendar-alt"></i> */}
                                     </div>
-                                    <div className="inclVoided">
+                                    <div className="inclVoided" style={{width:'20%'}}>
                                     <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
-                                    <label style={{ fontSize:"9px", width: "50%" }}>Include voided</label>
+                                    <label style={{ fontSize:"14px", width: "74%" }}>Include voided</label>
                                     </div>
                                     <br />
                                 </div>
@@ -402,7 +402,7 @@ class FormSearch extends React.Component {
 
                                 <div className="" id="secondaryFilters">
                                     <Label style={{ width: "15%", marginTop: "1%" }}>Component: </Label>
-                                    <Select id="form_component" name="form_component" value={this.state.form_component} onChange={(e) => this.handleChange(e, "form_component")} options={this.state.formGroups} />
+                                    <Select className="secondaryFilComp" id="form_component" name="form_component" value={this.state.form_component} onChange={(e) => this.handleChange(e, "form_component")} options={this.state.formGroups}/>
 
                                     <Label style={{ width: "20%", marginTop: "1%" }}>Form Type: </Label>
                                     <Select id="form_type" name="form_type" value={this.state.form_type} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} />
