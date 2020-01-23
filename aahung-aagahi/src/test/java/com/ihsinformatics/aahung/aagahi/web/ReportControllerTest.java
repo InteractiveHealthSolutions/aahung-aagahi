@@ -542,20 +542,28 @@ public class ReportControllerTest extends BaseRepositoryData {
 
     /**
      * Test method for
-     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#getPartnerInstitutionData(java.lang.String)}.
-     */
-    @Test
-    public void shouldGetPartnerInstitutionData() throws Exception {
-	// TODO
-    }
-
-    /**
-     * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#getParticipantTrainingData(java.lang.String, java.lang.String, java.lang.String)}.
      */
     @Test
     public void shouldGetParticipantTrainingData() throws Exception {
-	// TODO
+    	JSONArray jsonData = new JSONArray();
+    	JSONObject obj = new JSONObject();
+    	obj.put("state_province", hogwartz.getStateProvince());
+    	obj.put("city_village", hogwartz.getCityVillage());
+    	obj.put("participant_type", "Pre-service provider");
+    	obj.put("total", 3);
+    	obj.put("gender", "Female");
+    	obj.put("form_date", "2019-09-09");
+    	jsonData.put(obj);
+    	when(service.getTableDataAsJson(any(String.class))).thenReturn(jsonData);
+    	ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/participanttrainingdata")
+    		.param("state_province", hogwartz.getStateProvince())
+    		.param("city_village", hogwartz.getStateProvince())
+    		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 2010)))
+    		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 2020))));
+    	actions.andExpect(status().isOk());
+    	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+    	verify(service, times(1)).getTableDataAsJson(any(String.class));
     }
 
     /**
@@ -591,7 +599,24 @@ public class ReportControllerTest extends BaseRepositoryData {
      */
     @Test
     public void shouldGetAmplifyChangeParticipantData() throws Exception {
-	// TODO
+    	JSONArray jsonData = new JSONArray();
+    	JSONObject obj = new JSONObject();
+    	obj.put("state_province", hogwartz.getStateProvince());
+    	obj.put("city_village", hogwartz.getCityVillage());
+    	obj.put("participant_type", "Student");
+    	obj.put("total", 3);
+    	obj.put("gender", "Female");
+    	obj.put("form_date", "2019-09-09");
+    	jsonData.put(obj);
+    	when(service.getTableDataAsJson(any(String.class))).thenReturn(jsonData);
+    	ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/amplifychangeparticipantdata")
+    		.param("state_province", hogwartz.getStateProvince())
+    		.param("city_village", hogwartz.getStateProvince())
+    		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 2010)))
+    		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 2020))));
+    	actions.andExpect(status().isOk());
+    	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+    	verify(service, times(1)).getTableDataAsJson(any(String.class));
     }
 
     /**
@@ -738,4 +763,76 @@ public class ReportControllerTest extends BaseRepositoryData {
 	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
 	verify(service, times(1)).getTableDataAsJson(any(String.class));
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#getPartnerInstitutionData(java.lang.String, java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetPartnerInstitutionData() throws Exception {
+	JSONArray jsonData = new JSONArray();
+	JSONObject obj = new JSONObject();
+	obj.put("state_province", hogwartz.getStateProvince());
+	obj.put("date_of_partnership", hogwartz.getDateCreated());
+	obj.put("school_level", "Secondary");
+	obj.put("school_tier", "New");
+	obj.put("total", 1);
+	jsonData.put(obj);
+	when(service.getTableDataAsJson(any(String.class))).thenReturn(jsonData);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/partnerinstitutiondata")
+		.param("state_province", hogwartz.getStateProvince())
+		.param("city_village", hogwartz.getStateProvince())
+		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 2010)))
+		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 2020))));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+	verify(service, times(1)).getTableDataAsJson(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#getLocationCountByCategory()}.
+     */
+    @Test
+    public void shouldGetLocationCountByCategory() throws Exception {
+	JSONArray jsonData = new JSONArray();
+	JSONObject obj1 = new JSONObject();
+	obj1.put("total", 4);
+	obj1.put("category","School");
+	jsonData.put(obj1);
+	JSONObject obj2 = new JSONObject();
+	obj2.put("total", 2);
+	obj2.put("category","Institution");
+	jsonData.put(obj2);
+	when(service.getTableDataAsJson(any(String.class))).thenReturn(jsonData);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/locationcount/category"));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+	verify(service, times(1)).getTableDataAsJson(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#getLocationCountByStateProvince()}.
+     */
+    @Test
+    public void shouldGetLocationCountByStateProvince() throws Exception {
+	JSONArray jsonData = new JSONArray();
+	JSONObject obj1 = new JSONObject();
+	obj1.put("total", 4);
+	obj1.put("stateprovince","Sindh");
+	jsonData.put(obj1);
+	JSONObject obj2 = new JSONObject();
+	obj2.put("total", 2);
+	obj2.put("stateprovince","Balochistan");
+	jsonData.put(obj2);
+	when(service.getTableDataAsJson(any(String.class))).thenReturn(jsonData);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/locationcount/stateprovince"));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+	verify(service, times(1)).getTableDataAsJson(any(String.class));
+    }
+    
 }
