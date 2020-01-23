@@ -486,7 +486,7 @@ public class ReportController extends BaseController {
 
     @ApiOperation(value = "Get data for Partner Institutions (ref: D2 - Partner Institutions by District)")
     @GetMapping(value = "/report/partnerinstitutiondata")
-    public ResponseEntity<?> getPartnerInstitutionData(@RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
+    public ResponseEntity<?> getPartnerInstitutionData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
 	    query.append("select ifnull(l.state_province, 'Unknown') as state_province, ifnull(l.city_village, 'Unknown') as city_village, ");
@@ -495,9 +495,13 @@ public class ReportController extends BaseController {
 	    query.append("sum(json_contains(b.institute_types, '33', '$')) as total_nursing, ");
 	    query.append("sum(json_contains(b.institute_types, '34', '$')) as total_midwifery, ");
 	    query.append("sum(json_contains(b.institute_types, '35', '$')) as total_other from location as l ");
+	    query.append("inner join location_attribute as partnership on partnership.location_id = l.location_id and partnership.attribute_type_id = 7 ");
 	    // We join with location_attribute table, which combines all attribute_value elements into a JSON array
 	    query.append("inner join (select la.location_id, json_array(json_extract(attribute_value, '$[0].definitionId'), json_extract(attribute_value, '$[1].definitionId'), json_extract(attribute_value, '$[2].definitionId'), json_extract(attribute_value, '$[3].definitionId')) as institute_types from location_attribute as la where la.attribute_type_id = 8 and la.location_id) as b ");
 	    query.append("on b.location_id = l.location_id ");
+	    query.append("where l.voided = 0 ");
+	    query.append("and date(partnership.attribute_value) between ");
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
