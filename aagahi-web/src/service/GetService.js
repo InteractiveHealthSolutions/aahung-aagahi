@@ -93,7 +93,6 @@ export const getDefinitionByDefinitionId = async function (content) {
 export const getDefinitionByDefinitionShortName = async function (content) {
 
     console.log("GetService > calling getDefinitionByDefinitionShortName()");
-
     try {
         let result = await getData(DEFINITION_BY_SHORT_NAME, content);
         return result;
@@ -284,7 +283,6 @@ export const getProjectsByName = async function (content, includeVoided) {
  */
 export const getProjectsByDonor = async function (content, includeVoided) {
     console.log("GetService > calling getProjectsByDonor()");
-
     try {
         let result = await getData(PROJECT_LIST_BY_DONOR, content);
         let array = [];
@@ -352,7 +350,6 @@ export const getUsersByName = async function (content, includeVoided) {
  */
 export const getUsersByRole = async function (content, includeVoided) {
     console.log("GetService > calling getUsersByRole()");
-
     try {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
@@ -447,7 +444,6 @@ export const getAllLightWeightLocations = async function (content) {
  */
 export const getLocationsByCategory = async function (content) {
     console.log("GetService > calling getLocationsByCategory()");
-
     try {
         let result = await getData(LOCATION_LIST_BY_CATEGORY, content);
         let array = [];
@@ -516,9 +512,7 @@ export const getLocationByRegexValue = async function (content) {
  * Gets role by role name
  */
 export const getRoleByName = async function (content) {
-
     console.log("GetService > getRoleByName()");
-
     try {
         var resourceName = ROLE_By_NAME;
         let result = await getData(resourceName, content);
@@ -534,7 +528,6 @@ export const getRoleByName = async function (content) {
  */
 export const getParticipantsByLocation = async function (content, includeVoided) {
     console.log("GetService > calling getLocationsByCategory()");
-
     try {
         let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
@@ -660,9 +653,7 @@ export const getParticipantsByName = async function (content, includeVoided) {
  * returns form type object by uuid
  */
 export const getFormTypeByUuid = async function (content) {
-
     console.log("GetService > getFormTypeByUuid()");
-
     try {
         var resourceName = FORM_TYPE;
         let result = await getData(resourceName, content);
@@ -677,7 +668,6 @@ export const getFormTypeByUuid = async function (content) {
  * returns form type object by uuid
  */
 export const searchForms = async function (urlParams) {
-
     console.log("GetService > searchForms()");
     try {
         var resourceName = FORM_SEARCH_LIST;
@@ -693,7 +683,6 @@ export const searchForms = async function (urlParams) {
  * returns custom form data DTO by id or uuid
  */
 export const getFormDataById = async function (content) {
-
     console.log("GetService > searchForms()");
     try {
         var resourceName = FORM_DATA_CUSTOM;
@@ -711,7 +700,6 @@ export const getFormDataById = async function (content) {
  */
 export const getLocationAttributesByLocation = async function (content) {
     console.log("GetService > calling getLocationAttributesByLocation()");
-
     try {
         let result = await getData(LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION, content);
         return result;
@@ -727,7 +715,6 @@ export const getLocationAttributesByLocation = async function (content) {
  */
 export const getPersonAttributesByPerson = async function (content) {
     console.log("GetService > calling getPersonAttributesByPerson()");
-
     try {
         let result = await getData(PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON, content);
         return result;
@@ -743,7 +730,6 @@ export const getPersonAttributesByPerson = async function (content) {
  */
 export const getLocationAttributeTypeByShortName = async function (content) {
     console.log("GetService > calling getLocationAttributeTypeByShortName()");
-
     try {
         var resourceName = LOCATION_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
@@ -760,7 +746,6 @@ export const getLocationAttributeTypeByShortName = async function (content) {
  */
 export const getPersonAttributeTypeByShortName = async function (content) {
     console.log("GetService > calling getLocationAttributeTypeByShortName()");
-
     try {
         var resourceName = PERSON_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);

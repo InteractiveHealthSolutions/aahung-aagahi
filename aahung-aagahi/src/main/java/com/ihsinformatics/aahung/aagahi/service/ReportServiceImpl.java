@@ -478,7 +478,8 @@ public class ReportServiceImpl extends BaseService {
      */
     public JSONArray getTableDataAsJson(String query) throws SQLException, JSONException {
 	JSONArray json = new JSONArray();
-	ResultSet resultSet = getResultSet(query, dataSource.getConnection());
+	try(Connection conn =  dataSource.getConnection();){
+	ResultSet resultSet = getResultSet(query, conn);
 	ResultSetMetaData metadata = resultSet.getMetaData();
 	while (resultSet.next()) {
 	    int numColumns = metadata.getColumnCount();
@@ -519,6 +520,7 @@ public class ReportServiceImpl extends BaseService {
 		}
 	    }
 	    json.put(obj);
+	}
 	}
 	return json;
     }

@@ -358,12 +358,11 @@ class FormSearch extends React.Component {
                 <MDBCardBody>
                     <div id="filters" className="searchParams">
                         <MDBRow style={{ marginTop: "-1%" }}>
-                            <MDBCol md="3">
+                            <MDBCol md="3" style={{display:'flex !important'}}>
                                 <h6>Search By (Date Range, Component, Form Type)</h6>
-                                <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
-                                <label style={{ width: "50%" }}>Include voided</label>
                             </MDBCol>
                             <MDBCol md="8">
+                                <div className="flexClass">
                                 <div id="dateRangeDiv">
 
                                     <div id="firstDateDiv">
@@ -392,10 +391,14 @@ class FormSearch extends React.Component {
                                         />
                                         {/* <i color="secondary" class="far fa-calendar-alt"></i> */}
                                     </div>
+                                    <div className="inclVoided">
+                                    <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
+                                    <label style={{ fontSize:"9px", width: "50%" }}>Include voided</label>
+                                    </div>
                                     <br />
                                 </div>
                                 <br />
-
+                                </div>
 
                                 <div className="" id="secondaryFilters">
                                     <Label style={{ width: "15%", marginTop: "1%" }}>Component: </Label>
@@ -405,6 +408,8 @@ class FormSearch extends React.Component {
                                     <Select id="form_type" name="form_type" value={this.state.form_type} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} />
 
                                 </div>
+
+                                
 
                             </MDBCol>
                             <MDBCol md="1">
