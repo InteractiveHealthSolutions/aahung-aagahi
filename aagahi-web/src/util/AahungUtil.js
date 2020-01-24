@@ -199,7 +199,7 @@ export const getIndicatorCode = function (indicator) {
         case "no":
             indicatorCode = 1;
             break;
-        
+
         case "never": // coding is 5
             var indicatorCode = 5;
             break;
@@ -224,15 +224,9 @@ export const getIndicatorCode = function (indicator) {
     return indicatorCode;
 }
 export const loadFormState = function (formDataObj, stateObj) {
-    console.log("printing state...........................................");
-    console.log(stateObj);
-
     let self = this;
     formDataObj.data.map(function (element, i) {
-            // if(element.key.shortName === "program_type") {
-            //     alert(element.value);
-            // }
-        switch ((element.dataType).toLowerCase()) { 
+        switch ((element.dataType).toLowerCase()) {
             case 'string':
                 if (moment(element.value, 'LT', true).isValid()) { // just because of single case (for time) in Radio Appearance form
                     var time = element.value;
@@ -321,7 +315,6 @@ export const loadFormState = function (formDataObj, stateObj) {
     })
 
     return stateObj;
-
 }
 
 export const resetFormState = function (fields, stateObj) {
@@ -331,12 +324,10 @@ export const resetFormState = function (fields, stateObj) {
         if (typeof stateObj[stateName] === 'object' && moment(stateObj[stateName], 'LT', true).isValid()) {
             stateObj[stateName] = new Date();
         }
-
         // for array object
         else if (typeof stateObj[stateName] === 'object') {
             stateObj[stateName] = [];
         }
-
         // for text and others
         else if (typeof stateObj[stateName] != 'object') {
             stateObj[stateName] = '';
@@ -352,9 +343,9 @@ export const resetFormState = function (fields, stateObj) {
  * @param {*} data 
  * @param {*} key 
  */
-export const getUniqueValues = function(data, key) {
+export const getUniqueValues = function (data, key) {
     var uniqueValues = [];
-    if(data !== null && data !== undefined && data.length > 0) {
+    if (data !== null && data !== undefined && data.length > 0) {
         for (var i = 0; i < data.length; i++) {
             if (uniqueValues.indexOf(data[i][key]) === -1) {
                 uniqueValues.push(data[i][key]);
@@ -363,4 +354,3 @@ export const getUniqueValues = function(data, key) {
     }
     return uniqueValues;
 }
-

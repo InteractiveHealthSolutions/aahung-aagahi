@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-24 12:51:35
+ * @Last Modified time: 2020-01-24 15:00:17
  */
 
 
@@ -1477,27 +1477,23 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start">Monitoring Date<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
 
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Label for="school_id" >School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                             <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
 
                                                                 <Row>
-
-
-                                                                </Row>
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                            <Label for="monitor" >Monitored By<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1530,13 +1526,13 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Name of Teacher<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
+                                                                            <Label for="participant_id" >Teacher ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1557,7 +1553,7 @@ class PrimaryMonitoring extends React.Component {
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
+                                                                            <Label for="class_students" >Number of Students in Class<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
                                                                             <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => { this.inputChange(e, "class_students") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} max="99" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1565,7 +1561,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="class_duration" >Time duration of class in minutes</Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
+                                                                            <Label for="class_duration" >Time duration of class in minutes<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
                                                                             <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onChange={(e) => { this.inputChange(e, "class_duration") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} max="999" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1592,7 +1588,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_flashcard" >CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
+                                                                            <Label for="csa_flashcard" >CSA Flashcard being run<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={csaFlashcards} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1618,7 +1614,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_prompts" >The teacher is using the prompts provided in the CSA flashcard guide</Label>
+                                                                            <Label for="csa_prompts" >The teacher is using the prompts provided in the CSA flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1663,7 +1659,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_flashcard_objective" >The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide</Label>
+                                                                            <Label for="csa_flashcard_objective" >The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1707,7 +1703,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_material_preparation" >The teacher had all materials prepared in advance for the class</Label>
+                                                                            <Label for="csa_material_preparation" >The teacher had all materials prepared in advance for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1752,7 +1748,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_teacher_preparation" >The teacher was well prepared to facilitate the session</Label>
+                                                                            <Label for="csa_teacher_preparation" >The teacher was well prepared to facilitate the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1796,7 +1792,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_activity_time_allotment" >An appropriate amount of time is allotted for each activity and topic</Label>
+                                                                            <Label for="csa_activity_time_allotment" >An appropriate amount of time is allotted for each activity and topic<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1874,7 +1870,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_subject_comfort" >The teacher is comfortable speaking about this subject</Label>
+                                                                            <Label for="csa_subject_comfort" >The teacher is comfortable speaking about this subject<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1917,7 +1913,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="csa_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1961,7 +1957,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_impartial_opinions" >The teacher does not impose their own values or opinions on the participants</Label>
+                                                                            <Label for="csa_impartial_opinions" >The teacher does not impose their own values or opinions on the participants<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2004,7 +2000,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_student_engagement" >Students are engaged in discussion on flashcard(s)</Label>
+                                                                            <Label for="csa_student_engagement" >Students are engaged in discussion on flashcard(s)<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2047,7 +2043,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_student_understanding" >Students understand the main messages of the flashcard(s)</Label>
+                                                                            <Label for="csa_student_understanding" >Students understand the main messages of the flashcard(s)<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2090,7 +2086,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_student_attention" >Students are actively paying attention to the class while the teacher is instructing</Label>
+                                                                            <Label for="csa_student_attention" >Students are actively paying attention to the class while the teacher is instructing<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2154,7 +2150,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_timetable_integration" >Management has integrated the CSA program into the school timetable</Label>
+                                                                            <Label for="csa_timetable_integration" >Management has integrated the CSA program into the school timetable<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2199,7 +2195,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_two_teacher_assigned" >There are at least 2 teachers assigned to teach the CSA program</Label>
+                                                                            <Label for="csa_two_teacher_assigned" >There are at least 2 teachers assigned to teach the CSA program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2224,7 +2220,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="csa_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the CSA program</Label>
+                                                                            <Label for="csa_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the CSA program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2455,7 +2451,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_1" >The school is facing challenges scheduling the CSA class</Label>
+                                                                            <Label for="csa_challenge_1" >The school is facing challenges scheduling the CSA class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2490,7 +2486,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_2" >There are not enough resources</Label>
+                                                                            <Label for="csa_challenge_2" >There are not enough resources<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2524,7 +2520,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_3" >There is no room for the class</Label>
+                                                                            <Label for="csa_challenge_3" >There is no room for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2546,7 +2542,7 @@ class PrimaryMonitoring extends React.Component {
                                                                     </Col>
                                                                     <Col md="6" style={csaChallenge3Style}>
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_3_status" >Status of Challenge</Label> <span class="errorMessage">{this.state.errors["csa_challenge_3_status"]}</span>
+                                                                            <Label for="csa_challenge_3_status">Status of Challenge</Label> <span class="errorMessage">{this.state.errors["csa_challenge_3_status"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "csa_challenge_3_status")} value={this.state.csa_challenge_3_status} name="csa_challenge_3_status" id="csa_challenge_3_status">
                                                                                 <option value="resolved">Resolved</option>
                                                                                 <option value="unresolved">Unresolved</option>
@@ -2558,7 +2554,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_4" >There are not enough teachers to teach the CSA class</Label>
+                                                                            <Label for="csa_challenge_4">There are not enough teachers to teach the CSA class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2592,7 +2588,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup style={monitoredCsaStyle}>
-                                                                            <Label for="csa_challenge_5" >The content is irrelevant for the context of the students</Label>
+                                                                            <Label for="csa_challenge_5" >The content is irrelevant for the context of the students<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2626,7 +2622,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_challenge_6" >Students are not interested in the content</Label>
+                                                                            <Label for="csa_challenge_6">Students are not interested in the content<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2666,7 +2662,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_resources_required">Does this school require any resources?</Label>
+                                                                            <Label for="csa_resources_required">Does this school require any resources?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2722,7 +2718,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="csa_resources_delivered">Were any resources distributed to this school in this visit?</Label>
+                                                                            <Label for="csa_resources_delivered">Were any resources distributed to this school in this visit?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2785,7 +2781,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="gender_flashcard" >Gender Flashcard being run</Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
+                                                                            <Label for="gender_flashcard" >Gender Flashcard being run<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={genderFlashcards} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -2809,7 +2805,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_prompts" >The teacher is using the prompts provided in the Gender flashcard guide</Label>
+                                                                            <Label for="gender_prompts" >The teacher is using the prompts provided in the Gender flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2854,7 +2850,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_flashcard_objective" >The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the Gender flashcard guide</Label>
+                                                                            <Label for="gender_flashcard_objective" >The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the Gender flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2898,7 +2894,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_material_preparation" >The teacher had all materials prepared in advance for the class</Label>
+                                                                            <Label for="gender_material_preparation" >The teacher had all materials prepared in advance for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2942,7 +2938,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_teacher_preparation" >The teacher was well prepared to facilitate the session</Label>
+                                                                            <Label for="gender_teacher_preparation" >The teacher was well prepared to facilitate the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2985,7 +2981,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_activity_time_allotment" >An appropriate amount of time is allotted for each activity and topic</Label>
+                                                                            <Label for="gender_activity_time_allotment" >An appropriate amount of time is allotted for each activity and topic<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -3063,7 +3059,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_subject_comfort" >The teacher is comfortable speaking about this subject</Label>
+                                                                            <Label for="gender_subject_comfort" >The teacher is comfortable speaking about this subject <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3106,7 +3102,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="gender_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3149,7 +3145,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_impartial_opinions" >The teacher does not impose their own values or opinions on the participants</Label>
+                                                                            <Label for="gender_impartial_opinions" >The teacher does not impose their own values or opinions on the participants<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3192,7 +3188,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_student_engagement" >Students are engaged in discussion on flashcard(s)</Label>
+                                                                            <Label for="gender_student_engagement" >Students are engaged in discussion on flashcard(s)<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3235,7 +3231,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_student_understanding" >Students understand the main messages of the flashcard(s)</Label>
+                                                                            <Label for="gender_student_understanding" >Students understand the main messages of the flashcard(s)<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3278,7 +3274,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_student_attention" >Students are actively paying attention to the class while the teacher is instructing</Label>
+                                                                            <Label for="gender_student_attention" >Students are actively paying attention to the class while the teacher is instructing<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3343,7 +3339,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_timetable_integration" >Management has integrated the Gender program into the school timetable</Label>
+                                                                            <Label for="gender_timetable_integration" >Management has integrated the Gender program into the school timetable<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3388,7 +3384,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_two_teacher_assigned" >There are at least 2 teachers assigned to teach the Gender program</Label>
+                                                                            <Label for="gender_two_teacher_assigned" >There are at least 2 teachers assigned to teach the Gender program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3413,7 +3409,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
+                                                                            <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3504,7 +3500,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="gender_challenge_1" >The school is facing challenges scheduling the Gender class</Label>
+                                                                            <Label for="gender_challenge_1" >The school is facing challenges scheduling the Gender class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3541,7 +3537,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="gender_challenge_2" >There are not enough resources</Label>
+                                                                            <Label for="gender_challenge_2" >There are not enough resources<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3575,7 +3571,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="gender_challenge_3" >There is no room for the class</Label>
+                                                                            <Label for="gender_challenge_3" >There is no room for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3609,7 +3605,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="gender_challenge_4" >There are not enough teachers to teach the Gender class</Label>
+                                                                            <Label for="gender_challenge_4" >There are not enough teachers to teach the Gender class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3643,7 +3639,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="gender_challenge_5" >The content is irrelevant for the context of the students</Label>
+                                                                            <Label for="gender_challenge_5" >The content is irrelevant for the context of the students<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3677,7 +3673,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup>
-                                                                            <Label for="gender_challenge_6" >Students are not interested in the content</Label>
+                                                                            <Label for="gender_challenge_6" >Students are not interested in the content<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3718,7 +3714,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup style={monitoredGenderStyle}>
-                                                                            <Label for="gender_resources_required">Does this school require any resources?</Label>
+                                                                            <Label for="gender_resources_required">Does this school require any resources?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3774,7 +3770,7 @@ class PrimaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="gender_resources_delivered">Were any resources distributed to this school in this visit?</Label>
+                                                                            <Label for="gender_resources_delivered">Were any resources distributed to this school in this visit?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>

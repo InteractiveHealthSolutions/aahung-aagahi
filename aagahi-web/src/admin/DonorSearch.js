@@ -65,7 +65,13 @@ class DonorSearch extends React.Component {
                     template: `<i class="fas fa-redo"></i>`
                 }
                 ],
-                rowData: []
+                rowData: [],
+                rowClassRules: {
+                    "voided": function(params) {
+                      var voided = params.data.voided;
+                      return voided === "True";
+                    }
+                }
             },
             donor_shortname: '',  // widget IDs (and their states) are with underscore notation
             donor_name: '',
@@ -356,7 +362,9 @@ class DonorSearch extends React.Component {
                                 pagination={true}
                                 paginationPageSize="10"
                                 enableColResize={true}
-                                suppressCellSelection={true}>
+                                suppressCellSelection={true}
+                                rowClassRules={this.state.donor.rowClassRules}
+                                >
                             </AgGridReact>
                         </div>
                     </Animated>

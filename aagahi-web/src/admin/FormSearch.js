@@ -49,7 +49,7 @@ class FormSearch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            location: {
+            formData: {
                 columnDefs: [{ headerName: "ID", field: "formId", sortable: true },
                 { headerName: "Form Type", field: "formTypeName", sortable: true },
                 { headerName: "Form Group", field: "formGroupName", sortable: true },
@@ -68,8 +68,13 @@ class FormSearch extends React.Component {
                     template: `<i class="fas fa-redo"></i>`
                 }
                 ],
-                rowData: []
-
+                rowData: [],
+                rowClassRules: {
+                    "voided": function(params) {
+                      var voided = params.data.voided;
+                      return voided === "True";
+                    }
+                }
             },
             formGroups: [],
             formTypes: [],
@@ -98,7 +103,6 @@ class FormSearch extends React.Component {
      */
     loadData = async () => {
         try {
-
             let allFormTypes = await getAllFormTypes();
             if (allFormTypes != null && allFormTypes.length > 0) {
                 let array = [];
@@ -285,9 +289,9 @@ class FormSearch extends React.Component {
             })
         }
 
-        var location = { ...this.state.location }
-        location.rowData = array;
-        this.setState({ location });
+        var formData = { ...this.state.formData }
+        formData.rowData = array;
+        this.setState({ formData });
         this.setState({
             hasData: true
         })
@@ -358,58 +362,58 @@ class FormSearch extends React.Component {
                 <MDBCardBody>
                     <div id="filters" className="searchParams">
                         <MDBRow style={{ marginTop: '-1%', width: '115%' }}>
-                            <MDBCol md="3" style={{display:'flex !important'}}>
+                            <MDBCol md="3" style={{ display: 'flex !important' }}>
                                 <h6>Search By (Date Range, Component, Form Type)</h6>
                             </MDBCol>
                             <MDBCol md="8">
-                                <div className="flexClass" style={{marginBottom:'-2%'}}>
-                                <div id="dateRangeDiv" style={{display: 'flex'}}>
+                                <div className="flexClass" style={{ marginBottom: '-2%' }}>
+                                    <div id="dateRangeDiv" style={{ display: 'flex' }}>
 
-                                    <div id="firstDateDiv">
-                                        <Label>Start Date:    </Label><span className="required">*</span>
-                                        <DatePicker className="dateBox" id="dateSearch"
-                                            selected={this.state.start_date}
-                                            onChange={(date) => this.handleDate(date, "start_date")}
-                                            selectsStart
-                                            startDate={this.state.start_date}
-                                            endDate={this.state.end_date}
-                                            placeholderText="Select Start Date"
-                                        />
-                                        {/* <i class="far fa-calendar-alt"></i> */}
-                                    </div>
+                                        <div id="firstDateDiv">
+                                            <Label>Start Date:    </Label><span className="required">*</span>
+                                            <DatePicker className="dateBox" id="dateSearch"
+                                                selected={this.state.start_date}
+                                                onChange={(date) => this.handleDate(date, "start_date")}
+                                                selectsStart
+                                                startDate={this.state.start_date}
+                                                endDate={this.state.end_date}
+                                                placeholderText="Select Start Date"
+                                            />
+                                            {/* <i class="far fa-calendar-alt"></i> */}
+                                        </div>
 
-                                    <div id="secondDateDiv">
-                                        <Label>End Date:   </Label><span className="required">*</span>
-                                        <DatePicker className="dateBox" id="dateSearch"
-                                            selected={this.state.end_date}
-                                            onChange={(date) => this.handleDate(date, "end_date")}
-                                            selectsEnd
-                                            endDate={this.state.end_date}
-                                            minDate={this.state.start_date}
-                                            placeholderText="Select End Date"
-                                            maxDate={new Date()}
-                                        />
-                                        {/* <i color="secondary" class="far fa-calendar-alt"></i> */}
-                                    </div>
-                                    <div className="inclVoided" style={{width:'20%'}}>
-                                    <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
-                                    <label style={{ fontSize:"14px", width: "74%" }}>Include voided</label>
+                                        <div id="secondDateDiv">
+                                            <Label>End Date:   </Label><span className="required">*</span>
+                                            <DatePicker className="dateBox" id="dateSearch"
+                                                selected={this.state.end_date}
+                                                onChange={(date) => this.handleDate(date, "end_date")}
+                                                selectsEnd
+                                                endDate={this.state.end_date}
+                                                minDate={this.state.start_date}
+                                                placeholderText="Select End Date"
+                                                maxDate={new Date()}
+                                            />
+                                            {/* <i color="secondary" class="far fa-calendar-alt"></i> */}
+                                        </div>
+                                        <div className="inclVoided" style={{ width: '20%' }}>
+                                            <CustomCheckBox id="includeVoided" name="includeVoided" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "includeVoided")} />
+                                            <label style={{ fontSize: "14px", width: "74%" }}>Include voided</label>
+                                        </div>
+                                        <br />
                                     </div>
                                     <br />
-                                </div>
-                                <br />
                                 </div>
 
                                 <div className="" id="secondaryFilters">
                                     <Label style={{ width: "15%", marginTop: "1%" }}>Component: </Label>
-                                    <Select className="secondaryFilComp" id="form_component" name="form_component" value={this.state.form_component} onChange={(e) => this.handleChange(e, "form_component")} options={this.state.formGroups}/>
+                                    <Select className="secondaryFilComp" id="form_component" name="form_component" value={this.state.form_component} onChange={(e) => this.handleChange(e, "form_component")} options={this.state.formGroups} />
 
                                     <Label style={{ width: "20%", marginTop: "1%" }}>Form Type: </Label>
                                     <Select id="form_type" name="form_type" value={this.state.form_type} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} />
 
                                 </div>
 
-                                
+
 
                             </MDBCol>
                             <MDBCol md="1">
@@ -429,15 +433,17 @@ class FormSearch extends React.Component {
 
                             <AgGridReact style={{ width: '1150px' }}
                                 onGridReady={params => this.gridApi = params.api}
-                                columnDefs={this.state.location.columnDefs}
-                                rowData={this.state.location.rowData}
+                                columnDefs={this.state.formData.columnDefs}
+                                rowData={this.state.formData.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onCellClicked={this.onSelectionChanged.bind(this)}
                                 pagination={true}
                                 paginationPageSize="10"
                                 enableColResize={true}
-                                suppressCellSelection={true}>
+                                suppressCellSelection={true}
+                                rowClassRules={this.state.formData.rowClassRules}
+                                >
                             </AgGridReact>
                         </div>
                     </Animated>
