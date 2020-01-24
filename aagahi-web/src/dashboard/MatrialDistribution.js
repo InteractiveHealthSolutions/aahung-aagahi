@@ -55,7 +55,8 @@ class MaterialDistribution extends React.Component {
     render() {
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        const distributions = getUniqueValues(this.data, 'distribution_location');
+        const distributions = ['Aahung Office','Conference','Other','School','Stakeholder Meeting','Festival Stall']
+        
 
         let chartData = [
             { name: 'Pamphlet', data: filterData(this.data, 'pamphlet_count') },
@@ -65,7 +66,7 @@ class MaterialDistribution extends React.Component {
         ];
         
         
-        const colors = ['#DC143C', '#FFA500', '#32CD32'];
+        const colors = ['blue', '#008080', '#8A2BE2'];
 
 
         const crosshair = {

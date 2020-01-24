@@ -59,7 +59,7 @@ class AmplifyChangeParticipant extends React.Component {
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
 
-        const type =['Student','Faculty'];
+        const type =['Student','Faculty','Other','Pre-service','Providers'];
        
         let studentData = [
             { data: filterData(this.data, 'male', 'Student') },

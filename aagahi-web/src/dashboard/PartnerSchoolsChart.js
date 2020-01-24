@@ -89,14 +89,14 @@ class PartnerSchoolsChart extends React.Component {
                 <ChartTooltip/>
                 <ChartSeries>
                     {primary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
-                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} name={item.name} gap={2}>
                             <ChartSeriesItemTooltip render={primaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
                     {secondary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={2}>
                             <ChartSeriesItemTooltip render={secondaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
