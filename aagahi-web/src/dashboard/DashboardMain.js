@@ -67,7 +67,11 @@ class DashboardMain extends React.Component {
             district: [], // for capturing the selected options for districts
             province: [], // for capturing the selected options for provinces,
             component: "lse",
-            paramFilter: ""
+            paramFilter: "",
+            startDateParam: new Date(),
+            endDataParam: new Date(),
+            provincesStringParam: '',
+            citiesStringParam: '',
         }
     }
 
@@ -78,9 +82,9 @@ class DashboardMain extends React.Component {
         console.log(this.state.province);
         console.log(this.state.district);
 
-        if(this.state.selected === 0)
+        if (this.state.selected === 0)
             this.setState({ component: "lse" })
-        else if(this.state.selected === 1)
+        else if (this.state.selected === 1)
             this.setState({ component: "srhm" })
         else
             this.setState({ component: "comms" })
@@ -90,16 +94,16 @@ class DashboardMain extends React.Component {
 
     handleDate(date, name) {
         this.setState({
-          [name]: date
+            [name]: date
         });
-      };
+    };
 
     handleSelect = (e) => {
         this.setState({ selected: e.selected });
 
-        if(e.selected === 0)
+        if (e.selected === 0)
             this.setState({ component: "lse" })
-        else if(e.selected === 1)
+        else if (e.selected === 1)
             this.setState({ component: "srhm" })
         else
             this.setState({ component: "comms" })
@@ -133,16 +137,13 @@ class DashboardMain extends React.Component {
 
     refreshComponentCharts() {
 
-        var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
-        var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
         var concatenatedProvinces = getProvinceListFilter(this.state.province);
         var concatenatedDistricts = getDistrictListFilter(this.state.district);
-
-        // attaching the static filters for generating url
-        // var urlWithParams = "from=" + startDate + "&to=" + endDate + "&state_province=" + concatenatedProvinces + "&city_village=" + concatenatedDistricts;
-        var urlWithParams = "from=" + startDate + "&to=" + endDate + "&state_province=" + concatenatedProvinces;
         this.setState({
-            paramFilter: urlWithParams
+            startDateParam: moment(this.state.start_date).format('YYYY-MM-DD'),
+            endDataParam: moment(this.state.end_date).format('YYYY-MM-DD'),
+            provincesStringParam: concatenatedProvinces,
+            citiesStringParam: concatenatedDistricts
         })
     }
 
@@ -228,7 +229,7 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsChart paramFilter={this.state.paramFilter} component={this.state.component} />
+                                                    <PartnerSchoolsChart endDate={this.state.endDataParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
                                                     <PartnerSchoolsByYearChart />
