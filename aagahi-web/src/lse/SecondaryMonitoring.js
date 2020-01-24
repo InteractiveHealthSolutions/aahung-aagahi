@@ -202,7 +202,7 @@ class SecondaryMonitoring extends React.Component {
             let schoolsArray = [];
             if (schools != null && schools.length > 0) {
                 schools.forEach(async function (obj) {
-                    if(obj.shortName.includes("SEC"))
+                    if (obj.shortName.includes("SEC"))
                         schoolsArray.push(obj);
                 })
                 this.setState({
@@ -210,7 +210,7 @@ class SecondaryMonitoring extends React.Component {
                 })
             }
 
-            
+
 
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
@@ -220,11 +220,11 @@ class SecondaryMonitoring extends React.Component {
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
 
-                    if(this.state.school_tier !== "") {
-                        this.state.school_tier = this.state.school_tier === "school_tier_new" ? "New" 
-                        : (this.state.school_tier === "school_tier_running" ? "Running" 
-                        : (this.state.school_tier === "school_tier_exit" ? "Exit" 
-                        : ""));
+                    if (this.state.school_tier !== "") {
+                        this.state.school_tier = this.state.school_tier === "school_tier_new" ? "New"
+                            : (this.state.school_tier === "school_tier_running" ? "Running"
+                                : (this.state.school_tier === "school_tier_exit" ? "Exit"
+                                    : ""));
                     }
 
                     let self = this;
@@ -691,7 +691,7 @@ class SecondaryMonitoring extends React.Component {
 
                 let participants = await getParticipantsByLocation(e.uuid, false);
                 if (participants != null && participants.length > 0) {
-                    
+
                     this.setState({
                         participants: participants,
                         participant_name: [],
@@ -735,7 +735,7 @@ class SecondaryMonitoring extends React.Component {
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 attributeValue = definition.definitionName;
                 if (attrTypeName === "school_tier") {
-                    if(self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
+                    if (self.editMode && (self.state.school_tier !== '' && self.state.school_tier !== undefined) && self.state.school_tier !== attributeValue) {
                         // Edits are painful!! 
                         // Handling the case where change of tier will have an impact on scoring questions and everntually the cumulative score
                         self.setState({
@@ -753,7 +753,7 @@ class SecondaryMonitoring extends React.Component {
                     self.setState({ [attrTypeName]: attributeValue });
                 }
 
-                if (attrTypeName === "school_sex" && !self.editMode) {
+                if (attrTypeName === "school_sex") {
                     self.setState({ class_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : "girls" });
                     self.setState({ school_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : attributeValue === "Co-ed" ? "coed" : "" });
                 }
@@ -791,11 +791,11 @@ class SecondaryMonitoring extends React.Component {
             jsonData.data = {};
 
             var dataObj = {};
-            if(this.state.school_tier !== "") {
-                dataObj.school_tier = this.state.school_tier === "New" ? "school_tier_new" 
-                : (this.state.school_tier === "Running" ? "school_tier_running" 
-                : (this.state.school_tier === "Exit" ? "school_tier_exit" 
-                : ""));
+            if (this.state.school_tier !== "") {
+                dataObj.school_tier = this.state.school_tier === "New" ? "school_tier_new"
+                    : (this.state.school_tier === "Running" ? "school_tier_running"
+                        : (this.state.school_tier === "Exit" ? "school_tier_exit"
+                            : ""));
             }
 
             // for lsbe
@@ -2568,7 +2568,6 @@ class SecondaryMonitoring extends React.Component {
                                                                             <Input type="number" value={this.state.wb1_girls_delivered_count} name="wb1_girls_delivered_count" id="wb1_girls_delivered_count" onChange={(e) => { this.inputChange(e, "wb1_girls_delivered_count") }} max="999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                     <Col md="6" style={workbookBoysDistributeStyle}>
                                                                         <FormGroup >
                                                                             <Label for="wb1_boys_delivered_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_delivered_count"]}</span>
@@ -2584,7 +2583,6 @@ class SecondaryMonitoring extends React.Component {
                                                                             <Input type="number" value={this.state.wb2_girls_delivered_count} name="wb2_girls_delivered_count" id="wb2_girls_delivered_count" onChange={(e) => { this.inputChange(e, "wb2_girls_delivered_count") }} max="999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                     <Col md="6" style={workbookBoysDistributeStyle}>
                                                                         <FormGroup >
                                                                             <Label for="wb2_boys_delivered_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_delivered_count"]}</span>
@@ -2592,7 +2590,6 @@ class SecondaryMonitoring extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
-
                                                                 <Row>
                                                                     <Col md="6" style={otherResourcesDistributeStyle}>
                                                                         <FormGroup >
@@ -2608,7 +2605,6 @@ class SecondaryMonitoring extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
-
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
@@ -2618,18 +2614,12 @@ class SecondaryMonitoring extends React.Component {
                                         </Col>
                                     </Row>
 
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
-
                                                 <CardHeader>
-
                                                     <Row>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <ButtonGroup size="sm">
                                                                 <Button color="secondary" id="page1"
                                                                     className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
@@ -2643,9 +2633,7 @@ class SecondaryMonitoring extends React.Component {
                                                                         this.toggleTab('2');
                                                                     }}
                                                                 >LSBE</Button>
-
                                                             </ButtonGroup>
-                                                            {/* </div> */}
                                                         </Col>
                                                         <Col md="2">
                                                         </Col>
@@ -2663,18 +2651,15 @@ class SecondaryMonitoring extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
-
 }
 
 export default SecondaryMonitoring;
