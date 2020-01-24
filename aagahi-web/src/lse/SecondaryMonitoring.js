@@ -199,11 +199,18 @@ class SecondaryMonitoring extends React.Component {
             }
 
             let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            let schoolsArray = [];
             if (schools != null && schools.length > 0) {
+                schools.forEach(async function (obj) {
+                    if(obj.shortName.includes("SEC"))
+                        schoolsArray.push(obj);
+                })
                 this.setState({
-                    schools: schools
+                    schools: schoolsArray
                 })
             }
+
+            
 
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
