@@ -38,7 +38,7 @@ import ExitPlanning from './ExitPlanning';
 import IndividualsReached from './IndividualsReached';
 import SocialMediaTraffic from './SocialMediaTraffic';
 import DashboardFilterContainer from "./DashboardFilterContainer";
-import {Navbar, Form, FormControl, Nav} from 'react-bootstrap';
+import { Navbar, Form, FormControl, Nav } from 'react-bootstrap';
 import { TabStrip, TabStripTab, PanelBar, PanelBarItem, PanelBarUtils, Menu, MenuItem, MenuItemModel, MenuItemLink, MenuItemArrow, Splitter } from '@progress/kendo-react-layout'
 import '@progress/kendo-react-intl'
 import '@progress/kendo-react-dropdowns'
@@ -49,6 +49,10 @@ import CommunicationsTraining from "./CommunicationsTraining";
 import ParticipantTraining from "./ParticipantTraining";
 import PartnerInstitutions from "./PartnerInstitution";
 import AmplifyChangeParticipant from "./AmplifyChangeParticipants";
+import Select from 'react-select';
+import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location, getProvinceListFilter, getDistrictListFilter } from "../util/LocationUtil.js";
+import DatePicker from "react-datepicker";
+import moment from 'moment';
 
 class DashboardMain extends React.Component {
 
@@ -58,11 +62,88 @@ class DashboardMain extends React.Component {
         this.state = {
             selected: 0,
             showDialog: false,
+            start_date: new Date(),
+            end_date: new Date(),
+            district: [], // for capturing the selected options for districts
+            province: [], // for capturing the selected options for provinces,
+            component: "lse",
+            paramFilter: ""
         }
     }
-    
+
+    handleRefresh = () => {
+        console.log(this.state.selected);
+        console.log(this.state.start_date);
+        console.log(this.state.end_date);
+        console.log(this.state.province);
+        console.log(this.state.district);
+
+        if(this.state.selected === 0)
+            this.setState({ component: "lse" })
+        else if(this.state.selected === 1)
+            this.setState({ component: "srhm" })
+        else
+            this.setState({ component: "comms" })
+
+        this.refreshComponentCharts();
+    }
+
+    handleDate(date, name) {
+        this.setState({
+          [name]: date
+        });
+      };
+
     handleSelect = (e) => {
-        this.setState({selected: e.selected});
+        this.setState({ selected: e.selected });
+
+        if(e.selected === 0)
+            this.setState({ component: "lse" })
+        else if(e.selected === 1)
+            this.setState({ component: "srhm" })
+        else
+            this.setState({ component: "comms" })
+    }
+
+    // for multi select
+    valueChangeMulti(e, name) {
+
+        console.log(e);
+        this.setState({
+            [name]: e
+        });
+
+        if (name === "province") {
+            if (e !== null && e.length > 0) {
+                let districts = getDistrictsByMultipleProvinces(e);
+                console.log(districts);
+                this.setState({
+                    districtArray: districts,
+                    district: []
+                })
+            }
+            else {
+                this.setState({
+                    districtArray: [],
+                    district: []
+                })
+            }
+        }
+    }
+
+    refreshComponentCharts() {
+
+        var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
+        var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
+        var concatenatedProvinces = getProvinceListFilter(this.state.province);
+        var concatenatedDistricts = getDistrictListFilter(this.state.district);
+
+        // attaching the static filters for generating url
+        // var urlWithParams = "from=" + startDate + "&to=" + endDate + "&state_province=" + concatenatedProvinces + "&city_village=" + concatenatedDistricts;
+        var urlWithParams = "from=" + startDate + "&to=" + endDate + "&state_province=" + concatenatedProvinces;
+        this.setState({
+            paramFilter: urlWithParams
+        })
     }
 
     /**
@@ -78,97 +159,145 @@ class DashboardMain extends React.Component {
                 <MDBView>
                     <MDBMask className="gradient">
                         <div>
-                        <div className="bootstrap-wrapper">
-                            <Navbar style={{backgroundColor:"rgba(82, 42, 113, 1)"}}>
-                            <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
-                                <Nav className="mr-auto"></Nav>
-                                <Form inline>
-                                    {/* <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button> */}
-                                    <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
-                                </Form>
-                            </Navbar>
-                        <div className="row">
-                        <div class="col-md-10" style={{display: 'contents'}}>
-                            <PrimaryStatsContainer />
-                        </div>
-                        </div>
-
-                    <TabStrip style={{color: "white", fontWeight: "bold", width: "100%;"}} selected={this.state.selected} onSelect={this.handleSelect}>
-                        <TabStripTab style={{width:"33%"}} title="LSE">
-                            <DashboardFilterContainer />
-                                <div class="component-container">
-                                    <div class="row">
-                                        <div class="col" style={{marginBottom: '12px'}}>
-                                            <PartnerSchoolsChart />
-                                        </div>
-                                        <div class="col" style={{marginBottom: '12px'}}>
-                                            <PartnerSchoolsByYearChart />
-                                        </div>
-                                        <div class="w-100">
-                                            <div class="col" style={{marginBottom: '12px'}}>
-                                                <TeachersTrainedSummaryChart />
+                            <div className="bootstrap-wrapper">
+                                <Navbar style={{ backgroundColor: "rgba(82, 42, 113, 1)" }}>
+                                    <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
+                                    <Nav className="mr-auto"></Nav>
+                                    <Form inline>
+                                        {/* <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button> */}
+                                        <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+                                    </Form>
+                                </Navbar>
+                                <div className="row">
+                                    <div class="col-md-10" style={{ display: 'contents' }}>
+                                        <PrimaryStatsContainer />
+                                    </div>
+                                </div>
+                                <div id="filtersDiv">
+                                    {/* <DashboardFilterContainer handleRefresh={this.handleRefresh}/> */}
+                                    <div class="card" style={{ marginLeft: "2%", marginRight: "2%" }}>
+                                        <h5 class="card-header h5" style={{ color: 'black' }}>Filter Data</h5>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-3" style={{ color: 'black' }}>Province</div>
+                                                <div class="col-sm-3" style={{ color: 'black' }}>City</div>
+                                                <div class="col-sm-2" style={{ color: 'black' }}>Start Date</div>
+                                                <div class="col-sm-2" style={{ color: 'black' }}>End Date</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required />
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <DatePicker style={{ border: "none !important" }}
+                                                        selected={this.state.start_date}
+                                                        onChange={(date) => this.handleDate(date, "start_date")}
+                                                        selectsStart
+                                                        startDate={this.state.start_date}
+                                                        endDate={this.state.end_date}
+                                                        placeholderText="Start Date"
+                                                    />
+                                                    {/* <i class="far fa-calendar-alt"></i> */}
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <DatePicker style={{ borderTop: "none !important", borderLeft: "none !important", borderRight: "none !important" }}
+                                                        selected={this.state.end_date}
+                                                        onChange={(date) => this.handleDate(date, "end_date")}
+                                                        selectsEnd
+                                                        endDate={this.state.end_date}
+                                                        minDate={this.state.start_date}
+                                                        placeholderText="End Date"
+                                                        maxDate={new Date()}
+                                                    />
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <MDBBtn size="sm" style={{ backgroundColor: "#ef6c00", marginTop: "-4%" }} onClick={(e) => this.handleRefresh()} >Refresh<MDBIcon icon="sync-alt" className="ml-2" /></MDBBtn>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col" style={{marginBottom: '12px'}}>
-                                            <TrainingDataSummary />
-                                        </div>
-                                        <div class="col" style={{marginBottom: '12px'}}>
-                                            <ExitPlanning />
-                                        </div>
                                     </div>
+                                    <br />
                                 </div>
-                        </TabStripTab>
-                        <TabStripTab title="SRHM">
-                            <DashboardFilterContainer />
-                            <div class="component-container">
-                            <div class="row">                            
-                                <div class="col" style={{marginBottom: '12px'}}>
-                                    <IndividualsReached />
-                                </div>
-                                <div class="col" style={{marginBottom: '12px'}}>   
-                                    <ParticipantTraining />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col" style={{marginBottom: '12px'}}>   
-                                    <PartnerInstitutions />
-                                </div>
-                                <div class="col" style={{marginBottom: '12px'}}>  
-                                    <AmplifyChangeParticipant />
-                                </div>
-                            </div>
-                            </div>
-                        </TabStripTab>
-                        <TabStripTab title="COMMS">
-                            <DashboardFilterContainer />
-                            <div class="component-container">
-                                <div class="row">
-                                    <div class="col" style={{marginBottom: '12px'}}>   
-                                        <SocialMediaTraffic />
-                                    </div>
-                                    <div class="col" style={{marginBottom: '12px'}}>   
-                                        <RadioLiveCall />
-                                    </div>
-                                    <div class="w-100">
-                                        <div class="col" style={{marginBottom: '12px'}}>   
-                                            <MobileCinema />
+
+                                <TabStrip style={{ color: "white", fontWeight: "bold", width: "100%;" }} selected={this.state.selected} onSelect={this.handleSelect}>
+                                    <TabStripTab style={{ width: "33%" }} title="LSE">
+                                        {/* <DashboardFilterContainer /> */}
+                                        <div class="component-container">
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <PartnerSchoolsChart paramFilter={this.state.paramFilter} component={this.state.component} />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <PartnerSchoolsByYearChart />
+                                                </div>
+                                                <div class="w-100">
+                                                    <div class="col" style={{ marginBottom: '12px' }}>
+                                                        <TeachersTrainedSummaryChart />
+                                                    </div>
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <TrainingDataSummary />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <ExitPlanning />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col" style={{marginBottom: '12px'}}>   
-                                            <MaterialDistribution />
+                                    </TabStripTab>
+                                    <TabStripTab title="SRHM">
+                                        {/* <DashboardFilterContainer /> */}
+                                        <div class="component-container">
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <IndividualsReached />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <ParticipantTraining />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <PartnerInstitutions />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <AmplifyChangeParticipant />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col">   
-                                            {/* <CommunicationsTraining /> */}
+                                    </TabStripTab>
+                                    <TabStripTab title="COMMS">
+                                        {/* <DashboardFilterContainer /> */}
+                                        <div class="component-container">
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <SocialMediaTraffic />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <RadioLiveCall />
+                                                </div>
+                                                <div class="w-100">
+                                                    <div class="col" style={{ marginBottom: '12px' }}>
+                                                        <MobileCinema />
+                                                    </div>
+                                                    <div class="col" style={{ marginBottom: '12px' }}>
+                                                        <MaterialDistribution />
+                                                    </div>
+                                                    <div class="col">
+                                                        {/* <CommunicationsTraining /> */}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </TabStripTab>
+                                </TabStrip>
                             </div>
-                        </TabStripTab>
-                    </TabStrip>
-                    </div>
+                        </div>
+                    </MDBMask>
+                </MDBView>
             </div>
-            </MDBMask>
-          </MDBView>
-        </div>
         );
     }
 }
