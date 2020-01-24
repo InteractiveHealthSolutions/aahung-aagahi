@@ -54,35 +54,42 @@ class RadioLiveCall extends React.Component {
     }
 
     render() {
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultToolTip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
-        let dayName = getUniqueValues(this.data, 'day_name');
-        const dayNameStr = JSON.parse(JSON.stringify(dayName));
-        let listenerData = [];
-        let liveData = [];
+        const dayName = getUniqueValues(this.data,'day_name');
         
+        let monday = [
+            {data: filterData(this.data,'Monday','listener_count')},
+            {data: filterData(this.data,'Monday','live_call_data')},
+        ];
+        let tuesday = [
+            {data: filterData(this.data,'Tuesday','listener_count')},
+            {data: filterData(this.data,'Tuesday','live_call_data')},
+        ];
+        let wednesday = [
+            {data: filterData(this.data,'Wednesday','listener_count')},
+            {data: filterData(this.data,'Wednesday','live_call_data')},
+        ];
+        let thursday = [
+            {data: filterData(this.data,'Thursday','listener_count')},
+            {data: filterData(this.data,'Thursday','live_call_data')},
+        ];
 
-        for (var i=0; i<dayNameStr.length; i++){
-            listenerData.push(
-                { data: filterData(this.data, 'Other', dayNameStr[i], 'listener_count') },
-                { data: filterData(this.data, 'Quetta', dayNameStr[i], 'listener_count') },
-                { data: filterData(this.data, 'Karachi', dayNameStr[i], 'listener_count') },
-                { data: filterData(this.data, 'Peshawar', dayNameStr[i], 'listener_count') },
-                { data: filterData(this.data, 'Hyderabad', dayNameStr[i], 'listener_count') },
-                { data: filterData(this.data, 'Lahore', dayNameStr[i], 'listener_count') }  
-            );
-        }
-        for (var i=0; i<dayNameStr.length; i++){
-            liveData.push(
-                { data: filterData(this.data, 'Other', dayNameStr[i], 'live_call_count') },
-                { data: filterData(this.data, 'Quetta', dayNameStr[i], 'live_call_count') },
-                { data: filterData(this.data, 'Karachi', dayNameStr[i], 'live_call_count') },
-                { data: filterData(this.data, 'Peshawar', dayNameStr[i], 'live_call_count') },
-                { data: filterData(this.data, 'Hyderabad', dayNameStr[i], 'live_call_count') },
-                { data: filterData(this.data, 'Lahore', dayNameStr[i], 'live_call_count') }  
-            );
-        }
+        let friday = [
+            {data: filterData(this.data,'Friday','listener_count')},
+            {data: filterData(this.data,'Friday','live_call_data')},
+        ];
+        let saturday = [
+            {data: filterData(this.data,'Saturday','listener_count')},
+            {data: filterData(this.data,'Saturday','live_call_data')},
+        ];
+        let sunday = [
+            {data: filterData(this.data,'Sunday','listener_count')},
+            {data: filterData(this.data,'Sunday','live_call_data')},
+        ];
+
 
         const colors = ['#DC143C', '#FFA500'];
 
@@ -107,15 +114,40 @@ class RadioLiveCall extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip render={defaultTooltip}/>
-                <ChartSeries>
-                    {listenerData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'listener_count' }}
+                <ChartTooltip/>
+                <ChartSeries render={defaultToolTip}>
+                    {monday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
-                    {liveData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'live_call_count' }}
+                    {tuesday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {wednesday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {thursday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {friday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
+                            data={item.data} visible={seriesVisible[index]} >
+                        </ChartSeriesItem>
+                    ))}
+                    {saturday.map((item, index) => (
+                        <ChartSeriesItem type="column" 
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {sunday.map((item, index) => (
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
@@ -135,7 +167,7 @@ class RadioLiveCall extends React.Component {
 
 }
 
-function filterData(data, cityName, day, program) {
+function filterData(data, day, program) {
     // For each tier, attach tier as name and data as the sums for each province
     var days = getUniqueValues(data, 'day_name');
     var filtered;
@@ -143,7 +175,7 @@ function filterData(data, cityName, day, program) {
 
 
     if (program === 'listener_count'){
-        filtered =data.filter(element => element.city === cityName && element.day_name === day);
+        filtered =data.filter(element => element.day_name === day);
         
         days.forEach(day => {
             var sumListener = 0;
@@ -158,7 +190,7 @@ function filterData(data, cityName, day, program) {
         return sums;
     
     }else{
-        filtered = data.filter(element => element.city === cityName && element.day_name === day);
+        filtered = data.filter(element => element.day_name === day);
         
         days.forEach(day => {
             var sumLive = 0;

@@ -66,19 +66,17 @@ class TeachersTrainedSummaryChart extends React.Component {
         let programs = getUniqueValues(this.data, 'program');
 
         let primary = [
-            { name: 'LSBE', data: filterData(this.data, 'Primary', 'LSBE') },
-            { name: 'Gender', data: filterData(this.data, 'Primary', 'Gender') },
-            { name: 'CSA', data: filterData(this.data, 'Primary', 'CSA') },
-            { name: 'Overall', data: filterData(this.data, 'Primary', 'Overall') }
+            { name: 'New', data: filterData(this.data, 'Primary', 'New') },
+            { name: 'Running', data: filterData(this.data, 'Primary', 'Running') },
+            { name: 'Exit', data: filterData(this.data, 'Primary', 'Exit') },
         ];
         let secondary = [
-            { name: 'LSBE', data: filterData(this.data, 'Secondary', 'LSBE') },
-            { name: 'Gender', data: filterData(this.data, 'Secondary', 'Gender') },
-            { name: 'CSA', data: filterData(this.data, 'Secondary', 'CSA') },
-            { name: 'Overall', data: filterData(this.data, 'Secondary', 'Overall') }
+            { name: 'New', data: filterData(this.data, 'Secondary', 'New') },
+            { name: 'Running', data: filterData(this.data, 'Secondary', 'Running') },
+            { name: 'Exit', data: filterData(this.data, 'Secondary', 'Exit') },
         ];
         
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32'];
         const crosshair = {
             visible: true,
             tooltip: {
@@ -134,10 +132,10 @@ function addAggregateRecord(data) {
     return data.concat(clone);
 }
 
-function filterData(data, level, program) {
+function filterData(data, level, tier) {
     var programs = getUniqueValues(data, 'program');
     // var levels = getUniqueValues(data, 'school_level');
-    var filtered = data.filter(element => element.school_level === level && element.program === program);
+    var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
     var sums = [];
         programs.forEach(program => {
             var sum = 0;

@@ -49,8 +49,8 @@ class ParticipantTraining extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true,true,true],
-        name: ['Student','Teacher','Other', 'Pre-service providers']
+        seriesVisible: [true, true,true],
+        name: ['Male','Female','Other']
     }
 
     render() {
@@ -65,38 +65,25 @@ class ParticipantTraining extends React.Component {
             { data: filterData(this.data, 'Student', 'Sindh') },
             { data: filterData(this.data, 'Student', 'Punjab') },
             { data: filterData(this.data, 'Student', 'Other') },
-            { data: filterData(this.data, 'Student', 'Balochistan') },
-            { data: filterData(this.data, 'Student', 'KP') },
-            { data: filterData(this.data, 'Student', 'Gilgit-Baltistan') }              
+                      
         ];
         let teacherData = [
             { data: filterData(this.data, 'Teacher', 'Sindh') },
             { data: filterData(this.data, 'Teacher', 'Punjab') },
             { data: filterData(this.data, 'Teacher', 'Other') },
-            { data: filterData(this.data, 'Teacher', 'Balochistan') },
-            { data: filterData(this.data, 'Teacher', 'KP') },
-            { data: filterData(this.data, 'Teacher', 'Gilgit-Baltistan') }              
+                        
         ];
         let otherData = [
             { data: filterData(this.data, 'Other', 'Sindh') },
             { data: filterData(this.data, 'Other', 'Punjab') },
             { data: filterData(this.data, 'Other', 'Other') },
-            { data: filterData(this.data, 'Other', 'Balochistan') },
-            { data: filterData(this.data, 'Other', 'KP') },
-            { data: filterData(this.data, 'Other', 'Gilgit-Baltistan') }              
+                       
         ];
-        let preserviceData = [
-            { data: filterData(this.data, 'Pre-service providers', 'Sindh') },
-            { data: filterData(this.data, 'Pre-service providers', 'Punjab') },
-            { data: filterData(this.data, 'Pre-service providers', 'Other') },
-            { data: filterData(this.data, 'Pre-service providers', 'Balochistan') },
-            { data: filterData(this.data, 'Pre-service providers', 'KP') },
-            { data: filterData(this.data, 'Pre-service providers', 'Gilgit-Baltistan') }              
-        ];
+        
 
        
         
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32'];
 
 
         const crosshair = {
@@ -122,25 +109,21 @@ class ParticipantTraining extends React.Component {
                 <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {studentData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ group: 'Student'}}
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Student'}}
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
                     {teacherData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ group: 'Teacher'}}
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Teacher'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {otherData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ group: 'Other'}}
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Other'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
-                    {preserviceData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ group: 'Pre-service providers'}}
-                            data={item.data} visible={seriesVisible[index]}>
-                        </ChartSeriesItem>
-                    ))}
+                    
                 </ChartSeries>
                 <ChartValueAxis skip={4}>
                     <ChartValueAxisItem crosshair={crosshair} />

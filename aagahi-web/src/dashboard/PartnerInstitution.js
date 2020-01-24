@@ -50,12 +50,12 @@ class PartnerInstitutions extends React.Component {
 
     state = {
         seriesVisible: [true, true,true,true],
-        name: ['Total Medical', 'Total Nursing', 'Total Midwifery', 'Other Total']
+        name: ['Medical', 'Nursing', 'Midwifery', 'Other']
     }
 
     render() {
 
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         const locations = getUniqueValues(this.data, 'state_province');
@@ -118,27 +118,27 @@ class PartnerInstitutions extends React.Component {
                 <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {sindhData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Sindh'}}
+                        <ChartSeriesItem type="column" stack={{ type: '100%', group: 'Sindh'}}
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
                     {punjabData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Punjab'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Punjab'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {balochistanData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Balochistan'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Balochistan'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {gilgitBaltistanData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Gilgit-Baltistan'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Gilgit-Baltistan'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {kpData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'KP'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'KP'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}

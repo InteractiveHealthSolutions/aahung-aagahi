@@ -49,8 +49,8 @@ class SocialMediaTraffic extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true,true,true],
-        name : ['facebook', 'twitter', 'other', 'abc', 'Instagram', 'web_portal']
+        seriesVisible: [true, true, true,true,true],
+        name : ['Facebook', 'Twitter', 'Other', 'Instagram', 'Web Portal']
     }
 
     render() {
@@ -68,13 +68,12 @@ class SocialMediaTraffic extends React.Component {
                 { data: filterData(this.data, 'facebook', dayNameStr[i]) },
                 { data: filterData(this.data, 'twitter', dayNameStr[i]) },
                 { data: filterData(this.data, 'other', dayNameStr[i]) },
-                { data: filterData(this.data, 'abc', dayNameStr[i]) },
                 { data: filterData(this.data, 'Instagram', dayNameStr[i]) },
                 { data: filterData(this.data, 'web_portal', dayNameStr[i]) }  
             );
         }
 
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#2F4F4F', 'gray'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2'];
 
 
         const crosshair = {
