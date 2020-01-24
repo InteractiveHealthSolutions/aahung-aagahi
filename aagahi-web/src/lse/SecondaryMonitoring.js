@@ -830,10 +830,8 @@ class SecondaryMonitoring extends React.Component {
                 }
 
                 var element = document.getElementById(fields[i]);
-                // alert(element);
                 if (element != null) {
                     if (element.offsetParent != null) { // this line is for checking if the element is visible on page
-                        // alert("it's visible:   >>> value: " + element.value);
                         if (element.value != '')
                             dataObj[fields[i]] = element.value;
                     }
@@ -849,7 +847,6 @@ class SecondaryMonitoring extends React.Component {
                 }
             }
 
-            console.log(dataObj);
             jsonData.data = dataObj;
             console.log(jsonData);
 
@@ -919,7 +916,6 @@ class SecondaryMonitoring extends React.Component {
                         }
                     );
             }
-
         }
     }
 
@@ -1126,7 +1122,6 @@ class SecondaryMonitoring extends React.Component {
                                             <Card className="main-card mb-6 center-col">
                                                 <CardBody>
 
-                                                    {/* error message div */}
                                                     <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
                                                         <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
                                                     </div>
@@ -1138,7 +1133,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Monitoring Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Monitoring Date<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1146,7 +1141,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Label for="school_id" >School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                             <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1161,7 +1156,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                            <Label for="monitor" >Monitored By<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1199,14 +1194,14 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Name of Teacher<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_id" >Teacher ID</Label>  <span class="errorMessage">{this.state.errors["participant_id"]}</span>
+                                                                            <Label for="participant_id" >Teacher ID<span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1227,7 +1222,7 @@ class SecondaryMonitoring extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
+                                                                            <Label for="class_students" >Number of Students in Class<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
                                                                             <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => { this.inputChange(e, "class_students") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} max="99" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1236,7 +1231,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="class_duration" >Time duration of class in minutes</Label>  <span class="errorMessage">{this.state.errors["class_duration"]}</span>
+                                                                            <Label for="class_duration" >Time duration of class in minutes<span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["class_duration"]}</span>
                                                                             <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onChange={(e) => { this.inputChange(e, "class_duration") }} onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} max="999" min="1" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1255,7 +1250,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_level_monitored" >LSBE Level</Label> <span class="errorMessage">{this.state.errors["lsbe_level_monitored"]}</span>
+                                                                            <Label for="lsbe_level_monitored" >LSBE Level<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["lsbe_level_monitored"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" disabled={this.editMode}>
 
                                                                                 <option value="level_1">Level 1</option>
@@ -1307,7 +1302,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_chapter_revision" >Revision or First time chapter is being taught</Label> <span class="errorMessage">{this.state.errors["lsbe_chapter_revision"]}</span>
+                                                                            <Label for="lsbe_chapter_revision" >Revision or First time chapter is being taught<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["lsbe_chapter_revision"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_chapter_revision")} value={this.state.lsbe_chapter_revision} name="lsbe_chapter_revision" id="lsbe_chapter_revision" >
                                                                                 <option value="revision">Revision</option>
                                                                                 <option value="first_time">First time</option>
@@ -1325,7 +1320,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_prompts" >The teacher is actively using the teacher’s guide to aid in facilitation of content</Label>
+                                                                            <Label for="lsbe_prompts" >The teacher is actively using the teacher’s guide to aid in facilitation of content<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1369,7 +1364,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_chapter_objective" >The teacher is clearly relaying the main messages of the chapter, even if they are not actively using the teacher’s guide</Label>
+                                                                            <Label for="lsbe_chapter_objective" >The teacher is clearly relaying the main messages of the chapter, even if they are not actively using the teacher’s guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1412,7 +1407,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_teacher_understanding" >The teacher demonstrates good understanding of the LSBE content</Label>
+                                                                            <Label for="lsbe_teacher_understanding" >The teacher demonstrates good understanding of the LSBE content<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1455,7 +1450,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_material_preparation" >The teacher had all materials prepared in advance for the class</Label>
+                                                                            <Label for="lsbe_material_preparation" >The teacher had all materials prepared in advance for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1499,7 +1494,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_teacher_preparation" >The teacher was well prepared to facilitate the session</Label>
+                                                                            <Label for="lsbe_teacher_preparation" >The teacher was well prepared to facilitate the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1545,7 +1540,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic</Label>
+                                                                            <Label for="lsbe_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1622,7 +1617,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_subject_comfort" >The teacher is comfortable speaking about this subject</Label>
+                                                                            <Label for="lsbe_subject_comfort" >The teacher is comfortable speaking about this subject<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1665,7 +1660,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="lsbe_nonjudmental_tone" >The teacher uses a non-judgmental tone while facilitating the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1708,7 +1703,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_impartial_opinions" >The teacher is not imposing their own values or opinions on the participants</Label>
+                                                                            <Label for="lsbe_impartial_opinions" >The teacher is not imposing their own values or opinions on the participants<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1751,7 +1746,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_discussion_probes" >The teacher is engaging participants in discussion throughout session by providing probes</Label>
+                                                                            <Label for="lsbe_discussion_probes" >The teacher is engaging participants in discussion throughout session by providing probes<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1794,7 +1789,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_student_understanding" >Students demonstrate clear understanding of the main messages of the chapter</Label>
+                                                                            <Label for="lsbe_student_understanding" >Students demonstrate clear understanding of the main messages of the chapter<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1837,7 +1832,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_student_engagement" >Students are actively participating in discussion on the chapter</Label>
+                                                                            <Label for="lsbe_student_engagement" >Students are actively participating in discussion on the chapter<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1880,7 +1875,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_student_attention" >Students are actively paying attention to the class while the teacher is instructing</Label>
+                                                                            <Label for="lsbe_student_attention" >Students are actively paying attention to the class while the teacher is instructing<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1939,13 +1934,12 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <Label><h7><u><b>Management</b></u></h7></Label>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_timetable_integration" >Management has integrated the LSBE program into the school timetable</Label>
+                                                                            <Label for="lsbe_timetable_integration" >Management has integrated the LSBE program into the school timetable<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1990,7 +1984,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_two_teacher_assigned" >There are at least 2 teachers assigned to teach the LSBE program</Label>
+                                                                            <Label for="lsbe_two_teacher_assigned" >There are at least 2 teachers assigned to teach the LSBE program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2015,7 +2009,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the LSBE program</Label>
+                                                                            <Label for="lsbe_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the LSBE program<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2245,7 +2239,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_1" >The school is facing challenges scheduling the LSBE class</Label>
+                                                                            <Label for="lsbe_challenge_1" >The school is facing challenges scheduling the LSBE class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2265,9 +2259,7 @@ class SecondaryMonitoring extends React.Component {
                                                                             </FormGroup>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                    {/* </Row> */}
-
-                                                                    {/* <Row> */}
+                                                                    
                                                                     <Col md="6" style={challenge1Style}>
                                                                         <FormGroup >
                                                                             <Label for="lsbe_challenge_1_status" >Status of Challenge</Label>
@@ -2282,7 +2274,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_2" >There are not enough resources</Label>
+                                                                            <Label for="lsbe_challenge_2" >There are not enough resources<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2317,7 +2309,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_3" >There is no room for the class</Label>
+                                                                            <Label for="lsbe_challenge_3" >There is no room for the class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2351,7 +2343,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_4" >There are not enough teachers to teach the LSBE class</Label>
+                                                                            <Label for="lsbe_challenge_4" >There are not enough teachers to teach the LSBE class<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2385,7 +2377,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_5" >The content is irrelevant for the context of the students</Label>
+                                                                            <Label for="lsbe_challenge_5" >The content is irrelevant for the context of the students<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2419,7 +2411,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_challenge_6" >Students are not interested in the content</Label>
+                                                                            <Label for="lsbe_challenge_6" >Students are not interested in the content<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2460,7 +2452,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_resources_required">Does this school require any resources?</Label>
+                                                                            <Label for="lsbe_resources_required">Does this school require any resources?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2539,7 +2531,7 @@ class SecondaryMonitoring extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="lsbe_resources_delivered">Were any resources distributed to this school in this visit?</Label>
+                                                                            <Label for="lsbe_resources_delivered">Were any resources distributed to this school in this visit?<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>

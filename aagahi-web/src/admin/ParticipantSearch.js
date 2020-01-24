@@ -60,7 +60,8 @@ class ParticipantSearch extends React.Component {
                 { headerName: "School/Institution", field: "location", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
-                { headerName: "Voided", field: "voided", sortable: true },
+                { headerName: "Voided", field: "voided", sortable: true
+                },
                 { headerName: "Updated By", field: "updatedBy", sortable: true },
                 {
                     headerName: "Void",
@@ -71,7 +72,13 @@ class ParticipantSearch extends React.Component {
                     template: `<i class="fas fa-redo"></i>`
                 }
                 ],
-                rowData: []
+                rowData: [],
+                rowClassRules: {
+                    "voided": function(params) {
+                      var voided = params.data.voided;
+                      return voided === "True";
+                    }
+                }
             },
             allLocations: [],
             participant_name: '',  // widget IDs (and their states) are with underscore notation
@@ -147,7 +154,6 @@ class ParticipantSearch extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-
         this.setState({
             [name]: e.target.value
         });
@@ -244,7 +250,7 @@ class ParticipantSearch extends React.Component {
                 this.setState({
                     hasData: true
                 })
-
+                
                 this.gridApi.sizeColumnsToFit();
                 this.gridOptions.api.setColumnDefs();
                 this.gridApi.setQuickFilter("");
@@ -264,8 +270,6 @@ class ParticipantSearch extends React.Component {
             })
         }
 
-        console.log("printing constructed array >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        console.log(array);
         var participant = { ...this.state.participant }
         participant.rowData = array;
         this.setState({ participant });
@@ -318,7 +322,6 @@ class ParticipantSearch extends React.Component {
 
     // for autocomplete single select
     async handleChange(e, name) {
-
         this.setState({
             [name]: e
         });
@@ -372,7 +375,9 @@ class ParticipantSearch extends React.Component {
                                 pagination={true}
                                 paginationPageSize="10"
                                 enableColResize={true}
-                                suppressCellSelection={true}>
+                                suppressCellSelection={true}
+                                rowClassRules={this.state.participant.rowClassRules}
+                                >
                             </AgGridReact>
                         </div>
                     </Animated>

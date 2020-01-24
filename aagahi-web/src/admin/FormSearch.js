@@ -49,7 +49,7 @@ class FormSearch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            location: {
+            formData: {
                 columnDefs: [{ headerName: "ID", field: "formId", sortable: true },
                 { headerName: "Form Type", field: "formTypeName", sortable: true },
                 { headerName: "Form Group", field: "formGroupName", sortable: true },
@@ -68,8 +68,13 @@ class FormSearch extends React.Component {
                     template: `<i class="fas fa-redo"></i>`
                 }
                 ],
-                rowData: []
-
+                rowData: [],
+                rowClassRules: {
+                    "voided": function(params) {
+                      var voided = params.data.voided;
+                      return voided === "True";
+                    }
+                }
             },
             formGroups: [],
             formTypes: [],
@@ -284,9 +289,9 @@ class FormSearch extends React.Component {
             })
         }
 
-        var location = { ...this.state.location }
-        location.rowData = array;
-        this.setState({ location });
+        var formData = { ...this.state.formData }
+        formData.rowData = array;
+        this.setState({ formData });
         this.setState({
             hasData: true
         })
@@ -428,15 +433,17 @@ class FormSearch extends React.Component {
 
                             <AgGridReact style={{ width: '1150px' }}
                                 onGridReady={params => this.gridApi = params.api}
-                                columnDefs={this.state.location.columnDefs}
-                                rowData={this.state.location.rowData}
+                                columnDefs={this.state.formData.columnDefs}
+                                rowData={this.state.formData.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onCellClicked={this.onSelectionChanged.bind(this)}
                                 pagination={true}
                                 paginationPageSize="10"
                                 enableColResize={true}
-                                suppressCellSelection={true}>
+                                suppressCellSelection={true}
+                                rowClassRules={this.state.formData.rowClassRules}
+                                >
                             </AgGridReact>
                         </div>
                     </Animated>

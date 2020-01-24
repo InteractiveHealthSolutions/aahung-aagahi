@@ -707,3 +707,7 @@ body {
 .secondaryFilComp{
   width: 32% !important;
 }
+
+.voided {
+  background-color: #ffb74d  !important;
+}

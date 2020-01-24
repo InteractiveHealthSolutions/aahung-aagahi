@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-21 13:34:39
+ * @Last Modified time: 2020-01-24 16:59:48
  */
 
 
@@ -160,7 +160,7 @@ class SchoolDetails extends React.Component {
             if (this.editMode) {
 
                 this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
-                if(this.fetchedLocation !== null) {
+                if (this.fetchedLocation !== null) {
                     console.log("fetched location id is .................................");
                     console.log(this.fetchedLocation.locationId);
                     this.schoolId = this.fetchedLocation.shortName;
@@ -421,14 +421,14 @@ class SchoolDetails extends React.Component {
             }
         }
 
-        if(name === "girl_count" && this.isCoed) {
-            if(this.state.boy_count !== undefined && this.state.boy_count !== '') {
+        if (name === "girl_count" && this.isCoed) {
+            if (this.state.boy_count !== undefined && this.state.boy_count !== '') {
                 this.state.student_count = String(parseInt(e.target.value) + parseInt(this.state.boy_count));
             }
         }
 
-        if(name === "boy_count" && this.isCoed) {
-            if(this.state.girl_count !== undefined && this.state.girl_count !== '') {
+        if (name === "boy_count" && this.isCoed) {
+            if (this.state.girl_count !== undefined && this.state.girl_count !== '') {
                 this.state.student_count = String(parseInt(e.target.value) + parseInt(this.state.girl_count));
             }
         }
@@ -1271,13 +1271,13 @@ class SchoolDetails extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="school_level" id="school_level_primary" value="Primary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode}/>{' '}
+                                                                                    <Input type="radio" name="school_level" id="school_level_primary" value="Primary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode} />{' '}
                                                                                     Primary
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode}/>{' '}
+                                                                                    <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary" onChange={(e) => this.valueChange(e, "school_level")} disabled={this.editMode} />{' '}
                                                                                     Secondary
                                                                             </Label>
                                                                             </FormGroup>
@@ -1423,7 +1423,7 @@ class SchoolDetails extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
                         </div>
