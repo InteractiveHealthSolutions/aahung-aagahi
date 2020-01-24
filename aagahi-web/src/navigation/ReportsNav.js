@@ -14,10 +14,9 @@ import openIconic from "../img/open-iconic.svg";
 import "../index.css";
 import { getAllFormTypes, getDefinitionsByDefinitionType } from '../service/GetService';
 import { apiUrl, capitalize } from "../util/AahungUtil.js";
-import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location } from "../util/LocationUtil.js";
+import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location, getProvinceListFilter, getDistrictListFilter } from "../util/LocationUtil.js";
 import { getReportByComponent, getReportByName } from "../util/ReportsListUtil.js";
 var serverAddress = apiUrl;
-
 
 class ReportsNav extends Component {
 
@@ -222,46 +221,6 @@ class ReportsNav extends Component {
       });
   }
 
-  generateProvinceFilter() {
-    var concatenatedProvinces = "";
-    // generating province filter
-    if (this.state.province === null || this.state.province === undefined || this.state.province.length === 0) {
-      location.provinces.forEach(function (province) {
-        concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
-      })
-      concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
-    }
-    else {
-      var provincesArray = this.state.province;
-      provincesArray.forEach(function (province) {
-        concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
-      })
-      concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
-    }
-
-    return concatenatedProvinces;
-  }
-
-  generateDistrictFilter() {
-    var concatenatedDistricts = "";
-    // generating district filter
-    if (this.state.district === null || this.state.district === undefined || this.state.district.length === 0) {
-      location.districts.forEach(function (city) {
-        concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
-      })
-      concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
-    }
-    else {
-      var districtsArray = this.state.district;
-      districtsArray.forEach(function (city) {
-        concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
-      })
-      concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
-    }
-
-    return concatenatedDistricts;
-  }
-
   generateFirstFilter() {
     var optionsFirst = '';
     var selectedFirstFilters = this.state.firstFilterOptionSelected;
@@ -375,8 +334,8 @@ class ReportsNav extends Component {
       var reportName = this.state.reportName;
       var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
       var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
-      var concatenatedProvinces = this.generateProvinceFilter();
-      var concatenatedDistricts = this.generateDistrictFilter();
+      var concatenatedProvinces = getProvinceListFilter(this.state.province);
+      var concatenatedDistricts = getDistrictListFilter(this.state.district);
 
       // attaching the static filters for generating url
       var urlWithParams = "?start_date=" + startDate + "&end_date=" + endDate + "&province=" + concatenatedProvinces + "&city=" + concatenatedDistricts + "&";
@@ -532,12 +491,12 @@ class ReportsNav extends Component {
                               <br />
 
                               Province:
-                      <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required />
+                                  <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required />
 
                               <br />
 
                               District/City:
-                      <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
+                                  <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
                             </div>
                           </div>
 

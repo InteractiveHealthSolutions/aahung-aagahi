@@ -25,7 +25,6 @@ class VoidModal extends Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-
         this.setState({
             [name]: e.target.value
         });
@@ -37,9 +36,7 @@ class VoidModal extends Component {
     }
 
     render() {
-        
         return (
-
             <Modal
                 show={this.state.openModal}
                 onHide={this.props.closeModal}

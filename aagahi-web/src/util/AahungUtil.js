@@ -354,9 +354,11 @@ export const resetFormState = function (fields, stateObj) {
  */
 export const getUniqueValues = function(data, key) {
     var uniqueValues = [];
-    for (var i = 0; i < data.length; i++) {
-        if (uniqueValues.indexOf(data[i][key]) === -1) {
-            uniqueValues.push(data[i][key]);
+    if(data !== null && data !== undefined && data.length > 0) {
+        for (var i = 0; i < data.length; i++) {
+            if (uniqueValues.indexOf(data[i][key]) === -1) {
+                uniqueValues.push(data[i][key]);
+            }
         }
     }
     return uniqueValues;

@@ -200,3 +200,42 @@ export const getDistrictsByMultipleProvinces = function (provincesArray) {
   console.log(concetenatedProvinces);
   return districtsArray;
 }
+
+// returns comma separated provinces (which can be appended to the url param)
+export const getProvinceListFilter = function (provinces) {
+  var concatenatedProvinces = "";
+  // generating province filter
+  if (provinces === null || provinces === undefined || provinces.length === 0) {
+    location.provinces.forEach(function (province) {
+      concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
+    })
+    concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
+  }
+  else {
+    var provincesArray = provinces;
+    provincesArray.forEach(function (province) {
+      concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
+    })
+    concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
+  }
+  return concatenatedProvinces;
+}
+
+export const getDistrictListFilter = function (districts) {
+  var concatenatedDistricts = "";
+  // generating district filter
+  if (districts === null || districts === undefined || districts.length === 0) {
+    location.districts.forEach(function (city) {
+      concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
+    })
+    concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
+  }
+  else {
+    var districtsArray = districts;
+    districtsArray.forEach(function (city) {
+      concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
+    })
+    concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
+  }
+  return concatenatedDistricts;
+}
