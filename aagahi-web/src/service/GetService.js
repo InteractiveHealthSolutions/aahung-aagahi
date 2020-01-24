@@ -776,6 +776,17 @@ export const getAllFormTypes = async function () {
     }
 }
 
+export const getGraphData = async function (resourceUrl) {
+    console.log("GetService > calling getGraphData()");
+    try {
+        let result = await get(resourceUrl);
+        return result;
+    }
+    catch (error) {
+        return error;
+    }
+}
+
 var getData = async function (resourceName, content) {
 
     var requestURL = '';
