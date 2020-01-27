@@ -47,13 +47,14 @@ class PartnerSchoolsChart extends React.Component {
     constructor(props) {
         super(props);
         this.getData = this.getData.bind(this);
-        // this.data = partnerSchoolData; // TODO: replace with the correct resource
     }
 
     state = {
         seriesVisible: [true, true, true],
-        paramFilter: this.props.paramFilter,
         component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
         data: [],
     }
 
@@ -61,8 +62,10 @@ class PartnerSchoolsChart extends React.Component {
         await this.setState({ data: nextProps.data });
 
         await this.setState({
-            paramFilter: nextProps.paramFilter,
-            component: nextProps.component
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString
         })
 
         await this.getData();
@@ -71,18 +74,12 @@ class PartnerSchoolsChart extends React.Component {
     async getData() {
         // calling the appropriate resource with url params
         if(this.state.component === "lse") {
-            var resourceUrl = serverAddress + "/report/partnerschooldata?" + this.state.paramFilter;
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
+            var resourceUrl = serverAddress + "/report/partnerschooldata?" + params;
             var resultSet = await getGraphData(resourceUrl);
             if(resultSet != null && resultSet !== undefined) {
                 this.setState({
-                    data: resultSet,
-                    // uniqueProvinces: getUniqueValues(resultSet, 'state_province'),
-                    // priNewData: filterData(resultSet, 'Primary', 'New'),
-                    // priRunningData: filterData(resultSet, 'Primary', 'Running'),
-                    // priExitData: filterData(resultSet, 'Primary', 'Exit'),
-                    // secNewData: filterData(resultSet, 'Secondary', 'New'),
-                    // secRunningData: filterData(resultSet, 'Secondary', 'Running'),
-                    // secExitData: filterData(resultSet, 'Secondary', 'Exit')
+                    data: resultSet
                 })
             }
         }
@@ -92,7 +89,7 @@ class PartnerSchoolsChart extends React.Component {
         const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
         const secondaryToolTipRender = ({ point }) => (`Secondary - ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        let provinces = getUniqueValues(this.data, 'state_province');
+        let provinces = getUniqueValues(this.state.data, 'state_province');
         let primary = [
             { name: 'New', data: filterData(this.state.data, 'Primary', 'New') },
             { name: 'Running', data: filterData(this.state.data, 'Primary', 'Running') },
