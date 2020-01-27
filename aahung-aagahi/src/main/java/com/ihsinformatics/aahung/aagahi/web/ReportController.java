@@ -317,7 +317,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by l.state_province, partnership.attribute_value, level.attribute_value, tier.attribute_value ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -368,7 +368,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by level_name.definition_id, tier_name.definition_id, l.state_province, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -449,7 +449,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by l.state_province, sm.form_date, sm.secondary_grade ");	    
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -475,7 +475,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by year(fd.form_date), l.state_province, l.city_village, srhr.srhr_policy_implemented, ps.parent_session_conducted ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -505,7 +505,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by l.state_province, l.city_village ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -533,7 +533,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by fd.form_date, l.state_province, pa.attribute_value, per.gender ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -554,9 +554,9 @@ public class ReportController extends BaseController {
 	    query.append(whereDateFilter);
 	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append(formDataProvinceFilter);
+	    	query.append(formDataProvinceFilter.replace(provincePlaceholder,stateProvince));
 	    if (cityVillage != null)
-	    	query.append(formDataDistrictFilter);
+	    	query.append(formDataDistrictFilter.replace(districtPlaceholder,cityVillage));
 	    query.append(groupByClause);
 	    // Step down training
 	    query.append(union);
@@ -565,9 +565,9 @@ public class ReportController extends BaseController {
 	    query.append(whereDateFilter);
 	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append(formDataProvinceFilter);
+	    	query.append(formDataProvinceFilter.replace(provincePlaceholder,stateProvince));
 	    if (cityVillage != null)
-	    	query.append(formDataDistrictFilter);
+	    	query.append(formDataDistrictFilter.replace(districtPlaceholder,cityVillage));
 	    query.append(groupByClause);
 	    // Amplify change step down training by Students
 	    query.append(union);
@@ -578,9 +578,9 @@ public class ReportController extends BaseController {
 	    query.append(whereDateFilter);
 	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append(formDataProvinceFilter);
+	    	query.append(formDataProvinceFilter.replace(provincePlaceholder,stateProvince));
 	    if (cityVillage != null)
-	    	query.append(formDataDistrictFilter);
+	    	query.append(formDataDistrictFilter.replace(districtPlaceholder,cityVillage));
 	    query.append(groupByClause);
 	    // Amplify change step down training by Teachers
 	    query.append(union);
@@ -591,9 +591,9 @@ public class ReportController extends BaseController {
 	    query.append(whereDateFilter);
 	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append(formDataProvinceFilter);
+	    	query.append(formDataProvinceFilter.replace(provincePlaceholder,stateProvince));
 	    if (cityVillage != null)
-	    	query.append(formDataDistrictFilter);
+	    	query.append(formDataDistrictFilter.replace(districtPlaceholder,cityVillage));
 	    query.append(groupByClause);
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -621,7 +621,7 @@ public class ReportController extends BaseController {
 	    if (stateProvince != null) 
 	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
 	    if (cityVillage != null)
-	    	query.append(provinceFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
 	    query.append("group by fd.form_date, l.state_province, pa.attribute_value, per.gender ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
@@ -700,9 +700,9 @@ public class ReportController extends BaseController {
 	    query.append(whereDateFilter);
 	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
 	    if (stateProvince != null) 
-	    	query.append(formDataProvinceFilter);
+	    	query.append(formDataProvinceFilter.replace(provincePlaceholder,stateProvince));
 	    if (cityVillage != null)
-	    	query.append(formDataDistrictFilter);
+	    	query.append(formDataDistrictFilter.replace(districtPlaceholder,cityVillage));
 	    query.append("group by fd.province, fd.district, fd.screening_type, date(fd.form_date) ");
 	    JSONArray data = service.getTableDataAsJson(query.toString());
 	    return ResponseEntity.ok().body(data.toString());
