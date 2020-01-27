@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-23
  * @desc [description]
  */
-
 
 import React from "react";
 import {
@@ -55,7 +54,7 @@ class PartnerSchoolsChart extends React.Component {
         startDate: this.props.startDate,
         endDate: this.props.endDate,
         provincesString: this.props.provincesString,
-        data: [],
+        data: []
     }
 
     async componentWillReceiveProps(nextProps) {
@@ -74,6 +73,7 @@ class PartnerSchoolsChart extends React.Component {
     async getData() {
         // calling the appropriate resource with url params
         if(this.state.component === "lse") {
+            // TODO: include param for city_village, when Rabbia is done with the query chan
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
             var resourceUrl = serverAddress + "/report/partnerschooldata?" + params;
             var resultSet = await getGraphData(resourceUrl);
@@ -155,6 +155,7 @@ function filterData(data, level, tier) {
     var provinces = getUniqueValues(data, 'state_province');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
+        // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
         // var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
         var filtered = data.filter(element => element.school_level === level);
     }
@@ -163,7 +164,7 @@ function filterData(data, level, tier) {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].state_province == province) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);

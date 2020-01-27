@@ -38,24 +38,60 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { exitSchoolPlanningData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class ExitPlanning extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = exitSchoolPlanningData;
-        console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true]
+        seriesVisible: [true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/exitschoolplanningdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
 
         const series =[
-            {category:'SRHR Policy Implemented', value:filterData(this.data,'srhr_policy_implemented',this.province)},
-            {category:'Parent Sessions Conducted', value:filterData(this.data,'parent_session_conducted',this.province)}
+            {category:'SRHR Policy Implemented', value:filterData(this.state.data,'srhr_policy_implemented',this.province)},
+            {category:'Parent Sessions Conducted', value:filterData(this.state.data,'parent_session_conducted',this.province)}
         ];
         const seriesVisible = this.state.seriesVisible;
     
@@ -94,27 +130,26 @@ class ExitPlanning extends React.Component {
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
 function filterData(data, category, location) {
     // For each tier, attach tier as name and data as the sums for each province
     var years = getUniqueValues(data, 'fiscal_year');
     location = getUniqueValues(data, 'state_province');
-
-    var filtered = data.filter(element => element.state_province === location);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.state_province === location);
     var sums = [];
 
     years.forEach(year => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].fiscal_year == year) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);
     });
-
     return sums;
 }
 

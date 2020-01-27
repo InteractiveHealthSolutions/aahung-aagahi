@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
-
 
 import React from "react";
 import 'hammerjs';
@@ -39,30 +38,65 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { partnerSchoolDataByFiscalYear } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class PartnerSchoolsByYearChart extends React.Component {
 
     constructor(props) {
         super(props);
         this.data = partnerSchoolDataByFiscalYear; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true]
+        seriesVisible: [true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            // TODO: add params FROM date and TO date
+            // var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
+            var resourceUrl = serverAddress + "/report/partnerschooldata/year";
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
         const primaryToolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        let years = getUniqueValues(this.data, 'fiscal_year');
+        let years = getUniqueValues(this.state.data, 'fiscal_year');
         let min = Math.min(...years);
         let max = Math.max(...years);
         // We need to create a series from minimum year to maximum year
         years = Array.from({ length: max - min }, (el, index) => (min + index + 1));
         
         let primary = [
-            { name: 'Primary', data: filterData(this.data, 'Primary')},
-            { name: 'Secondary', data: filterData(this.data, 'Secondary')}
+            { name: 'Primary', data: filterData(this.state.data, 'Primary')},
+            { name: 'Secondary', data: filterData(this.state.data, 'Secondary')}
             
         ];
 
@@ -115,15 +149,16 @@ class PartnerSchoolsByYearChart extends React.Component {
 function filterData(data, level) {
     // For each tier, attach tier as name and data as the sums for each province
     var years = getUniqueValues(data, 'fiscal_year');
-
-    var filtered = data.filter(element => element.school_level === level);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0) {
+        filtered = data.filter(element => element.school_level === level);
+    }
     var sums = [];
-
     years.forEach(year => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].fiscal_year == year) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);

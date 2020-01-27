@@ -10,11 +10,11 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
@@ -69,7 +69,7 @@ class DashboardMain extends React.Component {
             component: "lse",
             paramFilter: "",
             startDateParam: new Date(),
-            endDataParam: new Date(),
+            endDateParam: new Date(),
             provincesStringParam: '',
             citiesStringParam: '',
         }
@@ -141,7 +141,7 @@ class DashboardMain extends React.Component {
         var concatenatedDistricts = getDistrictListFilter(this.state.district);
         this.setState({
             startDateParam: moment(this.state.start_date).format('YYYY-MM-DD'),
-            endDataParam: moment(this.state.end_date).format('YYYY-MM-DD'),
+            endDateParam: moment(this.state.end_date).format('YYYY-MM-DD'),
             provincesStringParam: concatenatedProvinces,
             citiesStringParam: concatenatedDistricts
         })
@@ -229,21 +229,21 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsChart endDate={this.state.endDataParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} component={this.state.component} />
+                                                    <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsByYearChart />
+                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
                                                 </div>
                                                 <div class="w-100">
                                                     <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <TeachersTrainedSummaryChart />
+                                                        <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                     </div>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <TrainingDataSummary />
+                                                    <TrainingDataSummary endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ExitPlanning />
+                                                    <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                 </div>
                                             </div>
                                         </div>
@@ -253,15 +253,15 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <IndividualsReached />
+                                                    <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ParticipantTraining />
+                                                    <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerInstitutions />
+                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
                                                     <AmplifyChangeParticipant />

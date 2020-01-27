@@ -39,16 +39,54 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { individualReachData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class IndividualsReached extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = individualReachData; // TODO: replace with the correct resource
+        // this.data = individualReachData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true, true]
+        seriesVisible: [true, true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if (this.state.component === "srhm") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/individualreachdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if (resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
@@ -56,27 +94,34 @@ class IndividualsReached extends React.Component {
         const defaultTooptip = ({ point }) => (`${point.series.name}: ${point.value}`);
 
         const seriesVisible = this.state.seriesVisible;
-        const activityType = ['Health Care Provider Reach','General Step Down Training','Amplify Change Step Down'];
-       
+        const activityType = ['HCP', 'Step Down', 'AC - Students', 'AC - Teachers'];
+
         let HCPTrained = [
-            { name: 'Male', data: filterData(this.data, 'health_care_provider_reach','Sindh', 'male_count')},
-            { name: 'Female', data: filterData(this.data, 'health_care_provider_reach', 'Punjab', 'female_count') },
-            { name: 'Other', data: filterData(this.data,'health_care_provider_reach', 'Balochistan', 'other_sex_count') },
-   
+            { name: 'Male', data: filterData(this.state.data, 'HCP', 'male_count') },
+            { name: 'Female', data: filterData(this.state.data, 'HCP', 'female_count') },
+            { name: 'Other', data: filterData(this.state.data, 'HCP', 'other_sex_count') },
+
         ];
         let GeneralStepDown = [
-            { name: 'Male', data: filterData(this.data, 'general_step_down_training_details','Sindh', 'male_count')},
-            { name: 'Female', data: filterData(this.data, 'general_step_down_training_details', 'Punjab', 'female_count') },
-            { name: 'Other', data: filterData(this.data,'general_step_down_training_details', 'Balochistan', 'other_sex_count') },
-   
+            { name: 'Male', data: filterData(this.state.data, 'Step Down', 'male_count') },
+            { name: 'Female', data: filterData(this.state.data, 'Step Down', 'female_count') },
+            { name: 'Other', data: filterData(this.state.data, 'Step Down', 'other_sex_count') },
+
         ];
-        let AmplifyChange = [
-            { name: 'Male', data: filterData(this.data, 'amplify_change_step_down_training_details','Sindh', 'male_count')},
-            { name: 'Female', data: filterData(this.data, 'amplify_change_step_down_training_details', 'Punjab', 'female_count') },
-            { name: 'Other', data: filterData(this.data,'amplify_change_step_down_training_details', 'Balochistan', 'other_sex_count') },
-   
+        let AmplifyChangeStudent = [
+            { name: 'Male', data: filterData(this.state.data, 'AC - Students', 'male_count') },
+            { name: 'Female', data: filterData(this.state.data, 'AC - Students', 'female_count') },
+            { name: 'Other', data: filterData(this.state.data, 'AC - Students', 'other_sex_count') },
+
         ];
-        
+
+        let AmplifyChangeTeacher = [
+            { name: 'Male', data: filterData(this.state.data, 'AC - Teachers', 'male_count') },
+            { name: 'Female', data: filterData(this.state.data, 'AC - Teachers', 'female_count') },
+            { name: 'Other', data: filterData(this.state.data, 'AC - Teachers', 'other_sex_count') },
+
+        ];
+
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
 
         const crosshair = {
@@ -106,13 +151,18 @@ class IndividualsReached extends React.Component {
                             data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
                         </ChartSeriesItem>
                     ))}
-                
+
                     {GeneralStepDown.map((item, index) => (
                         <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} gap={2}>
                         </ChartSeriesItem>
                     ))}
-                     {AmplifyChange.map((item, index) => (
+                    {AmplifyChangeStudent.map((item, index) => (
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                        </ChartSeriesItem>
+                    ))}
+                    {AmplifyChangeTeacher.map((item, index) => (
                         <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} gap={2}>
                         </ChartSeriesItem>
@@ -124,70 +174,63 @@ class IndividualsReached extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
-function filterData(data, activitytype, location, gender) {
+function filterData(data, activitytype, gender) {
     // For each tier, attach tier as name and data as the sums for each province
     var activitytypes = getUniqueValues(data, 'activity_type');
     var filtered;
     var sums = [];
 
-    if (gender === 'male_count'){
-        filtered = data.filter(element => element.activity_type === activitytype && element.state_province === location);
-        
+    if (gender === 'male_count') {
+        if (data !== null && data !== undefined && data.length > 0)
+            filtered = data.filter(element => element.activity_type === activitytype);
         activitytypes.forEach(activitytype => {
             var sumMale = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].activity_type == activitytype) {
-                    sumMale += filtered[i].male_count;
+                    sumMale += parseInt(filtered[i].male_count);
                 }
             }
             sums.push(sumMale);
         });
-
         return sums;
-    
-    }else if(gender === 'female_count'){
-        filtered = data.filter(element => element.activity_type === activitytype && element.state_province === location);
-    
+
+    } else if (gender === 'female_count') {
+        if (data !== null && data !== undefined && data.length > 0)
+            filtered = data.filter(element => element.activity_type === activitytype);
         activitytypes.forEach(activitytype => {
             var sumFemale = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].activity_type == activitytype) {
-                    sumFemale += filtered[i].female_count;
+                    sumFemale += parseInt(filtered[i].female_count);
                 }
             }
             sums.push(sumFemale);
         });
-
         return sums;
 
-
-    }else{  
-        filtered = data.filter(element => element.activity_type === activitytype && element.state_province === location);
-        
+    } else {
+        if (data !== null && data !== undefined && data.length > 0)
+            filtered = data.filter(element => element.activity_type === activitytype);
         activitytypes.forEach(activitytype => {
             var sumOthers = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].activity_type == activitytype) {
-                    sumOthers += filtered[i].other_sex_count;
+                    sumOthers += parseInt(filtered[i].other_sex_count);
                 }
             }
             sums.push(sumOthers);
         });
 
         return sums;
-
-
     }
-    
 }
 
 export default IndividualsReached;
