@@ -38,16 +38,54 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { partnerSchoolData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class PartnerSchoolsChart extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = partnerSchoolData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
+        // this.data = partnerSchoolData; // TODO: replace with the correct resource
     }
 
     state = {
-        seriesVisible: [true, true, true]
+        seriesVisible: [true, true, true],
+        paramFilter: this.props.paramFilter,
+        component: this.props.component,
+        data: [],
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            paramFilter: nextProps.paramFilter,
+            component: nextProps.component
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            var resourceUrl = serverAddress + "/report/partnerschooldata?" + this.state.paramFilter;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet,
+                    // uniqueProvinces: getUniqueValues(resultSet, 'state_province'),
+                    // priNewData: filterData(resultSet, 'Primary', 'New'),
+                    // priRunningData: filterData(resultSet, 'Primary', 'Running'),
+                    // priExitData: filterData(resultSet, 'Primary', 'Exit'),
+                    // secNewData: filterData(resultSet, 'Secondary', 'New'),
+                    // secRunningData: filterData(resultSet, 'Secondary', 'Running'),
+                    // secExitData: filterData(resultSet, 'Secondary', 'Exit')
+                })
+            }
+        }
     }
 
     render() {
@@ -56,14 +94,14 @@ class PartnerSchoolsChart extends React.Component {
         const seriesVisible = this.state.seriesVisible;
         let provinces = getUniqueValues(this.data, 'state_province');
         let primary = [
-            { name: 'New', data: filterData(this.data, 'Primary', 'New') },
-            { name: 'Running', data: filterData(this.data, 'Primary', 'Running') },
-            { name: 'Exit', data: filterData(this.data, 'Primary', 'Exit') }
+            { name: 'New', data: filterData(this.state.data, 'Primary', 'New') },
+            { name: 'Running', data: filterData(this.state.data, 'Primary', 'Running') },
+            { name: 'Exit', data: filterData(this.state.data, 'Primary', 'Exit') }
         ];
         let secondary = [
-            { name: 'New', data: filterData(this.data, 'Secondary', 'New') },
-            { name: 'Running', data: filterData(this.data, 'Secondary', 'Running') },
-            { name: 'Exit', data: filterData(this.data, 'Secondary', 'Exit') }
+            { name: 'New', data: filterData(this.state.data, 'Secondary', 'New') },
+            { name: 'Running', data: filterData(this.state.data, 'Secondary', 'Running') },
+            { name: 'Exit', data: filterData(this.state.data, 'Secondary', 'Exit') }
         ];
 
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
@@ -86,17 +124,17 @@ class PartnerSchoolsChart extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip/>
+                <ChartTooltip />
                 <ChartSeries>
                     {primary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
-                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} name={item.name} gap={2}>
                             <ChartSeriesItemTooltip render={primaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
                     {secondary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={2}>
                             <ChartSeriesItemTooltip render={secondaryToolTipRender} />
                         </ChartSeriesItem>
                     ))}
@@ -118,7 +156,11 @@ class PartnerSchoolsChart extends React.Component {
 
 function filterData(data, level, tier) {
     var provinces = getUniqueValues(data, 'state_province');
-    var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0) {
+        // var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+        var filtered = data.filter(element => element.school_level === level);
+    }
     var sums = [];
     provinces.forEach(province => {
         var sum = 0;

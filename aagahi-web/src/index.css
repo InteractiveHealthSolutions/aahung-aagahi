@@ -707,3 +707,11 @@ body {
 .secondaryFilComp{
   width: 32% !important;
 }
+
+.voided {
+  background-color: #ffb74d  !important;
+}
+
+.css-2b097c-container, .react-datepicker-popper{
+  z-index:100000 !important;
+}

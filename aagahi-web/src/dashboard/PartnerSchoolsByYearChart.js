@@ -48,12 +48,11 @@ class PartnerSchoolsByYearChart extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true,true]
+        seriesVisible: [true, true]
     }
 
     render() {
-        const primaryToolTipRender = ({ point }) => (`Primary: ${point.value}`);
-        const secondaryToolTipRender = ({ point }) => (`Secondary: ${point.value}`);
+        const primaryToolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let years = getUniqueValues(this.data, 'fiscal_year');
         let min = Math.min(...years);
@@ -62,25 +61,12 @@ class PartnerSchoolsByYearChart extends React.Component {
         years = Array.from({ length: max - min }, (el, index) => (min + index + 1));
         
         let primary = [
-            { name: 'Unknown', data: filterData(this.data, 'Primary', 'Unknown') },
-            { name: 'Balochistan', data: filterData(this.data, 'Primary', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'Primary', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'Primary', 'KP') },
-            { name: 'Punjab', data: filterData(this.data, 'Primary', 'Punjab') },
-            { name: 'Sindh', data: filterData(this.data, 'Primary', 'Sindh') },
-            
-        ];
-        let secondary = [
-            { name: 'Unknown', data: filterData(this.data, 'Secondary', 'Unknown') },
-            { name: 'Balochistan', data: filterData(this.data, 'Secondary', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'Secondary', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'Secondary', 'KP') },
-            { name: 'Punjab', data: filterData(this.data, 'Secondary', 'Punjab') },
-            { name: 'Sindh', data: filterData(this.data, 'Secondary', 'Sindh') },
+            { name: 'Primary', data: filterData(this.data, 'Primary')},
+            { name: 'Secondary', data: filterData(this.data, 'Secondary')}
             
         ];
 
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#2F4F4F'];
+        const colors = ['#32CD32', '#008080'];
 
         const crosshair = {
             visible: true,
@@ -105,17 +91,11 @@ class PartnerSchoolsByYearChart extends React.Component {
                 <ChartTooltip render={primaryToolTipRender} />
                 <ChartSeries>
                     {primary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
                         </ChartSeriesItem>
                     ))}
                 
-                    {secondary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
-                            <ChartSeriesItemTooltip render={secondaryToolTipRender} />
-                        </ChartSeriesItem>
-                    ))}
                 </ChartSeries>
                 <ChartValueAxis skip={4}>
                     <ChartValueAxisItem crosshair={crosshair} />
@@ -132,11 +112,11 @@ class PartnerSchoolsByYearChart extends React.Component {
 
 }
 
-function filterData(data, level, location) {
+function filterData(data, level) {
     // For each tier, attach tier as name and data as the sums for each province
     var years = getUniqueValues(data, 'fiscal_year');
 
-    var filtered = data.filter(element => element.school_level === level && element.state_province === location);
+    var filtered = data.filter(element => element.school_level === level);
     var sums = [];
 
     years.forEach(year => {

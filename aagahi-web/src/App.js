@@ -23,7 +23,6 @@ import StepDownTraining from './lse/StepDownTraining';
 import TrainingDetails from './lse/TrainingDetails';
 import SecondaryMonitoring from './lse/SecondaryMonitoring';
 import PrimaryMonitoring from './lse/PrimaryMonitoring';
-import AdminMainPage from './navigation/AdminMainPage';
 import AdminPage from './navigation/AdminPage';
 import CommsMainPage from './navigation/CommsMainPage';
 import LseMainPage from './navigation/LseMainPage';
@@ -53,7 +52,6 @@ class App extends Component {
           <SessionRoute path='/lsePage' component={LseMainPage}/>
           <SessionRoute path='/commsPage' component={CommsMainPage}/>
           <SessionRoute path='/reportNavPage' component={ReportsNav}/>
-          <SessionRoute path='/adminPage' component={AdminMainPage}/>
           <SessionRoute path='/admin' component={AdminPage}/>
           <SessionRoute path='/addUser'  component={AddUser}/>
           <SessionRoute path='/project'  component={ProjectDetails}/>

@@ -731,5 +731,16 @@ public class LocationControllerTest extends BaseTestData {
 	verifyNoMoreInteractions(locationService);
     }
     
+    @Test
+    public void shouldUpdateLocationAttributeType() throws Exception {
+	when(locationService.getLocationAttributeTypeByUuid(any(String.class))).thenReturn(noOfStudents);
+	when(locationService.updateLocationAttributeType(any(LocationAttributeType.class))).thenReturn(noOfStudents);
+	String content = BaseEntity.getGson().toJson(noOfStudents);
+	ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattributetype/{uuid}", noOfStudents.getUuid())
+		.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+	actions.andExpect(status().isOk());
+	verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
+	verify(locationService, times(1)).updateLocationAttributeType(any(LocationAttributeType.class));
+    }
 
 }

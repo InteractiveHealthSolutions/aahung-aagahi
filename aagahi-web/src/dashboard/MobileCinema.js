@@ -48,37 +48,19 @@ class MobileCinema extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true,true,true,true,true,true],
+        seriesVisible: [true, true],
     }
 
     render() {
         const seriesVisible = this.state.seriesVisible;
-        const provinces = getUniqueValues(this.data, 'state_province');
+        const provinces = getUniqueValues(this.data, 'city_village');
 
-        let cinemaData = [
-            { name: 'Sindh', data: filterData(this.data, 'cinema', 'Sindh') },
-            { name: 'Punjab', data: filterData(this.data, 'cinema', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'cinema', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'cinema', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'cinema', 'KP') },
-            { name: 'Unkown', data: filterData(this.data, 'cinema', 'Unkown') },
-            { name: 'GB', data: filterData(this.data, 'cinema', 'GB') }
-
+        let defaultData = [
+            { name: 'Cinema', data: filterData(this.data, 'cinema') },
+            { name: 'Live Theatre', data: filterData(this.data, 'live_theatre') }
             
         ];
-        let liveData = [
-            { name: 'Sindh', data: filterData(this.data, 'live_theatre', 'Sindh') },
-            { name: 'Punjab', data: filterData(this.data, 'live_theatre', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'live_theatre', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'live_theatre', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'live_theatre', 'KP') },
-            { name: 'Unkown', data: filterData(this.data, 'live_theatre', 'Unkown') },
-            { name: 'GB', data: filterData(this.data, 'live_theatre', 'GB') }
-
-            
-        ];
-        
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#2F4F4F', '#d2d4d6'];
+        const colors = ['#DC143C', '#FFA500'];
 
 
         const crosshair = {
@@ -102,14 +84,9 @@ class MobileCinema extends React.Component {
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
                 <ChartSeries>
-                    {cinemaData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'cinema'}}
+                    {defaultData.map((item, index) => (
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} name={item.name}>
-                        </ChartSeriesItem>
-                    ))}
-                    {liveData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'live_theatre'}}
-                            data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -128,17 +105,17 @@ class MobileCinema extends React.Component {
 
 }
 
-function filterData(data, screenType, location) {
+function filterData(data, screenType) {
     // For each tier, attach tier as name and data as the sums for each province
-    var provinces = getUniqueValues(data, 'state_province');
+    var provinces = getUniqueValues(data, 'city_village');
 
-    var filtered = data.filter(element => element.screening_type === screenType && element.state_province === location);
+    var filtered = data.filter(element => element.screening_type === screenType);
     var sums = [];
 
     provinces.forEach(province => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].state_province == province) {
+            if (filtered[i].city_village == province) {
                 sum += filtered[i].total;
             }
         }
