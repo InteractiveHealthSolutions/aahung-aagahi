@@ -70,6 +70,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
             public void onSuccess(List<? extends BaseItem> items) {
                 savePartipants((List<Participant>) items);
                 if (view != null) {
+                    view.updateFormsOnLocationSync(baseResult);
                     view.dismissLoading();
                     view.finishDialog();
                 }
