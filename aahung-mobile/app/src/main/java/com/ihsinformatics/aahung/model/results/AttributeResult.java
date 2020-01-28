@@ -16,7 +16,7 @@ public class AttributeResult implements Serializable {
 
 
 
-    @NonNull
+    @NonNull // its location ID
     private Integer contextId;
     @SerializedName("attributeId")
     @Expose

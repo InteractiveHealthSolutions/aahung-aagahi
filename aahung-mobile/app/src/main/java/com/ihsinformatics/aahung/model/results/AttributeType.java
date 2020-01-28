@@ -20,6 +20,13 @@ public class AttributeType implements Serializable {
     @Expose
     private String dataType;
 
+    public AttributeType(Integer attributeTypeId, String attributeName, String shortName, String dataType) {
+        this.attributeTypeId = attributeTypeId;
+        this.attributeName = attributeName;
+        this.shortName = shortName;
+        this.dataType = dataType;
+    }
+
     public Integer getAttributeTypeId() {
         return attributeTypeId;
     }

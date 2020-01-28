@@ -8,6 +8,7 @@ import androidx.room.Query;
 
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
+import com.ihsinformatics.aahung.model.results.AttributeType;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -35,4 +36,8 @@ public interface LocationDao {
 
     @Query("Select * from attributes where contextId = :locationId ")
     List<AttributeResult> getAttributesByLocation(Integer locationId);
+
+    @Query("Select * from attributes where contextId = :locationId and attributeType = :attributeType")
+    AttributeResult getLocationAttribute(Integer locationId, AttributeType attributeType);
+
 }
