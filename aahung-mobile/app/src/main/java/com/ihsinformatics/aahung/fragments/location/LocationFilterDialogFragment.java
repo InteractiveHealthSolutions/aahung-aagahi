@@ -127,8 +127,8 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
       /*  if (!loadingFragment.isAdded())
             loadingFragment.show(getFragmentManager(), LOADING_TAG);*/
 
-      binding.loader.setVisibility(View.VISIBLE);
-      binding.root.setVisibility(View.GONE);
+        binding.loader.setVisibility(View.VISIBLE);
+        binding.root.setVisibility(View.GONE);
     }
 
 
@@ -164,6 +164,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
             showLoadingFragment();
             presenter.getLocationById("" + location.getUUID());
         } else {
+            filterInteractionListener.onLocationUpdated(location);
             finishDialog();
         }
 
@@ -205,9 +206,17 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         }
     }
 
+    @Override
+    public void updateFormsOnLocationSync(Location baseResult) {
+        filterInteractionListener.onLocationUpdated(baseResult);
+    }
+
 
     public interface OnFilterInteractionListener extends Serializable {
         public void onLocationClick(BaseItem location);
+
+        public void onLocationUpdated(BaseItem location);
+
 
     }
 }

@@ -16,9 +16,11 @@ public class FormDetails implements Serializable {
         return forms;
     }
 
-
     public void enableAccess() {
         hasAccess = true;
+    }
+    public void disableAccess() {
+        hasAccess = false;
     }
 
     public boolean hasAccess() {
