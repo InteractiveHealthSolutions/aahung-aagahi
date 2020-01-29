@@ -28,9 +28,8 @@ import {
     ChartSeries,
     ChartTitle,
     ChartSeriesItem,
-    ChartSeriesItemTooltip,
+    ChartSeriesLabels,
     ChartCategoryAxis,
-    ChartCategoryAxisItem,
     ChartValueAxis,
     ChartValueAxisItem,
     ChartCategoryAxisCrosshair,
@@ -75,11 +74,14 @@ class ExitPlanning extends React.Component {
 
     async getData() {
         // calling the appropriate resource with url params
-        if(this.state.component === "lse") {
-            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+        if (this.state.component === "lse") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
             var resourceUrl = serverAddress + "/report/exitschoolplanningdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet !== undefined) {
+                console.log("printing result set >>>>>>>>>");
+                console.log(resultSet.length);
+                console.log(resultSet);
                 this.setState({
                     data: resultSet
                 })
@@ -89,13 +91,16 @@ class ExitPlanning extends React.Component {
 
     render() {
 
-        const series =[
-            {category:'SRHR Policy Implemented', value:filterData(this.state.data,'srhr_policy_implemented',this.province)},
-            {category:'Parent Sessions Conducted', value:filterData(this.state.data,'parent_session_conducted',this.province)}
+        const labelContent = (e) => (e.value);
+        const series = [
+            { category: 'SRHR', value: filterData(this.state.data, 'srhr_policy_implemented') },
+            { category: 'Parent Sessions', value: filterData(this.state.data, 'parent_session_conducted') },
+            { category: 'Both', value: filterData(this.state.data, 'both') },
+            { category: 'Neither', value: filterData(this.state.data, 'neither') }
         ];
         const seriesVisible = this.state.seriesVisible;
-    
-        const colors = ['#DC143C', '#FFA500'];
+
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
 
         const crosshair = {
             visible: true,
@@ -109,22 +114,16 @@ class ExitPlanning extends React.Component {
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
                 <ChartTitle text="Exit Planning Graph" color="black" font="19pt sans-serif" />
-                <ChartLegend position="bottom" />
-                <ChartCategoryAxis>
-                        <ChartCategoryAxisCrosshair>
-                            <ChartCategoryAxisCrosshairTooltip />
-                        </ChartCategoryAxisCrosshair>
-                </ChartCategoryAxis>
+                <ChartLegend position="bottom" visible={true} />
                 <ChartSeries>
-                   <ChartSeriesItem type="pie" data={series} field="value" categoryField="category" />
+                    <ChartSeriesItem type="donut" data={series} field="value" categoryField="category">
+                        <ChartSeriesLabels color="#fff" background="none" content={labelContent} />
+                    </ChartSeriesItem>
                 </ChartSeries>
-                <ChartValueAxis skip={4}>
-                    <ChartValueAxisItem crosshair={crosshair} />
-                </ChartValueAxis>
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
@@ -132,25 +131,33 @@ class ExitPlanning extends React.Component {
     }
 }
 
-function filterData(data, category, location) {
+function filterData(data, type) {
     // For each tier, attach tier as name and data as the sums for each province
-    var years = getUniqueValues(data, 'fiscal_year');
-    location = getUniqueValues(data, 'state_province');
-    var filtered = [];
-    if (data !== null && data !== undefined && data.length > 0)
-        filtered = data.filter(element => element.state_province === location);
-    var sums = [];
 
-    years.forEach(year => {
-        var sum = 0;
-        for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].fiscal_year == year) {
-                sum += parseInt(filtered[i].total);
-            }
-        }
-        sums.push(sum);
-    });
-    return sums;
+    var srhrData = [];
+    var parentSessionData = [];
+    var bothData = [];
+    var neitherData = [];
+
+    if (data !== null && data !== undefined && data.length > 0) {
+        srhrData = data.filter(element => String(element.srhr_policy_implemented) === "1")[0];
+        parentSessionData = data.filter(element => String(element.parent_session_conducted) === "1")[0];
+        bothData = data.filter(element => String(element.srhr_policy_implemented) === "1" && String(element.parent_session_conducted) === "1")[0];
+        neitherData = data.filter(element => String(element.srhr_policy_implemented) === "0" && String(element.parent_session_conducted) === "0")[0];
+    }
+
+    if (type === "srhr_policy_implemented") {
+        return srhrData.length === 0 ? 0 : srhrData.total;
+    }
+    else if (type === "parent_session_conducted") {
+        return parentSessionData.length === 0 ? 0 : parentSessionData.total;
+    }
+    else if (type === "both") {
+        return bothData.length === 0 ? 0 : bothData.total;
+    }
+    else {
+        return neitherData.length === 0 ? 0 : neitherData.total;
+    }
 }
 
 export default ExitPlanning;

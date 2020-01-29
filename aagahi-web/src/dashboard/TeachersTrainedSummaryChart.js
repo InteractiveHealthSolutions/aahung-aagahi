@@ -19,7 +19,6 @@
  * @desc [description]
  */
 
-
 import React from "react";
 import {
     Chart,
@@ -183,29 +182,5 @@ function filterData(data, level, tier) {
     
     return sums;
 }
-
-// function getTotals(data, level) {
-//     // For each tier, attach tier as name and data as the sums for each province
-//     var transformedData = []
-//     var tiers = getUniqueValues(data, 'school_tier');
-//     var programs = getUniqueValues(data, 'program');
-//     tiers.forEach(tier => {
-//         transformedData.push({ name: tier });
-//         var tierData = []
-//         // Sum for each province
-//         programs.forEach(program => {
-//             var sum = 0;
-//             for (var i = 0; i < data.length; i++) {
-//                 if (data[i].program === program && data[i].school_tier === tier && data[i].school_level === level) {
-//                     sum += parseInt(data[i].total);
-//                 }
-//             }
-//             tierData.push(sum);
-//         });
-//         transformedData.push({ data: tierData });
-//     });
-//     console.log(transformedData);
-//     return transformedData;    
-// }
 
 export default TeachersTrainedSummaryChart;

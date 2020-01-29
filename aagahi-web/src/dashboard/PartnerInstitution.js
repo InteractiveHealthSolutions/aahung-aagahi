@@ -82,7 +82,7 @@ class PartnerInstitutions extends React.Component {
             var resourceUrl = serverAddress + "/report/partnerinstitutiondata?" + params;
             var resultSet = await getGraphData(resourceUrl);
             if(resultSet != null && resultSet !== undefined) {
-                console.log(resultSet)
+                console.log(resultSet);
                 this.setState({
                     data: resultSet
                 })
@@ -92,6 +92,7 @@ class PartnerInstitutions extends React.Component {
 
     render() {
 
+        // TODO: fix tooltips
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;

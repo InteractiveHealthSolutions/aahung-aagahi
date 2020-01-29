@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:20:09
+ * @Last Modified time: 2020-01-29 16:47:33
  */
 
 
@@ -32,7 +32,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
-import { clearCheckedFields, getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { clearCheckedFields, getObject, loadFormState, resetFormState, capitalize } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -167,13 +167,26 @@ class SocialMediaDetail extends React.Component {
                     this.editUpdateDisplay();
 
                     // TODO: see if the platform fields can be edited
-
+                    // console.log(this.state.platform_scoress);
+                    var platformScoresData = this.fetchedForm.data.filter(el => el.dataType === "platform_scores")[0];
+                    console.log(platformScoresData);
+                    
+                    var postPlatforms = [];
+                    console.log("platformScoresData >>>>>>>>>>");
+                    console.log(platformScoresData.value.length);
+                    platformScoresData.value.map(function (element, i) {
+                        console.log(element);
+                        // TODO: API is not returning correct json string
+                        // var validJsonString = element.replace("=", ":"); 
+                        // console.log(validJsonString);
+                        // postPlatforms.push({value: JSON.parse(validJsonString).post_platform, label: capitalize(JSON.parse(validJsonString).post_platform)})
+                    })
+                    console.log(postPlatforms);
                 }
                 else {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
-
             this.setState({
                 loading: false
             })

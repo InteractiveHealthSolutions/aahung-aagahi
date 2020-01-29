@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
-
 
 import React from "react";
 import 'hammerjs';
@@ -39,55 +38,91 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { radioLiveCallData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class RadioLiveCall extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = radioLiveCallData;
-        console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
         seriesVisible: [true, true],
-        name : ['Listener', 'Live']
+        name: ['Listener', 'Live'],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if (this.state.component === "comms") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
+            var resourceUrl = serverAddress + "/report/radiocalldata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if (resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
         const defaultToolTip = ({ point }) => (`${point.series.name}: ${point.value}`);
-        
+
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
-        const dayName = getUniqueValues(this.data,'day_name');
-        
+        const dayName = getUniqueValues(this.state.data, 'day_name');
+
         let monday = [
-            {data: filterData(this.data,'Monday','listener_count')},
-            {data: filterData(this.data,'Monday','live_call_data')},
+            { data: filterData(this.state.data, 'Monday', 'listener_count') },
+            { data: filterData(this.state.data, 'Monday', 'live_call_data') },
         ];
         let tuesday = [
-            {data: filterData(this.data,'Tuesday','listener_count')},
-            {data: filterData(this.data,'Tuesday','live_call_data')},
+            { data: filterData(this.state.data, 'Tuesday', 'listener_count') },
+            { data: filterData(this.state.data, 'Tuesday', 'live_call_data') },
         ];
         let wednesday = [
-            {data: filterData(this.data,'Wednesday','listener_count')},
-            {data: filterData(this.data,'Wednesday','live_call_data')},
+            { data: filterData(this.state.data, 'Wednesday', 'listener_count') },
+            { data: filterData(this.state.data, 'Wednesday', 'live_call_data') },
         ];
         let thursday = [
-            {data: filterData(this.data,'Thursday','listener_count')},
-            {data: filterData(this.data,'Thursday','live_call_data')},
+            { data: filterData(this.state.data, 'Thursday', 'listener_count') },
+            { data: filterData(this.state.data, 'Thursday', 'live_call_data') },
         ];
 
         let friday = [
-            {data: filterData(this.data,'Friday','listener_count')},
-            {data: filterData(this.data,'Friday','live_call_data')},
+            { data: filterData(this.state.data, 'Friday', 'listener_count') },
+            { data: filterData(this.state.data, 'Friday', 'live_call_data') },
         ];
         let saturday = [
-            {data: filterData(this.data,'Saturday','listener_count')},
-            {data: filterData(this.data,'Saturday','live_call_data')},
+            { data: filterData(this.state.data, 'Saturday', 'listener_count') },
+            { data: filterData(this.state.data, 'Saturday', 'live_call_data') },
         ];
         let sunday = [
-            {data: filterData(this.data,'Sunday','listener_count')},
-            {data: filterData(this.data,'Sunday','live_call_data')},
+            { data: filterData(this.state.data, 'Sunday', 'listener_count') },
+            { data: filterData(this.state.data, 'Sunday', 'live_call_data') },
         ];
 
 
@@ -114,35 +149,35 @@ class RadioLiveCall extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip/>
+                <ChartTooltip />
                 <ChartSeries render={defaultToolTip}>
                     {monday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
                     {tuesday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {wednesday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {thursday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {friday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} >
                         </ChartSeriesItem>
                     ))}
                     {saturday.map((item, index) => (
-                        <ChartSeriesItem type="column" 
+                        <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
@@ -158,7 +193,7 @@ class RadioLiveCall extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
@@ -174,29 +209,32 @@ function filterData(data, day, program) {
     var sums = [];
 
 
-    if (program === 'listener_count'){
-        filtered =data.filter(element => element.day_name === day);
-        
+    if (program === 'listener_count') {
+
+        if (data !== null && data !== undefined && data.length > 0)
+            filtered = data.filter(element => element.day_name === day);
+
         days.forEach(day => {
             var sumListener = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].day_name == day) {
-                    sumListener += filtered[i].listener_count;
+                    sumListener += parseInt(filtered[i].listener_count);
                 }
             }
             sums.push(sumListener);
         });
 
         return sums;
-    
-    }else{
-        filtered = data.filter(element => element.day_name === day);
-        
+
+    } else {
+        if (data !== null && data !== undefined && data.length > 0)
+            filtered = data.filter(element => element.day_name === day);
+
         days.forEach(day => {
             var sumLive = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].day_name == day) {
-                    sumLive += filtered[i].live_call_count;
+                    sumLive += parseInt(filtered[i].live_call_count);
                 }
             }
             sums.push(sumLive);

@@ -10,11 +10,11 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
@@ -39,37 +39,76 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { amplifyChangeParticipantData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class AmplifyChangeParticipant extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = amplifyChangeParticipantData;
-        console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true,true,true],
-        name : ['Male', 'Female', 'Other']
+        seriesVisible: [true, true, true, true, true, true, true],
+        name: ['Male', 'Female', 'Other'],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "srhm") {
+            // TODO: add cities param after Rabbia updates the query
+            // var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
+            var resourceUrl = serverAddress + "/report/amplifychangeparticipantdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
 
+        // TODO: implement changes according to result set returned
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
 
-        const type =['Student','Faculty','Other','Pre-service','Providers'];
-       
+        const type = ['Student', 'Faculty', 'Other', 'Pre-service', 'Providers'];
+
         let studentData = [
-            { data: filterData(this.data, 'male', 'Student') },
-            { data: filterData(this.data, 'female', 'Student') },
-            { data: filterData(this.data, 'othery', 'Student') }       
+            { data: filterData(this.state.data, 'male', 'Student') },
+            { data: filterData(this.state.data, 'female', 'Student') },
+            { data: filterData(this.state.data, 'othery', 'Student') }
         ];
         let facultyData = [
-            { data: filterData(this.data, 'male', 'Faculty') },
-            { data: filterData(this.data, 'female', 'Faculty') },
-            { data: filterData(this.data, 'other', 'Faculty') }     
+            { data: filterData(this.state.data, 'male', 'Faculty') },
+            { data: filterData(this.state.data, 'female', 'Faculty') },
+            { data: filterData(this.state.data, 'other', 'Faculty') }
         ];
 
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
@@ -98,12 +137,12 @@ class AmplifyChangeParticipant extends React.Component {
                 <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {studentData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Student'}}
+                        <ChartSeriesItem type="column" stack={{ group: 'Student' }}
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
-                     {facultyData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Faculty'}}
+                    {facultyData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={{ group: 'Faculty' }}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
@@ -114,60 +153,59 @@ class AmplifyChangeParticipant extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
 function filterData(data, gender, type) {
     // For each tier, attach tier as name and data as the sums for each province
     var provinces = getUniqueValues(data, 'state_province');
-    var filtered = data.filter(element => element.participant_type === type);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.participant_type === type);
     var sums = [];
 
-    if (gender === 'male'){
+    if (gender === 'male') {
         provinces.forEach(province => {
             var sumMale = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumMale += filtered[i].male;
+                    sumMale += parseInt(filtered[i].male);
                 }
             }
             sums.push(sumMale);
         });
-    
+
         return sums;
-    }else if(gender === 'female'){
+    } else if (gender === 'female') {
         provinces.forEach(province => {
             var sumFemale = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumFemale += filtered[i].female;
+                    sumFemale += parseInt(filtered[i].female);
                 }
             }
             sums.push(sumFemale);
         });
-    
+
         return sums;
-    }else{
+    } else {
         provinces.forEach(province => {
             var sumOther = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumOther += filtered[i].other;
+                    sumOther += parseInt(filtered[i].other);
                 }
             }
             sums.push(sumOther);
         });
-    
+
         return sums;
     }
-
-    
 }
 
 export default AmplifyChangeParticipant;

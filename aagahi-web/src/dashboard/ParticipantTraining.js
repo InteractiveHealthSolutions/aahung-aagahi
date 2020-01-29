@@ -51,7 +51,6 @@ class ParticipantTraining extends React.Component {
 
     state = {
         seriesVisible: [true, true,true],
-        name: ['Male','Female','Other'],
         component: this.props.component,
         startDate: this.props.startDate,
         endDate: this.props.endDate,
@@ -90,25 +89,20 @@ class ParticipantTraining extends React.Component {
 
     render() {
 
-        // TODO: need changes, adjust according to result set
-
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
-        // const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
-
+        // const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
-        const names = this.state.name;
         const participants = getUniqueValues(this.state.data, 'participant_type');
+        const names = getUniqueValues(this.state.data, 'gender');
 
         let maleData = [
             { data: filterData(this.state.data, 'Male') }
         ];
         let femaleData = [
-            { data: filterData(this.state.data, 'Female') }
-                        
+            { data: filterData(this.state.data, 'Female') }         
         ];
         let otherData = [
-            { data: filterData(this.state.data, 'Other') }
-                       
+            { data: filterData(this.state.data, 'Other') }      
         ];       
         
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
@@ -136,17 +130,17 @@ class ParticipantTraining extends React.Component {
                 <ChartSeries>
                     {maleData.map((item, index) => (
                         <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
-                            data={item.data} visible={seriesVisible[index]} name={names[index]}>
+                            data={item.data} visible={seriesVisible[index]} name={names[0]}>
                         </ChartSeriesItem>
                     ))}
                     {femaleData.map((item, index) => (
                         <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
-                            data={item.data} visible={seriesVisible[index]} name={names[index]}>
+                            data={item.data} visible={seriesVisible[index]} name={names[1]}>
                         </ChartSeriesItem>
                     ))}
                     {otherData.map((item, index) => (
                         <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
-                            data={item.data} visible={seriesVisible[index]} name={names[index]}>
+                            data={item.data} visible={seriesVisible[index]} name={names[2]}>
                                 {/* <ChartSeriesItemTooltip render={defaultTooltip} /> */}
                         </ChartSeriesItem>
                     ))}
@@ -164,7 +158,6 @@ class ParticipantTraining extends React.Component {
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
 function filterData(data, gender) {

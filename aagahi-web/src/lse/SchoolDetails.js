@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-24 16:59:48
+ * @Last Modified time: 2020-01-29 17:04:50
  */
 
 
@@ -299,7 +299,8 @@ class SchoolDetails extends React.Component {
                         attrValueObj.forEach(async function (obj) {
                             // definitionArr contains only one item because filter will return only one definition)
                             let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
-                            arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
+                            if(projectObj !== null && projectObj !== undefined)
+                                arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
                         })
                     }
 

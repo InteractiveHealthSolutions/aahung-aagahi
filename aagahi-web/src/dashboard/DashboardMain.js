@@ -24,11 +24,11 @@ import ReactDOM from 'react-dom';
 import '../css/dashboard.css';
 import 'bootstrap-4-grid/css/grid.min.css';
 import { Button } from '@progress/kendo-react-buttons';
-import { savePDF } from '@progress/kendo-react-pdf';
+import { savePDF, PDFExport } from '@progress/kendo-react-pdf';
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBCol, MDBContainer, MDBIcon, MDBMask, MDBNav, MDBNavbar, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBRow, MDBTabContent, MDBTable, MDBTableBody, MDBTableHead, MDBTabPane, MDBView } from "mdbreact";
 import '@progress/kendo-theme-material/dist/all.css';
 import { PieChartContainer, GridContainer } from './DashboardDataContainer';
-import { PrimaryStatsContainer } from './PrimaryStatsContainer';
+import PrimaryStatsContainer from './PrimaryStatsContainer';
 import OneTouchSessions from './OneTouchSessions';
 import TrainingDataSummary from './TrainingDataSummary';
 import PartnerSchoolsChart from './PartnerSchoolsChart';
@@ -56,13 +56,14 @@ import moment from 'moment';
 
 class DashboardMain extends React.Component {
 
+    chartsDiv;
     constructor(props) {
         super(props);
         this.appContainer = React.createRef();
         this.state = {
             selected: 0,
             showDialog: false,
-            start_date: new Date(),
+            start_date: new Date(new Date().getFullYear(), 0, 1),
             end_date: new Date(),
             district: [], // for capturing the selected options for districts
             province: [], // for capturing the selected options for provinces,
@@ -75,12 +76,11 @@ class DashboardMain extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.handleRefresh();
+    }
+
     handleRefresh = () => {
-        console.log(this.state.selected);
-        console.log(this.state.start_date);
-        console.log(this.state.end_date);
-        console.log(this.state.province);
-        console.log(this.state.district);
 
         if (this.state.selected === 0)
             this.setState({ component: "lse" })
@@ -98,15 +98,29 @@ class DashboardMain extends React.Component {
         });
     };
 
-    handleSelect = (e) => {
+    handleSelect = async (e) => {
         this.setState({ selected: e.selected });
 
         if (e.selected === 0)
-            this.setState({ component: "lse" })
+            await this.setState({ component: "lse" })
         else if (e.selected === 1)
-            this.setState({ component: "srhm" })
+            await this.setState({ component: "srhm" })
         else
-            this.setState({ component: "comms" })
+            await this.setState({ component: "comms" })
+
+        this.refreshComponentCharts();
+    }
+
+    refreshComponentCharts() {
+
+        var concatenatedProvinces = getProvinceListFilter(this.state.province);
+        var concatenatedDistricts = getDistrictListFilter(this.state.district);
+        this.setState({
+            startDateParam: moment(this.state.start_date).format('YYYY-MM-DD'),
+            endDateParam: moment(this.state.end_date).format('YYYY-MM-DD'),
+            provincesStringParam: concatenatedProvinces,
+            citiesStringParam: concatenatedDistricts
+        })
     }
 
     // for multi select
@@ -135,23 +149,16 @@ class DashboardMain extends React.Component {
         }
     }
 
-    refreshComponentCharts() {
-
-        var concatenatedProvinces = getProvinceListFilter(this.state.province);
-        var concatenatedDistricts = getDistrictListFilter(this.state.district);
-        this.setState({
-            startDateParam: moment(this.state.start_date).format('YYYY-MM-DD'),
-            endDateParam: moment(this.state.end_date).format('YYYY-MM-DD'),
-            provincesStringParam: concatenatedProvinces,
-            citiesStringParam: concatenatedDistricts
-        })
-    }
-
     /**
      * Handle export to PDF. All the content inside appContainer div will be exported as is
      */
     handlePDFExport = () => {
         savePDF(ReactDOM.findDOMNode(this.appContainer), { paperSize: 'auto' });
+    }
+
+    exportPDFWithComponent = (event) => {
+        event.preventDefault();
+        this.pdfExportComponent.save();
     }
 
     render() {
@@ -165,7 +172,7 @@ class DashboardMain extends React.Component {
                                     <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
                                     <Nav className="mr-auto"></Nav>
                                     <Form inline>
-                                        {/* <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.handlePDFExport}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button> */}
+                                        <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.exportPDFWithComponent}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button>
                                         <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
                                     </Form>
                                 </Navbar>
@@ -223,6 +230,8 @@ class DashboardMain extends React.Component {
                                     <br />
                                 </div>
 
+                                <PDFExport ref={(component) => this.pdfExportComponent = component} paperSize="auto">
+                                <div ref={(chartsDiv) => this.chartsDiv = chartsDiv}>
                                 <TabStrip style={{ color: "white", fontWeight: "bold", width: "100%;" }} selected={this.state.selected} onSelect={this.handleSelect}>
                                     <TabStripTab style={{ width: "33%" }} title="LSE">
                                         {/* <DashboardFilterContainer /> */}
@@ -232,18 +241,18 @@ class DashboardMain extends React.Component {
                                                     <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
+                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
                                                 </div>
                                                 <div class="w-100">
                                                     <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                        <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                     </div>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <TrainingDataSummary endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                    <TrainingDataSummary endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                    <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                         </div>
@@ -253,18 +262,18 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                    <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                    <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component}/>
+                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <AmplifyChangeParticipant />
+                                                    <AmplifyChangeParticipant endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                         </div>
@@ -274,26 +283,28 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <SocialMediaTraffic />
+                                                    <SocialMediaTraffic endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <RadioLiveCall />
+                                                    <RadioLiveCall endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
                                                 </div>
                                                 <div class="w-100">
                                                     <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <MobileCinema />
+                                                        <MobileCinema endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                     </div>
                                                     <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <MaterialDistribution />
+                                                        <MaterialDistribution endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
                                                     </div>
                                                     <div class="col">
-                                                        {/* <CommunicationsTraining /> */}
+                                                        <CommunicationsTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </TabStripTab>
                                 </TabStrip>
+                                </div>
+                                </PDFExport>
                             </div>
                         </div>
                     </MDBMask>
