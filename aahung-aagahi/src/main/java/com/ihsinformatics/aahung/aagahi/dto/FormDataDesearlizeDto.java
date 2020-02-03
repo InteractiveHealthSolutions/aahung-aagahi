@@ -285,7 +285,7 @@ public class FormDataDesearlizeDto {
        		 			
        		 		dmapObj.setDataType(element.getShortName());	
      
-	  				returnJsonArray.put(jObj);
+	  				returnJsonArray.put(jObj.toString());
        		 	   }
        		 		
        		 		
