@@ -194,10 +194,10 @@ class DashboardMain extends React.Component {
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-3">
-                                                    <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required />
+                                                    <Select id="province" name="province" className="provinceDashboard" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required />
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
+                                                    <Select id="district" name="district" className="districtDashboard" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required />
                                                 </div>
                                                 <div class="col-md-2">
                                                     <DatePicker style={{ border: "none !important" }}

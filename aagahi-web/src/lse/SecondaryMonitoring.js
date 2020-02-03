@@ -215,7 +215,7 @@ class SecondaryMonitoring extends React.Component {
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
                 if (this.fetchedForm !== null) {
-                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.state = await loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
                     this.setState({
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
@@ -259,8 +259,8 @@ class SecondaryMonitoring extends React.Component {
                     })
 
                     let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
-                    this.autopopulateFields(attributes);
-                    this.editUpdateDisplay();
+                    await this.autopopulateFields(attributes);
+                    await this.editUpdateDisplay();
                 }
                 else {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
@@ -707,7 +707,7 @@ class SecondaryMonitoring extends React.Component {
                 }
 
                 let attributes = await getLocationAttributesByLocation(e.uuid);
-                this.autopopulateFields(attributes);
+                await this.autopopulateFields(attributes);
                 this.setState({ loading: false });
             }
 
@@ -756,6 +756,16 @@ class SecondaryMonitoring extends React.Component {
                 if (attrTypeName === "school_sex") {
                     self.setState({ class_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : "girls" });
                     self.setState({ school_sex: attributeValue === "Girls" ? 'girls' : attributeValue === "Boys" ? 'boys' : attributeValue === "Co-ed" ? "coed" : "" });
+                    // alert(attributeValue)
+
+                    self.isSchoolSexGirls = attributeValue === "Girls" ? true : false;
+                    self.isSchoolSexBoys = attributeValue === "Boys" ? true : false;
+
+                    self.isWorkbookGirls = self.isSchoolSexGirls && self.isResourcesRequired;
+                    self.isWorkbookBoys = self.isSchoolSexBoys && self.isResourcesRequired;
+
+                    self.isWorkbookGirlsDistribute = self.isSchoolSexGirls && self.isResourcesRequiredDistribute;
+                    self.isWorkbookBoysDistribute = self.isSchoolSexBoys && self.isResourcesRequiredDistribute;
                 }
             }
         })
@@ -1919,7 +1929,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="facilitation_score" style={{ color: "green" }}><b>Facilitation Score</b></Label>
-                                                                            <Input value={this.state.facilitation_score} name="facilitation_score" id="facilitation_score" onChange={(e) => { this.inputChange(e, "facilitation_score") }} ></Input>
+                                                                            <Input value={this.state.facilitation_score} name="facilitation_score" id="facilitation_score" onChange={(e) => { this.inputChange(e, "facilitation_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -2191,7 +2201,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="management_score" style={{ color: "green" }}><b>Management Score</b></Label>
-                                                                            <Input value={this.state.management_score} name="management_score" id="management_score" onChange={(e) => { this.inputChange(e, "management_score") }} ></Input>
+                                                                            <Input value={this.state.management_score} name="management_score" id="management_score" onChange={(e) => { this.inputChange(e, "management_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -2218,7 +2228,7 @@ class SecondaryMonitoring extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup className="monitoringScoreBox">
                                                                             <Label for="monitoring_score" style={{ color: "green" }}><b>Cumulative Monitoring Score</b></Label>
-                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} ></Input>
+                                                                            <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => { this.inputChange(e, "monitoring_score") }} readOnly></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
