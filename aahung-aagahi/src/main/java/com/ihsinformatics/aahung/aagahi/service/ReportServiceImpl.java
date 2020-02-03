@@ -510,7 +510,7 @@ public class ReportServiceImpl extends BaseService {
 		    break;
 		case Types.NVARCHAR:
 		case Types.VARCHAR:
-		    obj.put(displayName, resultSet.getString(columnName));
+		    obj.put(displayName, resultSet.getString(i));
 		    break;
 		case Types.BLOB:
 		    obj.put(displayName, resultSet.getBlob(columnName));
