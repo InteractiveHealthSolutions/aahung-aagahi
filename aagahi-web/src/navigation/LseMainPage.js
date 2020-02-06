@@ -36,6 +36,7 @@ import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoring from "../lse/PrimaryMonitoring";
 import SchoolClosing from "../lse/SchoolClosing";
 import SchoolDetails from "../lse/SchoolDetails";
+import SchoolUpdate from "../lse/SchoolUpdate";
 import SecondaryMonitoring from "../lse/SecondaryMonitoring";
 import SrhrPolicy from "../lse/SrhrPolicy";
 import StakeholderMeeting from "../lse/StakeholderMeeting";

@@ -36,6 +36,7 @@ import { getObject } from "../util/AahungUtil.js";
 import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const institutionTypes = [
     { label: 'Medical', value: 'medical' },
@@ -801,6 +802,11 @@ class InstitutionDetails extends React.Component {
             formNavVisible = false;
         }
 
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit Location') ? false : true;
+        }
+
         return (
             <div id="formDiv">
                 <Router>
@@ -964,8 +970,8 @@ class InstitutionDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

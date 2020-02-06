@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
-
 
 import React from "react";
 import {
@@ -38,42 +37,71 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { teachersTrainingData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class TeachersTrainedSummaryChart extends React.Component {
 
-    // state = {
-    //     seriesVisible: true
-    // }
-
-    // secondState = {
-    //     seriesVisible2: true
-    // }
-
     constructor(props) {
         super(props);
-        this.data = addAggregateRecord(teachersTrainingData); // TODO: replace with the correct resource
-        console.debug(this.data);
+        // this.data = addAggregateRecord(teachersTrainingData); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true, true, true]
+        seriesVisible: [true, true, true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/teacherstrainingdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: addAggregateRecord(resultSet)
+                })
+            }
+        }
     }
 
     render() {
         const primaryToolTipRender = ({ point }) => (`Primary: ${point.value}`);
         const secondaryToolTipRender = ({ point }) => (`Secondary: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        let programs = getUniqueValues(this.data, 'program');
+        let programs = getUniqueValues(this.state.data, 'program');
 
         let primary = [
-            { name: 'New', data: filterData(this.data, 'Primary', 'New') },
-            { name: 'Running', data: filterData(this.data, 'Primary', 'Running') },
-            { name: 'Exit', data: filterData(this.data, 'Primary', 'Exit') },
+            { name: 'New', data: filterData(this.state.data, 'Primary', 'New') },
+            { name: 'Running', data: filterData(this.state.data, 'Primary', 'Running') },
+            { name: 'Exit', data: filterData(this.state.data, 'Primary', 'Exit') },
         ];
         let secondary = [
-            { name: 'New', data: filterData(this.data, 'Secondary', 'New') },
-            { name: 'Running', data: filterData(this.data, 'Secondary', 'Running') },
-            { name: 'Exit', data: filterData(this.data, 'Secondary', 'Exit') },
+            { name: 'New', data: filterData(this.state.data, 'Secondary', 'New') },
+            { name: 'Running', data: filterData(this.state.data, 'Secondary', 'Running') },
+            { name: 'Exit', data: filterData(this.state.data, 'Secondary', 'Exit') },
         ];
         
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
@@ -135,13 +163,18 @@ function addAggregateRecord(data) {
 function filterData(data, level, tier) {
     var programs = getUniqueValues(data, 'program');
     // var levels = getUniqueValues(data, 'school_level');
-    var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0) {
+        // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
+        // filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+        filtered = data.filter(element => element.school_level === level);
+    }
     var sums = [];
         programs.forEach(program => {
             var sum = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].program == program) {
-                    sum += filtered[i].total;
+                    sum += parseInt(filtered[i].total);
                 }
             }
             sums.push(sum);
@@ -149,29 +182,5 @@ function filterData(data, level, tier) {
     
     return sums;
 }
-
-// function getTotals(data, level) {
-//     // For each tier, attach tier as name and data as the sums for each province
-//     var transformedData = []
-//     var tiers = getUniqueValues(data, 'school_tier');
-//     var programs = getUniqueValues(data, 'program');
-//     tiers.forEach(tier => {
-//         transformedData.push({ name: tier });
-//         var tierData = []
-//         // Sum for each province
-//         programs.forEach(program => {
-//             var sum = 0;
-//             for (var i = 0; i < data.length; i++) {
-//                 if (data[i].program === program && data[i].school_tier === tier && data[i].school_level === level) {
-//                     sum += data[i].total;
-//                 }
-//             }
-//             tierData.push(sum);
-//         });
-//         transformedData.push({ data: tierData });
-//     });
-//     console.log(transformedData);
-//     return transformedData;    
-// }
 
 export default TeachersTrainedSummaryChart;

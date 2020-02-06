@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
-
 
 import React from "react";
 import 'hammerjs';
@@ -39,53 +38,74 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { participantTrainingData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class ParticipantTraining extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = participantTrainingData;
-        console.log(this.data); // TODO: replace with the correct resource
+        // this.data = participantTrainingData; // TODO: replace with the correct resource
     }
 
     state = {
         seriesVisible: [true, true,true],
-        name: ['Male','Female','Other']
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "srhm") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
+            var resourceUrl = serverAddress + "/report/participanttrainingdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
 
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
-
+        // const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
-        const names = this.state.name;
-        const participants = getUniqueValues(this.data, 'participant_type');
+        const participants = getUniqueValues(this.state.data, 'participant_type');
+        const names = getUniqueValues(this.state.data, 'gender');
 
-        let studentData = [
-            { data: filterData(this.data, 'Student', 'Sindh') },
-            { data: filterData(this.data, 'Student', 'Punjab') },
-            { data: filterData(this.data, 'Student', 'Other') },
-                      
+        let maleData = [
+            { data: filterData(this.state.data, 'Male') }
         ];
-        let teacherData = [
-            { data: filterData(this.data, 'Teacher', 'Sindh') },
-            { data: filterData(this.data, 'Teacher', 'Punjab') },
-            { data: filterData(this.data, 'Teacher', 'Other') },
-                        
+        let femaleData = [
+            { data: filterData(this.state.data, 'Female') }         
         ];
         let otherData = [
-            { data: filterData(this.data, 'Other', 'Sindh') },
-            { data: filterData(this.data, 'Other', 'Punjab') },
-            { data: filterData(this.data, 'Other', 'Other') },
-                       
-        ];
-        
-
-       
+            { data: filterData(this.state.data, 'Other') }      
+        ];       
         
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
-
-
         const crosshair = {
             visible: true,
             tooltip: {
@@ -108,19 +128,20 @@ class ParticipantTraining extends React.Component {
                 </ChartCategoryAxis>
                 <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
-                    {studentData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Student'}}
-                            data={item.data} visible={seriesVisible[index]} name={names[index]}>
+                    {maleData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[0]}>
                         </ChartSeriesItem>
                     ))}
-                    {teacherData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Teacher'}}
-                            data={item.data} visible={seriesVisible[index]}>
+                    {femaleData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[1]}>
                         </ChartSeriesItem>
                     ))}
                     {otherData.map((item, index) => (
-                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'Other'}}
-                            data={item.data} visible={seriesVisible[index]}>
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[2]}>
+                                {/* <ChartSeriesItemTooltip render={defaultTooltip} /> */}
                         </ChartSeriesItem>
                     ))}
                     
@@ -137,21 +158,22 @@ class ParticipantTraining extends React.Component {
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
-function filterData(data, parType, location) {
+function filterData(data, gender) {
     // For each tier, attach tier as name and data as the sums for each province
     var participantTypes = getUniqueValues(data, 'participant_type');
 
-    var filtered = data.filter(element => element.participant_type === parType && element.state_province === location);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.gender === gender);
     var sums = [];
 
     participantTypes.forEach(participanttype => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].participant_type == participanttype) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);

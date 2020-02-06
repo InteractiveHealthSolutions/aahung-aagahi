@@ -10,11 +10,11 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
@@ -39,17 +39,54 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { trainingData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class TrainingDataSummary extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = trainingData;
-        console.log(this.data); // TODO: replace with the correct resource
+        // this.state.data = trainingData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true, true,true]
+        seriesVisible: [true, true, true,true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/trainingdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
@@ -64,37 +101,35 @@ class TrainingDataSummary extends React.Component {
 
 
         let initialTraining = [
-            { name: 'Punjab', data: filterData(this.data, 'INITIAL_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'INITIAL_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.data, 'INITIAL_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.data, 'INITIAL_TRAINING', 'Sindh') },
+            { name: 'Punjab', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Punjab') },
+            { name: 'Balochistan', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Balochistan') },
+            { name: 'KP', data: filterData(this.state.data, 'INITIAL_TRAINING', 'KP') },
+            { name: 'Sindh', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Sindh') },
             
         ];
         let refresherTraining = [
-            { name: 'Punjab', data: filterData(this.data, 'REFRESHER_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'REFRESHER_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.data, 'REFRESHER_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.data, 'REFRESHER_TRAINING', 'Sindh') },
+            { name: 'Punjab', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Punjab') },
+            { name: 'Balochistan', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Balochistan') },
+            { name: 'KP', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'KP') },
+            { name: 'Sindh', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Sindh') },
             
         ];
         let mtTraining = [
-            { name: 'Punjab', data: filterData(this.data, 'MT_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'MT_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.data, 'MT_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.data, 'MT_TRAINING', 'Sindh') },
+            { name: 'Punjab', data: filterData(this.state.data, 'MT_TRAINING', 'Punjab') },
+            { name: 'Balochistan', data: filterData(this.state.data, 'MT_TRAINING', 'Balochistan') },
+            { name: 'KP', data: filterData(this.state.data, 'MT_TRAINING', 'KP') },
+            { name: 'Sindh', data: filterData(this.state.data, 'MT_TRAINING', 'Sindh') },
             
         ];
         let rollOutStepDown = [
-            { name: 'Punjab', data: filterData(this.data, 'ROLL_OUT_STEP_DOWN', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.data, 'ROLL_OUT_STEP_DOWN', 'Balochistan') },
-            { name: 'KP', data: filterData(this.data, 'ROLL_OUT_STEP_DOWN', 'KP') },
-            { name: 'Sindh', data: filterData(this.data, 'ROLL_OUT_STEP_DOWN', 'Sindh') },
+            { name: 'Punjab', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Punjab') },
+            { name: 'Balochistan', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Balochistan') },
+            { name: 'KP', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'KP') },
+            { name: 'Sindh', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Sindh') },
             
         ];
 
-
         const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
-
         const crosshair = {
             visible: true,
             tooltip: {
@@ -163,15 +198,16 @@ class TrainingDataSummary extends React.Component {
 function filterData(data, trainingType, location) {
     // For each tier, attach tier as name and data as the sums for each province
     var trainingTypes = getUniqueValues(data, 'training_type');
-
-    var filtered = data.filter(element => element.training_type === trainingType && element.state_province === location);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.training_type === trainingType && element.state_province === location);
     var sums = [];
 
     trainingTypes.forEach(trainingType => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].training_type == trainingType) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);

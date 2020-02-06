@@ -137,7 +137,7 @@ class MainPageLayout extends React.Component {
                             <p className="font-weight-bolder">Select the field you are interested</p>
 
                             <RequirePrivilege
-                                privilegeName="View Administration Section"
+                                privilegeName="View Search Section"
                                 yes={() => (
                                     <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-center"><img src={admin} alt="thumbnail" height="60" width="70" /><br /><p className="font-weight-bold" style={{fontSize: "85%"}}>Search</p></MDBBtn></Link>
                                 )}

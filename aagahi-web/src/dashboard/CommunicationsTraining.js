@@ -38,39 +38,67 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { communicationsTrainingData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class CommunicationsTraining extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = communicationsTrainingData;
-        console.log(this.data); // TODO: replace with the correct resource
+        // this.data = communicationsTrainingData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
-        seriesVisible: [true, true,true,true],
+        seriesVisible: [true, true, true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if (this.state.component === "comms") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
+            var resourceUrl = serverAddress + "/report/communicationstrainingdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if (resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
         const seriesVisible = this.state.seriesVisible;
+        const toolTipRender = ({ point }) => (`${point.value}`);
+        let data = [
+            { name: 'SRHR', data: filterData(this.state.data, 'covered_srhr') },
+            { name: 'Agency and Choice', data: filterData(this.state.data, 'covered_agency_choice') },
+            { name: 'Gender Sensitization', data: filterData(this.state.data, 'covered_gender_sensitization') },
+            { name: 'Other', data: filterData(this.state.data, 'covered_other') }
+        ];
 
-        let srhrData = [
-            { name: 'SRHR', data: filterData(this.data, 'covered_srhr') }
-        ];
-        let agencyData = [
-            { name: 'Agency and Choice', data: filterData(this.data, 'covered_agency_choice') }
-        ];
-        let genderData = [
-            { name: 'Gender Sensitization', data: filterData(this.data, 'covered_gender_sensitization') }
-        ];
-        let otherData = [
-            { name: 'Other', data: filterData(this.data, 'covered_other') }
-        ];
-        
-        
-        const colors = ['red', 'blue','greeb', 'purple'];
-
-
+        const colors = ['red', 'blue', 'green', 'purple'];
         const crosshair = {
             visible: true,
             tooltip: {
@@ -85,29 +113,17 @@ class CommunicationsTraining extends React.Component {
                 <ChartTitle text="Communications Training" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={['Journalists','Screenwriters','Media', 'Other']} startAngle={45}>
+                    <ChartCategoryAxisItem categories={['Journalists', 'Screenwriters', 'Bloggers', 'Media', 'Other']} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
                 <ChartSeries>
-                    {srhrData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'karachi'}}
-                            data={item.data} visible={seriesVisible[index]} name={item.name}>
-                        </ChartSeriesItem>
-                    ))}
-                    {agencyData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'hyderabad'}}
-                            data={item.data} visible={seriesVisible[index]} name={item.name}>
-                        </ChartSeriesItem>
-                    ))}{genderData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Peshawar'}}
-                            data={item.data} visible={seriesVisible[index]} name={item.name}>
-                        </ChartSeriesItem>
-                    ))}{otherData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Other'}}
-                            data={item.data} visible={seriesVisible[index]} name={item.name}>
+                {data.map((item, index) => (
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} name={item.name} gap={2}>
+                            <ChartSeriesItemTooltip render={toolTipRender} />
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -117,7 +133,7 @@ class CommunicationsTraining extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
@@ -126,66 +142,75 @@ class CommunicationsTraining extends React.Component {
 
 }
 
-function filterData(data, materialType) {
+function sum(key) {
+    return this.reduce((a, b) => a + (b[key] || 0), 0);
+}
+
+function filterData(data, materialType, parType) {
     // For each tier, attach tier as name and data as the sums for each province
     var locations = getUniqueValues(data, 'city_village');
     var sums = [];
 
-    if (materialType === 'covered_srhr'){
-        locations.forEach(location => {
-            var srhrSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].city_village == location) {
-                    srhrSum += data[i].journalist_count;
-                }
-            }
-            sums.push(srhrSum);
-        });
+    var coveredSrhr = [];
+    var coveredAgencyChoice = [];
+    var coveredGenderSensitization = [];
+    var coveredOther = [];
+    var parTypeSum = 0;
+    var sums = [];
+    if (data !== null && data !== undefined && data.length > 0) {
+        coveredSrhr = data.filter(element => String(element.covered_srhr) === "1");
+        coveredAgencyChoice = data.filter(element => String(element.covered_agency_choice) === "1");
+        coveredGenderSensitization = data.filter(element => String(element.covered_gender_sensitization) === "1");
+        coveredOther = data.filter(element => String(element.covered_other) === "1");
+    }
 
+    if (materialType === "covered_srhr") {
+        sums.push(coveredSrhr.reduce(function (cnt, o) { return cnt + o.journalist_count; }, 0));
+        sums.push(coveredSrhr.reduce(function (cnt, o) { return cnt + o.screenwriter_count; }, 0));
+        sums.push(coveredSrhr.reduce(function (cnt, o) { return cnt + o.blogger_count; }, 0));
+        sums.push(coveredSrhr.reduce(function (cnt, o) { return cnt + o.other_media_count; }, 0));
+        sums.push(coveredSrhr.reduce(function (cnt, o) { return cnt + o.other_attendant_count; }, 0))
+
+        console.log("covered_srhr: printing sums");
+        console.log(sums);
         return sums;
+    }
+    else if(materialType === "covered_agency_choice") {
+        sums.push(coveredAgencyChoice.reduce(function (cnt, o) { return cnt + o.journalist_count; }, 0));
+        sums.push(coveredAgencyChoice.reduce(function (cnt, o) { return cnt + o.screenwriter_count; }, 0));
+        sums.push(coveredAgencyChoice.reduce(function (cnt, o) { return cnt + o.blogger_count; }, 0));
+        sums.push(coveredAgencyChoice.reduce(function (cnt, o) { return cnt + o.other_media_count; }, 0));
+        sums.push(coveredAgencyChoice.reduce(function (cnt, o) { return cnt + o.other_attendant_count; }, 0))
 
-    }else if(materialType === 'covered_agency_choice'){
-
-        locations.forEach(location => {
-            var agencySum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].city_village == location) {
-                    agencySum += data[i].blogger_count;
-                }
-            }
-            sums.push(agencySum);
-        });
-
+        console.log("covered_agency_choice: printing sums");
+        console.log(sums);
         return sums;
+    }
+    else if(materialType === "covered_gender_sensitization") {
+        sums.push(coveredGenderSensitization.reduce(function (cnt, o) { return cnt + o.journalist_count; }, 0));
+        sums.push(coveredGenderSensitization.reduce(function (cnt, o) { return cnt + o.screenwriter_count; }, 0));
+        sums.push(coveredGenderSensitization.reduce(function (cnt, o) { return cnt + o.blogger_count; }, 0));
+        sums.push(coveredGenderSensitization.reduce(function (cnt, o) { return cnt + o.other_media_count; }, 0));
+        sums.push(coveredGenderSensitization.reduce(function (cnt, o) { return cnt + o.other_attendant_count; }, 0))
 
-    }else if(materialType === 'covered_gender_sensitization'){
-
-        locations.forEach(location => {
-            var genderSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].city_village == location) {
-                    genderSum += data[i].screenwriter_count;
-                }
-            }
-            sums.push(genderSum);
-        });
-
+        console.log("covered_gender_sensitization: printing sums");
+        console.log(sums);
         return sums;
+    }
+    else if(materialType === "covered_other") {
+        sums.push(coveredOther.reduce(function (cnt, o) { return cnt + o.journalist_count; }, 0));
+        sums.push(coveredOther.reduce(function (cnt, o) { return cnt + o.screenwriter_count; }, 0));
+        sums.push(coveredOther.reduce(function (cnt, o) { return cnt + o.blogger_count; }, 0));
+        sums.push(coveredOther.reduce(function (cnt, o) { return cnt + o.other_media_count; }, 0));
+        sums.push(coveredOther.reduce(function (cnt, o) { return cnt + o.other_attendant_count; }, 0))
 
-    }else{
-        locations.forEach(location => {
-            var otherSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].distribution_location == location) {
-                    otherSum += data[i].other_media_count;
-                }
-            }
-            sums.push(otherSum);
-        });
-
+        console.log("covered_other: printing sums");
+        console.log(sums);
         return sums;
-    }   
-        
+    }
+
+
+
 }
 
 export default CommunicationsTraining;

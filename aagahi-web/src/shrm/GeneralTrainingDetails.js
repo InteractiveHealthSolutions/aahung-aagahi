@@ -115,7 +115,7 @@ class GeneralTrainingDetails extends React.Component {
         this.requiredFields = ["date_start", "province", "district", "institution_id", "trainer", "topic_covered", "participant_name", "training_days"];
         this.errors = {};
         this.participantList = [];
-
+        this.editMode = false;
     }
 
     componentDidMount() {
@@ -137,7 +137,8 @@ class GeneralTrainingDetails extends React.Component {
      */
     loadData = async () => {
         try {
-
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            
             let formTypeObj = await getFormTypeByUuid(Constants.GENERAL_TRAINING_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -772,8 +773,8 @@ class GeneralTrainingDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={this.editMode}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={this.editMode}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

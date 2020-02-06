@@ -38,31 +38,66 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { mobileCinemaData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class MobileCinema extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = mobileCinemaData;
-        console.log(this.data); // TODO: replace with the correct resource
+        // this.data = mobileCinemaData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
         seriesVisible: [true, true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if (this.state.component === "comms") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/mobilecinemadata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if (resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
-        const seriesVisible = this.state.seriesVisible;
-        const provinces = getUniqueValues(this.data, 'city_village');
 
+        const seriesVisible = this.state.seriesVisible;
+        const provinces = getUniqueValues(this.state.data, 'city_village');
         let defaultData = [
-            { name: 'Cinema', data: filterData(this.data, 'cinema') },
-            { name: 'Live Theatre', data: filterData(this.data, 'live_theatre') }
-            
+            { name: 'Cinema', data: filterData(this.state.data, 'cinema') },
+            { name: 'Live Theatre', data: filterData(this.state.data, 'live_theatre') }
+
         ];
         const colors = ['#DC143C', '#FFA500'];
-
-
         const crosshair = {
             visible: true,
             tooltip: {
@@ -96,7 +131,7 @@ class MobileCinema extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
@@ -109,19 +144,20 @@ function filterData(data, screenType) {
     // For each tier, attach tier as name and data as the sums for each province
     var provinces = getUniqueValues(data, 'city_village');
 
-    var filtered = data.filter(element => element.screening_type === screenType);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.screening_type === screenType);
     var sums = [];
 
     provinces.forEach(province => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             if (filtered[i].city_village == province) {
-                sum += filtered[i].total;
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);
     });
-
     return sums;
 }
 

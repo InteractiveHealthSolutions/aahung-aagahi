@@ -35,6 +35,7 @@ import { clearCheckedFields, getIndicatorCode, getObject, loadFormState, resetFo
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const facilitatorTypeOptions = [
     { value: 'parents', label: 'Parents' },
@@ -694,19 +695,22 @@ class ParentSessions extends React.Component {
     }
 
     render() {
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
         const sessionConductedStyle = this.isSessionConducted ? {} : { display: 'none' };
         const genderBothStyle = this.isGenderBoth ? {} : { display: 'none' };
         const nextPlanStyle = this.isNextPlan ? {} : { display: 'none' };
         const otherTopicStyle = this.isPreviousTopicOther ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
         var formNavVisible = false;
         if (this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
+        }
+
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
         return (
@@ -1021,8 +1025,8 @@ class ParentSessions extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
