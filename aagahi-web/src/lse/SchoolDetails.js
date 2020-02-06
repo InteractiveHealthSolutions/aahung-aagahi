@@ -2,9 +2,11 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-24 16:59:48
+ * @Last Modified time: 2020-02-06 11:53:30
  */
 
+ // TODO: ### NOTE: ###
+// this form has a known bug in EDIT mode. Associated projects do not auto-populate in edit mode (this.state.projects).
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -20,11 +22,15 @@
 
 // Contributors: Tahira Niazi
 
+// TODO: Note:
+// this form has a known bug in EDIT mode. Associated projects do not auto-populate in edit mode (this.state.projects).
+
 import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
@@ -35,6 +41,7 @@ import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
 import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa' },
@@ -63,6 +70,7 @@ class SchoolDetails extends React.Component {
             organizations: [],
             projectsList: [],
             projects: [],
+            selectedProjects: [],
             school_id: '',
             program_implemented: [],
             school_tier: 'school_tier_new',
@@ -108,7 +116,6 @@ class SchoolDetails extends React.Component {
         this.isExtension = false;
         this.isCoed = false;
         this.fetchedLocation = {};
-        this.selectedProjects = [];
         this.requiredFields = ["province", "district", "parent_organization_id", "school_name", "partnership_start_date", "program_implemented", "school_level", "point_person_name", "point_person_contact", "student_count"];
     }
 
@@ -224,11 +231,12 @@ class SchoolDetails extends React.Component {
     /**
      * created separate method because async handle was not updating the local variables (location attrs)
      */
-    autopopulateFields(locationAttributes) {
+    async autopopulateFields(locationAttributes) {
         let self = this;
         let attributeValue = '';
-        locationAttributes.forEach(async function (obj) {
+        await locationAttributes.forEach(async function (obj) {
             let attrTypeName = obj.attributeType.shortName;
+            console.log("attr type name: " + attrTypeName)
             if (attrTypeName === "partnership_years") {
                 attributeValue = obj.attributeValue;
             }
@@ -279,7 +287,6 @@ class SchoolDetails extends React.Component {
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {
-
                 var arr = [];
                 // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
                 let attrValueObj = JSON.parse(obj.attributeValue);
@@ -294,12 +301,26 @@ class SchoolDetails extends React.Component {
                         })
                     }
 
-                    if ('projectId' in attrValueObj[0]) {
-
+                    if ('projectId' in attrValueObj[0] && attrTypeName === "projects") {
                         attrValueObj.forEach(async function (obj) {
                             // definitionArr contains only one item because filter will return only one definition)
                             let projectObj = await getProjectByRegexValue(String(obj.projectId), false);
-                            arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
+                            if(projectObj !== null && projectObj !== undefined) {
+                                arr.push({ id: projectObj.projectId, uuid: projectObj.uuid, label: projectObj.projectName, shortName: projectObj.shortName, name: projectObj.projectName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName });
+                                // array.push({ "id": obj.projectId, "uuid": obj.uuid, "shortName": obj.shortName, "name": obj.projectName, "label": obj.projectName, "value": obj.shortName, "donorName": obj.donor.donorName, "donorId": obj.donor.donorId });
+                            }
+                        })
+
+                        // TESTING:
+                        console.log("printing project array::: attrtype name is: " + attrTypeName) 
+                        console.log(arr)
+                        console.log(typeof arr)
+                        let aarrrr = arr;
+                        console.log(typeof aarrrr)
+                        console.log(aarrrr)
+                        self.setState({
+                            projects: aarrrr,
+                            selectedProjects: arr
                         })
                     }
 
@@ -308,34 +329,12 @@ class SchoolDetails extends React.Component {
                             [attrTypeName]: arr
                         })
                     }
-                    if (attrTypeName === "projects") {
-
-                        console.log(arr);
-                        // self.setState({
-                        //     [attrTypeName]: arr
-                        // })
-
-                        console.log("============= in projects =================");
-                        console.log(arr);
-                        self.setState({
-                            projects: arr
-                        })
-
-                        self.selectedProjects = arr;
-
-                        console.log("project state changed");
-                        console.log(self.state.projects);
-
-                        self.setState({
-                            hasError: false
-                        })
-
-                    }
                 }
-                // attributeValue = multiSelectString;
-                self.setState({
-                    [attrTypeName]: arr
-                })
+                if (attrTypeName !== "projects") {
+                    self.setState({
+                        [attrTypeName]: arr
+                    })
+                }
                 return;
             }
 
@@ -353,8 +352,6 @@ class SchoolDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        console.log(e);
-        console.log(e.target.value);
 
         this.setState({
             [name]: e.target.value
@@ -363,7 +360,6 @@ class SchoolDetails extends React.Component {
         if (name === "school_level") {
 
             this.state.school_level_shortname = e.target.id;
-
             e.target.id === "school_level_secondary" ? this.setState({
                 // Autoselect program_implemented = LSBE
                 program_implemented: [{ value: 'lsbe', label: 'LSBE' }]
@@ -397,7 +393,6 @@ class SchoolDetails extends React.Component {
                 boy_count: ''
             })
         }
-
     }
 
     inputChange(e, name) {
@@ -466,6 +461,9 @@ class SchoolDetails extends React.Component {
 
     valueChangeMulti(e, name) {
 
+        // alert(e.length);
+        console.log("printing e::::::::::::::");
+        console.log(e);
         this.setState({
             [name]: e
         });
@@ -743,7 +741,6 @@ class SchoolDetails extends React.Component {
                 updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                     .then(
                         responseData => {
-                            console.log(responseData);
                             if (!(String(responseData).includes("Error"))) {
 
                                 this.setState({
@@ -779,7 +776,6 @@ class SchoolDetails extends React.Component {
                 this.beforeSubmit();
 
                 const data = new FormData(event.target);
-                console.log(data);
                 var jsonData = new Object();
                 jsonData.category = {};
                 var categoryId = await getDefinitionId("location_category", "school");
@@ -938,7 +934,6 @@ class SchoolDetails extends React.Component {
                 attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
                 jsonData.attributes.push(attributeObject);
 
-
                 // projects > loca attr type
                 var attrType = await getLocationAttributeTypeByShortName("projects");
                 var attrTypeId = attrType.attributeTypeId;
@@ -957,11 +952,10 @@ class SchoolDetails extends React.Component {
                 attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
                 jsonData.attributes.push(attributeObject);
 
-                console.log(jsonData);
+                // console.log(jsonData);
                 saveLocation(jsonData)
                     .then(
                         responseData => {
-                            console.log(responseData);
                             if (!(String(responseData).includes("Error"))) {
 
                                 this.setState({
@@ -991,9 +985,7 @@ class SchoolDetails extends React.Component {
                         }
                     );
             }
-
         }
-
     }
 
     handleValidation() {
@@ -1001,7 +993,6 @@ class SchoolDetails extends React.Component {
         this.isCoed ? this.requiredFields.push("girl_count") : this.requiredFields = this.requiredFields.filter(e => e !== "girl_count");
         this.isCoed ? this.requiredFields.push("boy_count") : this.requiredFields = this.requiredFields.filter(e => e !== "boy_count");
         let formIsValid = true;
-        console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({ errors: this.errors });
@@ -1057,7 +1048,6 @@ class SchoolDetails extends React.Component {
         return isOk;
     }
 
-
     beforeSubmit = async () => {
 
         // autogenerate school id
@@ -1072,13 +1062,10 @@ class SchoolDetails extends React.Component {
             this.schoolId = this.schoolId + levelInitials;
             var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
             this.schoolId = this.schoolId + "-" + randomDigits.substring(0, 4);
-
-
         }
         catch (error) {
             console.log(error);
         }
-
     }
 
     /**
@@ -1127,6 +1114,8 @@ class SchoolDetails extends React.Component {
 
     render() {
 
+        // console.log("printing projects in render method" );
+        // console.log(this.state.projects.length);
         const page2style = this.state.page2Show ? {} : { display: 'none' };
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
@@ -1139,6 +1128,11 @@ class SchoolDetails extends React.Component {
         }
         else {
             formNavVisible = false;
+        }
+
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit Location') ? false : true;
         }
 
         return (
@@ -1300,10 +1294,9 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="projects" >Associated Projects</Label> <span class="errorMessage">{this.state.errors["projects"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} isMulti required />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} required isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
-
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_tier" >School Tier<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
@@ -1314,7 +1307,6 @@ class SchoolDetails extends React.Component {
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
-
                                                                 <Col md="6" style={newSchoolStyle}>
                                                                     <FormGroup >
                                                                         <Label for="school_category_new" >New Schools Category<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_category_new"]}</span>
@@ -1324,8 +1316,6 @@ class SchoolDetails extends React.Component {
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
-
-
                                                                 <Col md="6" style={runningSchoolStyle}>
                                                                     <FormGroup >
                                                                         <Label for="school_category_running" >Running Schools Category<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_category_running"]}</span>
@@ -1415,8 +1405,8 @@ class SchoolDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

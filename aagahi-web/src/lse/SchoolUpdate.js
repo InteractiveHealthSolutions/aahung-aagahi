@@ -322,11 +322,6 @@ class SchoolUpdate extends React.Component {
                         })
                     }
 
-                    // if (attrTypeName === "program_implemented") {
-                    //     self.setState({
-                    //         [attrTypeName]: arr
-                    //     })
-                    // }
                     if (attrTypeName === "projects") {
 
                         console.log(arr);
@@ -763,6 +758,8 @@ class SchoolUpdate extends React.Component {
 
                                                                 </Row>
 
+                                                                {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                                <div style={{ height: '250px' }}><span>   </span></div>
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>

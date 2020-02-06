@@ -39,62 +39,97 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { partnerInstitutionData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class PartnerInstitutions extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = partnerInstitutionData;
-        console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
         seriesVisible: [true, true,true,true],
-        name: ['Medical', 'Nursing', 'Midwifery', 'Other']
+        name: ['Medical', 'Nursing', 'Midwifery', 'Other'],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "srhm") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/partnerinstitutiondata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                console.log(resultSet);
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
 
+        // TODO: fix tooltips
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
-        const locations = getUniqueValues(this.data, 'state_province');
+        const locations = getUniqueValues(this.state.data, 'state_province');
 
         let sindhData = [
-            { data: filterData(this.data, 'total_medical', 'Sindh') },
-            { data: filterData(this.data, 'total_nursing', 'Sindh') },
-            { data: filterData(this.data, 'total_midwifery', 'Sindh') },
-            { data: filterData(this.data, 'total_other', 'Sindh') }         
+            { data: filterData(this.state.data, 'total_medical', 'Sindh') },
+            { data: filterData(this.state.data, 'total_nursing', 'Sindh') },
+            { data: filterData(this.state.data, 'total_midwifery', 'Sindh') },
+            { data: filterData(this.state.data, 'total_other', 'Sindh') }         
         ];
         let punjabData = [
-            { data: filterData(this.data, 'total_medical', 'Punjab') },
-            { data: filterData(this.data, 'total_nursing', 'Punjab') },
-            { data: filterData(this.data, 'total_midwifery', 'Punjab') },
-            { data: filterData(this.data, 'total_other', 'Punjab') }         
+            { data: filterData(this.state.data, 'total_medical', 'Punjab') },
+            { data: filterData(this.state.data, 'total_nursing', 'Punjab') },
+            { data: filterData(this.state.data, 'total_midwifery', 'Punjab') },
+            { data: filterData(this.state.data, 'total_other', 'Punjab') }         
         ];
         let balochistanData = [
-            { data: filterData(this.data, 'total_medical', 'Balochistan') },
-            { data: filterData(this.data, 'total_nursing', 'Balochistan') },
-            { data: filterData(this.data, 'total_midwifery', 'Balochistan') },
-            { data: filterData(this.data, 'total_other', 'Balochistan') }         
+            { data: filterData(this.state.data, 'total_medical', 'Balochistan') },
+            { data: filterData(this.state.data, 'total_nursing', 'Balochistan') },
+            { data: filterData(this.state.data, 'total_midwifery', 'Balochistan') },
+            { data: filterData(this.state.data, 'total_other', 'Balochistan') }         
         ];
         let gilgitBaltistanData = [
-            { data: filterData(this.data, 'total_medical', 'Gilgit-Baltistan') },
-            { data: filterData(this.data, 'total_nursing', 'Gilgit-Baltistan') },
-            { data: filterData(this.data, 'total_midwifery', 'Gilgit-Baltistan') },
-            { data: filterData(this.data, 'total_other', 'Gilgit-Baltistan') }         
+            { data: filterData(this.state.data, 'total_medical', 'Gilgit-Baltistan') },
+            { data: filterData(this.state.data, 'total_nursing', 'Gilgit-Baltistan') },
+            { data: filterData(this.state.data, 'total_midwifery', 'Gilgit-Baltistan') },
+            { data: filterData(this.state.data, 'total_other', 'Gilgit-Baltistan') }         
         ];
         let kpData = [
-            { data: filterData(this.data, 'total_medical', 'KP') },
-            { data: filterData(this.data, 'total_nursing', 'KP') },
-            { data: filterData(this.data, 'total_midwifery', 'KP') },
-            { data: filterData(this.data, 'total_other', 'KP') }         
+            { data: filterData(this.state.data, 'total_medical', 'KP') },
+            { data: filterData(this.state.data, 'total_nursing', 'KP') },
+            { data: filterData(this.state.data, 'total_midwifery', 'KP') },
+            { data: filterData(this.state.data, 'total_other', 'KP') }         
         ];
        
-        
         const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
-
-
         const crosshair = {
             visible: true,
             tooltip: {
@@ -163,7 +198,9 @@ function filterData(data, dataType, location) {
     // For each tier, attach tier as name and data as the sums for each province
     var provinces = getUniqueValues(data, 'state_province');
 
-    var filtered = data.filter(element => element.state_province === location);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.state_province === location);
     var sums = [];
 
     if(dataType === 'total_medical'){
@@ -171,7 +208,7 @@ function filterData(data, dataType, location) {
             var sumMedical = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumMedical += filtered[i].total_medical;
+                    sumMedical += parseInt(filtered[i].total_medical);
                 }
             }
             sums.push(sumMedical);
@@ -183,7 +220,7 @@ function filterData(data, dataType, location) {
             var sumNursing = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumNursing += filtered[i].total_nursing;
+                    sumNursing += parseInt(filtered[i].total_nursing);
                 }
             }
             sums.push(sumNursing);
@@ -194,7 +231,7 @@ function filterData(data, dataType, location) {
             var sumMidwifery = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumMidwifery += filtered[i].total_midwifery;
+                    sumMidwifery += parseInt(filtered[i].total_midwifery);
                 }
             }
             sums.push(sumMidwifery);
@@ -205,18 +242,13 @@ function filterData(data, dataType, location) {
             var sumOther = 0;
             for (var i = 0; i < filtered.length; i++) {
                 if (filtered[i].state_province == province) {
-                    sumOther += filtered[i].total_other;
+                    sumOther += parseInt(filtered[i].total_other);
                 }
             }
             sums.push(sumOther);
         });
         return sums;
     }
-    
-    
-    
-    
-    return sums;
 }
 
 export default PartnerInstitutions;

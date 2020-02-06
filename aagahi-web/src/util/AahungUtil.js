@@ -139,7 +139,11 @@ export const clearCheckedFields = function () {
 }
 
 export const capitalize = function (stringValue) {
-    var words = stringValue.split('_');
+    var words = [];
+    if(stringValue.includes('_'))
+        words = stringValue.split('_');
+    else 
+        words.push(stringValue);
     for (let i = 0; i < words.length; i++) {
         words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
     }
@@ -318,6 +322,7 @@ export const loadFormState = function (formDataObj, stateObj) {
 }
 
 export const resetFormState = function (fields, stateObj) {
+
     for (let j = 0; j < fields.length; j++) {
         let stateName = fields[j];
         // time field case
@@ -333,7 +338,7 @@ export const resetFormState = function (fields, stateObj) {
             stateObj[stateName] = '';
         }
     }
-
+    
     return stateObj;
 }
 

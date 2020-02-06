@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:20:09
+ * @Last Modified time: 2020-02-06 13:39:49
  */
 
 
@@ -31,11 +31,12 @@ import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, In
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { clearCheckedFields, getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { saveFormData, updateFormData } from "../service/PostService";
+import { clearCheckedFields, getObject, loadFormState, resetFormState, capitalize } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const postComponentOptions = [
     { value: 'comms', label: 'Comms' },
@@ -158,22 +159,409 @@ class SocialMediaDetail extends React.Component {
             this.formTypeId = formTypeObj.formTypeId;
             if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                // this.fetchedForm = {
+                //     "formId": 2793,
+                //     "uuid": "3cd027f9-be54-4c08-9dc7-9e2b85c4f78c",
+                //     "formType": {
+                //       "uuid": "9e0914fd-d2d1-11e9-b422-0242ac130002",
+                //       "description": "Social Media Details",
+                //       "isRetired": false,
+                //       "dateCreated": "2019-09-09",
+                //       "dateRetired": null,
+                //       "reasonRetired": null,
+                //       "formTypeId": 22,
+                //       "formName": "Social Media Details",
+                //       "shortName": "comms_social_media_details",
+                //       "version": 1,
+                //       "formSchema": "{\"lang\":\"en\",\"fields\":[{\"page\":1,\"order\":1,\"element\":\"82ffddc5-1457-4bac-8f79-9ea35957ca60\"},{\"page\":1,\"order\":2,\"element\":\"ebccb02e-29e5-4bd0-9510-b8685333e90c\"},{\"page\":1,\"order\":3,\"element\":\"306215fe-2044-479a-9541-82bd642d7506\"},{\"page\":1,\"order\":4,\"element\":\"79d49a46-70d8-448a-8ec3-602d6e43073f\"},{\"page\":1,\"order\":5,\"element\":\"dc9ff959-4c3e-4bbe-919d-bd87645be978\"},{\"page\":1,\"order\":6,\"element\":\"25740f95-ff99-49de-9ccb-737f6cd10b4f\"},{\"page\":1,\"order\":7,\"element\":\"620e9cbe-7b32-415a-addf-10974e40b992\"},{\"page\":1,\"order\":8,\"element\":\"477720b0-3656-4786-be15-28df369e92b5\"},{\"page\":1,\"order\":9,\"element\":\"28e1f680-dd94-4312-b3ad-094970ce13aa\"},{\"page\": 1,\"order\": 10,\"element\": \"368f302a-1bec-11ea-978f-2e728ce88125\"}]}",
+                //       "formSchemaMap": {},
+                //       "formGroup": {
+                //         "uuid": "cb90960a-d2cf-11e9-b422-0242ac130002",
+                //         "description": "Communications Component Forms",
+                //         "isRetired": false,
+                //         "dateCreated": "2019-09-09",
+                //         "dateRetired": null,
+                //         "reasonRetired": null,
+                //         "definitionId": 445,
+                //         "definitionType": {
+                //           "uuid": "2ee34905-d2cf-11e9-b422-0242ac130002",
+                //           "description": "Form Group",
+                //           "isRetired": false,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "definitionTypeId": 105,
+                //           "typeName": "Form Group",
+                //           "shortName": "form_group"
+                //         },
+                //         "definitionName": "Communications Component Forms",
+                //         "shortName": "communications_component",
+                //         "isPreferred": null
+                //       }
+                //     },
+                //     "location": null,
+                //     "formDate": 1579028400000,
+                //     "referenceId": "1-20200115070806",
+                //     "data": [
+                //       {
+                //         "key": {
+                //           "uuid": "28e1f680-dd94-4312-b3ad-094970ce13aa",
+                //           "description": "For each platform, platform_scores (json) will contain - post_platform, post_boosted, post_boosted_count, post_likes_count, post_comments_count, post_shares_count, post_url",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 222,
+                //           "elementName": "Platform Scores",
+                //           "dataType": "JSON",
+                //           "shortName": "platform_scores",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "platform_scores",
+                //         "value": [
+                //           "{\"post_likes_count\":3,\"post_comments_count\":7,\"post_boosted\":\"yes\",\"post_url\":\"facebook.com.pk\",\"post_shares_count\":3,\"post_platform\":\"Facebook\",\"post_boosted_count\":12}",
+                //           "{\"post_likes_count\":15,\"post_comments_count\":8,\"post_boosted\":\"yes\",\"post_url\":\"instagram.com.pk\",\"post_shares_count\":5,\"post_platform\":\"Instagram\"}"
+                //         ]
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "82ffddc5-1457-4bac-8f79-9ea35957ca60",
+                //           "description": "Post Relevant for",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 216,
+                //           "elementName": "Post Component",
+                //           "dataType": "JSON",
+                //           "shortName": "post_component",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "definition_array",
+                //         "value": [
+                //           {
+                //             "uuid": "f3da09f1-d2d5-11e9-b422-0242ac130002",
+                //             "description": "Comms",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionId": 450,
+                //             "definitionType": {
+                //               "uuid": "e76a90bc-d2d5-11e9-b422-0242ac130002",
+                //               "description": "Post Relevant for",
+                //               "isRetired": false,
+                //               "dateCreated": "2019-09-09",
+                //               "dateRetired": null,
+                //               "reasonRetired": null,
+                //               "definitionTypeId": 106,
+                //               "typeName": "Post Component",
+                //               "shortName": "post_component"
+                //             },
+                //             "definitionName": "Comms",
+                //             "shortName": "comms",
+                //             "isPreferred": null
+                //           }
+                //         ]
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "368f302a-1bec-11ea-978f-2e728ce88125",
+                //           "description": "Date Start",
+                //           "isRetired": false,
+                //           "dateCreated": "2019-12-11",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 415,
+                //           "elementName": "Date Start",
+                //           "dataType": "DATE",
+                //           "shortName": "date_start",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "date",
+                //         "value": 1579028400000
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "306215fe-2044-479a-9541-82bd642d7506",
+                //           "description": "Type of Post",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 218,
+                //           "elementName": "Post Type",
+                //           "dataType": "DEFINITION",
+                //           "shortName": "post_type",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "definition",
+                //         "value": {
+                //           "uuid": "cadf206e-d2cf-11e9-b422-0242ac130002",
+                //           "description": "Other",
+                //           "isRetired": false,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "definitionId": 409,
+                //           "definitionType": {
+                //             "uuid": "2ebe85ac-d2cf-11e9-b422-0242ac130002",
+                //             "description": "Type of Post",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionTypeId": 98,
+                //             "typeName": "Post Type",
+                //             "shortName": "post_type"
+                //           },
+                //           "definitionName": "Other",
+                //           "shortName": "other",
+                //           "isPreferred": null
+                //         }
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "79d49a46-70d8-448a-8ec3-602d6e43073f",
+                //           "description": "Specify Other",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 219,
+                //           "elementName": "Post Type Other",
+                //           "dataType": "STRING",
+                //           "shortName": "post_type_other",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "string",
+                //         "value": "abc web"
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "ebccb02e-29e5-4bd0-9510-b8685333e90c",
+                //           "description": "Date/Time of Post",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 217,
+                //           "elementName": "Post Date Time",
+                //           "dataType": "DATETIME",
+                //           "shortName": "post_date",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "datetime",
+                //         "value": 1579072025000
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "dc9ff959-4c3e-4bbe-919d-bd87645be978",
+                //           "description": "Topic Covered",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 211,
+                //           "elementName": "Topic Covered",
+                //           "dataType": "JSON",
+                //           "shortName": "topic_covered",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "definition_array",
+                //         "value": [
+                //           {
+                //             "uuid": "ca1778b7-d2cf-11e9-b422-0242ac130002",
+                //             "description": "News Article",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionId": 352,
+                //             "definitionType": {
+                //               "uuid": "2e95e172-d2cf-11e9-b422-0242ac130002",
+                //               "description": "Topics Covered",
+                //               "isRetired": false,
+                //               "dateCreated": "2019-09-09",
+                //               "dateRetired": null,
+                //               "reasonRetired": null,
+                //               "definitionTypeId": 92,
+                //               "typeName": "Topic Covered",
+                //               "shortName": "topic_covered"
+                //             },
+                //             "definitionName": "News Article",
+                //             "shortName": "news_article",
+                //             "isPreferred": null
+                //           },
+                //           {
+                //             "uuid": "c9e7e234-d2cf-11e9-b422-0242ac130002",
+                //             "description": "CSA/LSBE Infographic",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionId": 342,
+                //             "definitionType": {
+                //               "uuid": "2e95e172-d2cf-11e9-b422-0242ac130002",
+                //               "description": "Topics Covered",
+                //               "isRetired": false,
+                //               "dateCreated": "2019-09-09",
+                //               "dateRetired": null,
+                //               "reasonRetired": null,
+                //               "definitionTypeId": 92,
+                //               "typeName": "Topic Covered",
+                //               "shortName": "topic_covered"
+                //             },
+                //             "definitionName": "CSA/LSBE Infographic",
+                //             "shortName": "csa_lsbe_infographic",
+                //             "isPreferred": null
+                //           },
+                //           {
+                //             "uuid": "ca33e0de-d2cf-11e9-b422-0242ac130002",
+                //             "description": "Radio Appearance",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionId": 361,
+                //             "definitionType": {
+                //               "uuid": "2e95e172-d2cf-11e9-b422-0242ac130002",
+                //               "description": "Topics Covered",
+                //               "isRetired": false,
+                //               "dateCreated": "2019-09-09",
+                //               "dateRetired": null,
+                //               "reasonRetired": null,
+                //               "definitionTypeId": 92,
+                //               "typeName": "Topic Covered",
+                //               "shortName": "topic_covered"
+                //             },
+                //             "definitionName": "Radio Appearance",
+                //             "shortName": "radio_appearance",
+                //             "isPreferred": null
+                //           },
+                //           {
+                //             "uuid": "ca1d8509-d2cf-11e9-b422-0242ac130002",
+                //             "description": "Other",
+                //             "isRetired": false,
+                //             "dateCreated": "2019-09-09",
+                //             "dateRetired": null,
+                //             "reasonRetired": null,
+                //             "definitionId": 354,
+                //             "definitionType": {
+                //               "uuid": "2e95e172-d2cf-11e9-b422-0242ac130002",
+                //               "description": "Topics Covered",
+                //               "isRetired": false,
+                //               "dateCreated": "2019-09-09",
+                //               "dateRetired": null,
+                //               "reasonRetired": null,
+                //               "definitionTypeId": 92,
+                //               "typeName": "Topic Covered",
+                //               "shortName": "topic_covered"
+                //             },
+                //             "definitionName": "Other",
+                //             "shortName": "other",
+                //             "isPreferred": null
+                //           }
+                //         ]
+                //       },
+                //       {
+                //         "key": {
+                //           "uuid": "25740f95-ff99-49de-9ccb-737f6cd10b4f",
+                //           "description": "Specify Other",
+                //           "isRetired": true,
+                //           "dateCreated": "2019-09-09",
+                //           "dateRetired": null,
+                //           "reasonRetired": null,
+                //           "elementId": 212,
+                //           "elementName": "Topic Covered Other",
+                //           "dataType": "STRING",
+                //           "shortName": "topic_covered_other",
+                //           "validationRegex": null
+                //         },
+                //         "dataType": "string",
+                //         "value": "abc web"
+                //       }
+                //     ],
+                //     "formParticipantUuids": []
+                //   };
 
                 if (this.fetchedForm !== null) {
                     this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    let self = this;
                     this.setState({
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
-                    this.editUpdateDisplay();
 
                     // TODO: see if the platform fields can be edited
+                    // console.log(this.state.platform_scoress);
+                    var platformScoresData = this.fetchedForm.data.filter(el => el.dataType === "platform_scores")[0];
+                    console.log(platformScoresData);
+                    
+                    var postPlatforms = [];
+                    console.log("platformScoresData >>>>>>>>>>");
+                    console.log(platformScoresData.value);
+                    console.log(platformScoresData.value.length);
+                    platformScoresData.value.map(function (element, i) {
+                        console.log("printing platform details");
+                        console.log(element);
+                        console.log(JSON.parse(element));
+                        console.log(JSON.parse(element).post_platform);
+                        var platformJson = JSON.parse(element);
+                        postPlatforms.push({value: platformJson.post_platform.toLowerCase(), label: capitalize(platformJson.post_platform)})
+                        
+                        var platformName = platformJson.post_platform.toLowerCase();
+                        var boostedPostBoostedRadioButton = platformName + "_post_boosted";
+                        var boostedCountStateName = platformName + "_post_boosted_count";
+                        var boostedLikesStateName = platformName + "_post_likes_count";
+                        var boostedCommentsStateName = platformName + "_post_comments_count";
+                        var boostedSharesStateName = platformName + "_post_shares_count";
+                        var boostedPostUrlStateName = platformName + "_post_url";
+                        
+                        var radios = document.getElementsByName(boostedPostBoostedRadioButton);
+                        for (let i = 0; i < radios.length; i++) {
+                            if (radios[i].value === platformJson.post_boosted) {
+                                radios[i].checked = true;
+                                if(platformName === "facebook") {
+                                    self.isFacebookPostBoosted = true;
+                                }
+                                
+                                if(platformName === "twitter") {
+                                    self.isTwitterPostBoosted = true;
+                                }
+                                
+                                if(platformName === "instagram") {
+                                    self.isInstagramPostBoosted = true;
+                                }  
 
+                                if(platformName === "web_portal") {
+                                    self.isWebPortalPostBoosted = true;
+                                }
+                                    
+                                if(platformName === "other") {
+                                    self.isOtherPostBoosted = true;
+                                }
+                            }
+                        }
+                        self.setState({
+                            [boostedPostBoostedRadioButton] : platformJson.post_boosted,
+                            [boostedCountStateName] : platformJson.post_boosted_count,
+                            [boostedLikesStateName]: platformJson.post_likes_count,
+                            [boostedCommentsStateName]: platformJson.post_comments_count,
+                            [boostedSharesStateName]: platformJson.post_shares_count,
+                            [boostedPostUrlStateName]: platformJson.post_url
+                        })
+                    })
+                    console.log(postPlatforms);
+                    await this.setState({
+                        post_platform: postPlatforms
+                    })
+
+                    this.editUpdateDisplay();
                 }
                 else {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
-
             this.setState({
                 loading: false
             })
@@ -463,7 +851,7 @@ class SocialMediaDetail extends React.Component {
             // add all platform if applicable
             if (this.isTwitter) {
                 var platform_details = {};
-                platform_details.post_platform = "Twitter";
+                platform_details.post_platform = "twitter";
                 platform_details.post_boosted = data.get('twitter_post_boosted');
                 if (this.isTwitterPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('twitter_post_boosted_count'));
@@ -477,7 +865,7 @@ class SocialMediaDetail extends React.Component {
 
             if (this.isFacebook) {
                 var platform_details = {};
-                platform_details.post_platform = "Facebook";
+                platform_details.post_platform = "facebook";
                 platform_details.post_boosted = data.get('facebook_post_boosted');
                 if (this.isFacebookPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('facebook_post_boosted_count'));
@@ -491,7 +879,7 @@ class SocialMediaDetail extends React.Component {
 
             if (this.isInstagram) {
                 var platform_details = {};
-                platform_details.post_platform = "Instagram";
+                platform_details.post_platform = "instagram";
                 platform_details.post_boosted = data.get('instagram_post_boosted');
                 if (this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('instagram_post_boosted_count'));
@@ -505,10 +893,10 @@ class SocialMediaDetail extends React.Component {
 
             if (this.isWebPortal) {
                 var platform_details = {};
-                platform_details.post_platform = "Web Portal";
+                platform_details.post_platform = "web_portal";
                 platform_details.post_boosted = data.get('web_portal_post_boosted');
                 if (this.isWebPortalPostBoosted) {
-                    platform_details.post_boosted = parseInt(data.get('web_portal_post_boosted_count'));
+                    platform_details.post_boosted_count = parseInt(data.get('web_portal_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('web_portal_post_likes_count'));
                 platform_details.post_comments_count = parseInt(data.get('web_portal_post_comments_count'));
@@ -519,7 +907,7 @@ class SocialMediaDetail extends React.Component {
 
             if (this.isOther) {
                 var platform_details = {};
-                platform_details.post_platform = 'Other';
+                platform_details.post_platform = 'other';
                 platform_details.post_boosted = data.get('other_post_boosted');
                 if (this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('other_post_boosted_count'));
@@ -537,16 +925,32 @@ class SocialMediaDetail extends React.Component {
             if (this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
                 jsonData.referenceId = this.fetchedForm.referenceId;
-                var submitMsg = '';
-                submitMsg = "This form can not be edited at the moment. Please see error logs for details.";
+                updateFormData(jsonData)
+                    .then(
+                        responseData => {
+                            if (!(String(responseData).includes("Error"))) {
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    modalText: 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
 
-                this.setState({
-                    loading: false,
-                    modalHeading: 'Fail!',
-                    okButtonStyle: { display: 'none' },
-                    modalText: submitMsg,
-                    modal: !this.state.modal
-                });
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
             }
             else {
                 saveFormData(jsonData)
@@ -599,6 +1003,8 @@ class SocialMediaDetail extends React.Component {
      * verifies and notifies for the empty form fields
      */
     checkValid = (fields) => {
+
+        alert(this.isFacebook);
 
         this.isTwitter ? fields.push("twitter_post_boosted") : fields = fields.filter(e => e !== "twitter_post_boosted");
         this.isTwitter ? fields.push("twitter_post_likes_count") : fields = fields.filter(e => e !== "twitter_post_likes_count");
@@ -717,6 +1123,11 @@ class SocialMediaDetail extends React.Component {
         }
         else {
             formNavVisible = false;
+        }
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
         return (
@@ -1267,8 +1678,8 @@ class SocialMediaDetail extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

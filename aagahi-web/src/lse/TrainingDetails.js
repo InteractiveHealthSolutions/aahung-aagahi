@@ -106,6 +106,7 @@ class TrainingDetails extends React.Component {
             "program_type", "trainer", "training_days", "trained_school", "participant_name"];
         this.errors = {};
         this.participantList = [];
+        this.editMode = false;
 
     }
 
@@ -123,6 +124,8 @@ class TrainingDetails extends React.Component {
      */
     loadData = async () => {
         try {
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+
             let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -841,8 +844,8 @@ class TrainingDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={this.editMode}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={this.editMode}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

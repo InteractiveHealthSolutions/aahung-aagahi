@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-03 17:20:28
+ * @Last Modified time: 2020-02-06 13:37:43
  */
 
 
@@ -36,6 +36,7 @@ import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js"
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const coveredTopics = [
     { value: 'csa', label: 'CSA' },
@@ -59,21 +60,9 @@ class RadioAppearance extends React.Component {
             time_radio_show: new Date(),
             users: [],
             date_start: '',
-            participant_name: '',
-            dob: '',
-            sex: '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught: [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
-            isCsa: true,
-            isGender: false,
             hasError: false,
             errors: {},
             loading: false,
@@ -157,8 +146,8 @@ class RadioAppearance extends React.Component {
 
 
     cancelCheck = () => {
-        console.log(moment(this.state.time_radio_show).format('h:mm A'));
-        console.log(this.state.aahung_staff_appearance);
+        // console.log(moment(this.state.time_radio_show).format('h:mm A'));
+        // console.log(this.state.aahung_staff_appearance);
         this.resetForm(this.requiredFields);
     }
 
@@ -459,10 +448,8 @@ class RadioAppearance extends React.Component {
     }
 
     updateDisplay() {
-
         this.isCityOther = false;
         this.isOtherTopic = false;
-
     }
 
     editUpdateDisplay() {
@@ -488,19 +475,20 @@ class RadioAppearance extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
         // skip logics
         const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
         var formNavVisible = false;
         if (this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
+        }
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
         return (
@@ -693,11 +681,10 @@ class RadioAppearance extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
-
 
                                                 </CardHeader>
                                             </Card>

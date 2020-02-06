@@ -10,15 +10,14 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
-
 
 import React from "react";
 import 'hammerjs';
@@ -39,37 +38,74 @@ import {
 } from '@progress/kendo-react-charts';
 import { getUniqueValues } from '../util/AahungUtil';
 import { socialMediaTrafficData } from '../service/ReportService';
+import { getGraphData } from "../service/GetService";
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class SocialMediaTraffic extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = socialMediaTrafficData;
-        console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {
         seriesVisible: [true, true, true,true,true],
-        name : ['Facebook', 'Twitter', 'Other', 'Instagram', 'Web Portal']
+        name : ['Facebook', 'Twitter', 'Other', 'Instagram', 'Web Portal'],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "comms") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/socialmediatraffic?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
 
+        // TODO: fix tooltips
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
-        let dayName = getUniqueValues(this.data, 'day_name');
+        let dayName = getUniqueValues(this.state.data, 'day_name');
         const dayNameStr = JSON.parse(JSON.stringify(dayName));
         let myData = [];
         
 
         for (var i=0; i<dayNameStr.length; i++){
             myData.push(
-                { data: filterData(this.data, 'facebook', dayNameStr[i]) },
-                { data: filterData(this.data, 'twitter', dayNameStr[i]) },
-                { data: filterData(this.data, 'other', dayNameStr[i]) },
-                { data: filterData(this.data, 'Instagram', dayNameStr[i]) },
-                { data: filterData(this.data, 'web_portal', dayNameStr[i]) }  
+                { data: filterData(this.state.data, 'facebook', dayNameStr[i]) },
+                { data: filterData(this.state.data, 'twitter', dayNameStr[i]) },
+                { data: filterData(this.state.data, 'other', dayNameStr[i]) },
+                { data: filterData(this.state.data, 'Instagram', dayNameStr[i]) },
+                { data: filterData(this.state.data, 'web_portal', dayNameStr[i]) }  
             );
         }
 
@@ -122,8 +158,9 @@ class SocialMediaTraffic extends React.Component {
 function filterData(data, platforms, day) {
     // For each tier, attach tier as name and data as the sums for each province
     var days = getUniqueValues(data, 'day_name');
-
-    var filtered = data.filter(element => element.platform === platforms && element.day_name === day);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => element.platform === platforms && element.day_name === day);
     var sums = [];
 
     days.forEach(day => {

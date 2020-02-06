@@ -34,6 +34,7 @@ import { clearCheckedFields, getObject, resetFormState } from "../util/AahungUti
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const subjectsTaught = [
     { label: 'Math', value: 'math' },
@@ -663,6 +664,11 @@ class ParticipantDetails extends React.Component {
         else {
             formNavVisible = false;
         }
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit LSE Participant') ? false : true;
+        }
 
         return (
             <div id="formDiv">
@@ -845,8 +851,8 @@ class ParticipantDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit</Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear</Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

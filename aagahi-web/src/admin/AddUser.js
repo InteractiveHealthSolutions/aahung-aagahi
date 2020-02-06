@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:24:18
+ * @Last Modified time: 2020-01-28 13:07:51
  */
 
 
@@ -76,7 +76,6 @@ class AddUser extends React.Component {
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
-
     }
 
     componentWillUnmount() {
