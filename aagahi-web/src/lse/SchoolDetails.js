@@ -2,9 +2,11 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-03 12:27:13
+ * @Last Modified time: 2020-02-06 11:53:30
  */
 
+ // TODO: ### NOTE: ###
+// this form has a known bug in EDIT mode. Associated projects do not auto-populate in edit mode (this.state.projects).
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -21,7 +23,7 @@
 // Contributors: Tahira Niazi
 
 // TODO: Note:
-// this form has a known bug in EDIT mode. Associated projects do not update (this.state.projects).
+// this form has a known bug in EDIT mode. Associated projects do not auto-populate in edit mode (this.state.projects).
 
 import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
@@ -285,7 +287,6 @@ class SchoolDetails extends React.Component {
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {
-
                 var arr = [];
                 // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
                 let attrValueObj = JSON.parse(obj.attributeValue);
@@ -342,16 +343,11 @@ class SchoolDetails extends React.Component {
 
         })
 
-        console.log("1: printing the state of the form");
-        console.log(this.state);
-        // this.setState({
-        //     projects: this.state.selectedProjects
-        // })
     }
 
     cancelCheck = async () => {
         // clearing form
-        // this.resetForm(this.requiredFields);
+        this.resetForm(this.requiredFields);
     }
 
     // for single select
@@ -938,7 +934,6 @@ class SchoolDetails extends React.Component {
                 attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
                 jsonData.attributes.push(attributeObject);
 
-
                 // projects > loca attr type
                 var attrType = await getLocationAttributeTypeByShortName("projects");
                 var attrTypeId = attrType.attributeTypeId;
@@ -990,9 +985,7 @@ class SchoolDetails extends React.Component {
                         }
                     );
             }
-
         }
-
     }
 
     handleValidation() {
@@ -1054,7 +1047,6 @@ class SchoolDetails extends React.Component {
         }
         return isOk;
     }
-
 
     beforeSubmit = async () => {
 
@@ -1413,8 +1405,8 @@ class SchoolDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>

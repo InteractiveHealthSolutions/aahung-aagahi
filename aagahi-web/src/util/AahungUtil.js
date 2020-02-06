@@ -322,6 +322,7 @@ export const loadFormState = function (formDataObj, stateObj) {
 }
 
 export const resetFormState = function (fields, stateObj) {
+
     for (let j = 0; j < fields.length; j++) {
         let stateName = fields[j];
         // time field case
@@ -337,7 +338,7 @@ export const resetFormState = function (fields, stateObj) {
             stateObj[stateName] = '';
         }
     }
-
+    
     return stateObj;
 }
 

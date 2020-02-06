@@ -134,18 +134,6 @@ class CommsTrainingDetails extends React.Component {
                 })
             }
 
-            if (this.editMode) {
-                // this.editUpdateDisplay();
-
-                this.setState({
-                    loading: false,
-                    modalHeading: 'Caution!',
-                    okButtonStyle: { display: 'none' },
-                    modalText: 'This form is not editable. Please contact admin for more details.',
-                    modal: !this.state.modal
-                });
-            }
-
             this.setState({
                 loading: false
             })
@@ -873,8 +861,8 @@ class CommsTrainingDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={this.editMode}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={this.editMode}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
 

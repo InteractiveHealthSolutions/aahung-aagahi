@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-01-21 13:35:08
+ * @Last Modified time: 2020-02-06 13:43:00
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -30,6 +30,7 @@ import { getDonorByRegexValue } from '../service/GetService';
 import { saveDonor, updateDonor } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 class DonorRegistration extends React.Component {
 
@@ -300,6 +301,11 @@ class DonorRegistration extends React.Component {
         else {
             formNavVisible = false;
         }
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit Donor') ? false : true;
+        }
 
         return (
 
@@ -387,8 +393,8 @@ class DonorRegistration extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
-                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
