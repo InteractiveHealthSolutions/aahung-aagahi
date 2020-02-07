@@ -19,26 +19,11 @@
  * @desc [description]
  */
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip,
-    ChartTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { radioLiveCallData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -90,9 +75,7 @@ class SchoolMonitoringScoresByDistrict extends React.Component {
 
     render() {
         const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
-        const secondaryToolTipRender = ({ point }) => (`Secondary - ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        const labelContent = (e) => (e.category);
         let districts = getUniqueValues(this.state.data, 'city_village');
         let data = [
             { name: 'Primary', data: filterData(this.state.data, 'Primary') },

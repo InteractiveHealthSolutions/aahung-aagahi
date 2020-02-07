@@ -21,8 +21,8 @@
 
 // Contributors: Tahira Niazi
 
-import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
+import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
@@ -32,11 +32,11 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getLocationByRegexValue, getProjectByRegexValue } from '../service/GetService';
 import { saveLocation, updateLocation } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { getObject } from "../util/AahungUtil.js";
 import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const institutionTypes = [
     { label: 'Medical', value: 'medical' },

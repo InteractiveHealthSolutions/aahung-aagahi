@@ -31,12 +31,12 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getAllDonors, getFormDataById, getFormTypeByUuid, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -689,7 +689,7 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -698,14 +698,14 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -714,7 +714,7 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="institution_sensitization_session_conducted" >Name of Institution/Venue</Label> <span class="errorMessage">{this.state.errors["institution_sensitization_session_conducted"]}</span>
+                                                                            <Label for="institution_sensitization_session_conducted" >Name of Institution/Venue <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_sensitization_session_conducted"]}</span>
                                                                             <Input name="institution_sensitization_session_conducted" id="institution_sensitization_session_conducted" value={this.state.institution_sensitization_session_conducted} onChange={(e) => { this.inputChange(e, "institution_sensitization_session_conducted") }} maxLength="100" placeholder="Enter name of institution" pattern="^[A-Za-z. ]+" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -729,14 +729,14 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topics Covered <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -752,14 +752,14 @@ class OneTouchSensitizationDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Label for="training_days" >Number of Days <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
                                                                             <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" ></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                            <Label for="participants_sex" >Sex of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -787,21 +787,21 @@ class OneTouchSensitizationDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                            <Label for="participants_age_group" >Participant Age Group <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" style={otherParticipantTypeStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                            <Label for="event_attendant_other" >Specify Other Type of Participants </Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
                                                                             <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => { this.inputChange(e, "event_attendant_other") }} maxLength="200" placeholder="Enter other" />
                                                                         </FormGroup>
                                                                     </Col>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 13:39:49
+ * @Last Modified time: 2020-02-07 21:59:24
  */
 
 
@@ -1004,8 +1004,6 @@ class SocialMediaDetail extends React.Component {
      */
     checkValid = (fields) => {
 
-        alert(this.isFacebook);
-
         this.isTwitter ? fields.push("twitter_post_boosted") : fields = fields.filter(e => e !== "twitter_post_boosted");
         this.isTwitter ? fields.push("twitter_post_likes_count") : fields = fields.filter(e => e !== "twitter_post_likes_count");
         this.isTwitter ? fields.push("twitter_post_comments_count") : fields = fields.filter(e => e !== "twitter_post_comments_count");
@@ -1177,7 +1175,7 @@ class SocialMediaDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1236,7 +1234,7 @@ class SocialMediaDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topic(s) Covered by the Post</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topic(s) Covered by the Post <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={postTopicOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1249,7 +1247,7 @@ class SocialMediaDetail extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="post_platform" >Platform used</Label> <span class="errorMessage">{this.state.errors["post_platform"]}</span>
+                                                                            <Label for="post_platform" >Platform used <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["post_platform"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "post_platform")} value={this.state.post_platform} id="post_platform" options={postPlatformOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>

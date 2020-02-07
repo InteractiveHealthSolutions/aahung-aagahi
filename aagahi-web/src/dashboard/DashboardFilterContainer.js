@@ -20,10 +20,10 @@
  */
 
 
-import React from "react";
 import { Button } from '@progress/kendo-react-buttons';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import React from "react";
 import DatePicker from "react-datepicker";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 
 const provinces = [

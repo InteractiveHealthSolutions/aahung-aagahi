@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 13:02:56
+ * @Last Modified time: 2020-02-07 22:01:39
  */
 
 
@@ -1083,7 +1083,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1150,21 +1150,20 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="distribution_location_name" >Name of Location</Label> <span class="errorMessage">{this.state.errors["distribution_location_name"]}</span>
+                                                                            <Label for="distribution_location_name" >Name of Location <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["distribution_location_name"]}</span>
                                                                             <Input name="distribution_location_name" id="distribution_location_name" value={this.state.distribution_location_name} onChange={(e) => { this.inputChange(e, "distribution_location_name") }} maxLength="200" placeholder="Enter other" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="distribution_material_type" >Type of Material</Label> <span class="errorMessage">{this.state.errors["distribution_material_type"]}</span>
+                                                                            <Label for="distribution_material_type" >Type of Material <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["distribution_material_type"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "distribution_material_type")} value={this.state.distribution_material_type} id="distribution_material_type" options={materialTypes} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
 
                                                                     <Col md="6" style={materialTypeOtherStyle}>
-
                                                                         <FormGroup >
                                                                             <Label for="distribution_material_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["distribution_material_type_other"]}</span>
                                                                             <Input name="distribution_material_type_other" id="distribution_material_type_other" value={this.state.distribution_material_type_other} onChange={(e) => { this.inputChange(e, "distribution_material_type_other") }} maxLength="200" placeholder="Enter other" />
@@ -1255,7 +1254,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topic <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={this.distributionTopics} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1334,9 +1333,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
 
-
                                                                     <Col md="6" style={preMaritalStyle}>
-
                                                                         <FormGroup >
                                                                             <Label for="premarital_info_count">Number of Pre-marital Information</Label> <span class="errorMessage">{this.state.errors["premarital_info_count"]}</span>
                                                                             <Input type="number" value={this.state.premarital_info_count} name="premarital_info_count" id="premarital_info_count" onChange={(e) => { this.inputChange(e, "premarital_info_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -1350,8 +1347,6 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                             <Input type="number" value={this.state.pac_count} name="pac_count" id="pac_count" onChange={(e) => { this.inputChange(e, "pac_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
-
 
                                                                     <Col md="6" style={maternalHealthStyle}>
 
@@ -1371,7 +1366,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>

@@ -21,8 +21,8 @@
 
 // Contributors: Tahira Niazi
 
-import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
+import moment from 'moment';
 import React, { Fragment } from "react";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';

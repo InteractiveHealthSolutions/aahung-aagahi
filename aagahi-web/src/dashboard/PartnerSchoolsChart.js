@@ -19,29 +19,12 @@
  * @desc [description]
  */
 
-import React from "react";
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTooltip,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesLabels,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartSeriesItemTooltip,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip, 
-    exportVisual
-} from '@progress/kendo-react-charts';
 import { exportPDF } from '@progress/kendo-drawing';
 import { saveAs } from '@progress/kendo-file-saver';
-import { getUniqueValues } from '../util/AahungUtil';
-import { partnerSchoolData } from '../service/ReportService';
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem, exportVisual } from '@progress/kendo-react-charts';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 

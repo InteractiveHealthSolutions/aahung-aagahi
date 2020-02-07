@@ -20,65 +20,93 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
+import React from "react";
+import { getGraphData } from "../service/GetService";
 import { getUniqueValues } from '../util/AahungUtil';
-import { oneTouchData } from '../service/ReportService';
+import { apiUrl } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class OneTouchSessions extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = oneTouchData;
-        console.log(this.data); // TODO: replace with the correct resource
+        // this.data = oneTouchData;
+        // console.log(this.data); // TODO: replace with the correct resource
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true,true]
+        seriesVisible: [true, true, true,true,true,true],
+        component: this.props.component,
+        startDate: this.props.startDate,
+        endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
+        data: []
+    }
+    
+    async componentWillReceiveProps(nextProps) {
+        await this.setState({ data: nextProps.data });
+
+        await this.setState({
+            component: nextProps.component,
+            startDate: nextProps.startDate,
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
+        })
+
+        await this.getData();
+    }
+
+    async getData() {
+        // calling the appropriate resource with url params
+        if(this.state.component === "lse") {
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
+            var resourceUrl = serverAddress + "/report/onetouchdata?" + params;
+            var resultSet = await getGraphData(resourceUrl);
+            console.log("printing url >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            console.log(resourceUrl);
+            if(resultSet != null && resultSet !== undefined) {
+                this.setState({
+                    data: resultSet
+                })
+            }
+        }
     }
 
     render() {
+        // const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
-        let years = getUniqueValues(this.data, 'fiscal_year');
-        let min = Math.min(...years);
-        let max = Math.max(...years);
-        // We need to create a series from minimum year to maximum year
-        years = Array.from({ length: max - min }, (el, index) => (min + index + 1));
+        const participants = getUniqueValues(this.state.data, 'session_topic');
+        // const names = getUniqueValues(this.state.data, 'gender');
+        const names = ['Parents', 'Teachers', 'Students', 'School Staff', 'Call Agents', 'Other Professional', 'Other'];
         
-        let primary = [
-            { name: 'Unknown', data: filterData(this.data, 'Primary', 'Unknown') },
-            { name: 'Balochistan', data: filterData(this.data, 'Primary', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'Primary', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'Primary', 'KP') },
-            { name: 'Punjab', data: filterData(this.data, 'Primary', 'Punjab') },
-            { name: 'Sindh', data: filterData(this.data, 'Primary', 'Sindh') },
-            
+        let parentsData = [
+            { data: filterData(this.state.data, 'parents_attending') }
         ];
-        let secondary = [
-            { name: 'Unknown', data: filterData(this.data, 'Secondary', 'Unknown') },
-            { name: 'Balochistan', data: filterData(this.data, 'Secondary', 'Balochistan') },
-            { name: 'Gilgit-Baltistan', data: filterData(this.data, 'Secondary', 'Gilgit-Baltistan') },
-            { name: 'KP', data: filterData(this.data, 'Secondary', 'KP') },
-            { name: 'Punjab', data: filterData(this.data, 'Secondary', 'Punjab') },
-            { name: 'Sindh', data: filterData(this.data, 'Secondary', 'Sindh') },
-            
+        let teachersData = [
+            { data: filterData(this.state.data, 'teachers_attending') }         
+        ];
+        let studentsData = [
+            { data: filterData(this.state.data, 'students_attending') }      
+        ];
+        let staffData = [
+            { data: filterData(this.state.data, 'school_staff_attending') }
+        ];
+        let callAgentsData = [
+            { data: filterData(this.state.data, 'call_agents_attending') }         
+        ];
+        let otherProfessionalData = [
+            { data: filterData(this.state.data, 'other_professionals_attending') }      
+        ];
+        let otherData = [
+            { data: filterData(this.state.data, 'others_attending') }         
         ];
 
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#2F4F4F'];
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2', '#F48FB1'];
 
         const crosshair = {
             visible: true,
@@ -94,22 +122,47 @@ class OneTouchSessions extends React.Component {
                 <ChartTitle text="One Touch Sessions Summary" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={years} startAngle={45}>
+                    <ChartCategoryAxisItem categories={participants} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
-                    {primary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Primary' }}
-                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                    {parentsData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[0]}>
                         </ChartSeriesItem>
                     ))}
-                
-                    {secondary.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Secondary' }}
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                    {teachersData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[1]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {studentsData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[2]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {staffData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[3]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {callAgentsData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[4]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {otherProfessionalData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[5]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {otherData.map((item, index) => (
+                        <ChartSeriesItem type="bar" stack={{ type:'100%', group: 'gender'}}
+                            data={item.data} visible={seriesVisible[index]} name={names[6]}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -125,26 +178,27 @@ class OneTouchSessions extends React.Component {
         newState[e.seriesIndex] = !newState[e.seriesIndex];
         this.setState(newState);
     }
-
 }
 
-function filterData(data, level, location) {
+function filterData(data, parType) {
     // For each tier, attach tier as name and data as the sums for each province
-    var years = getUniqueValues(data, 'fiscal_year');
+    var sessionTopics = getUniqueValues(data, 'session_topic');
 
-    var filtered = data.filter(element => element.school_level === level && element.state_province === location);
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => String(element[parType]) === "1");
     var sums = [];
 
-    years.forEach(year => {
+    sessionTopics.forEach(sessionTopic => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].fiscal_year == year) {
-                sum += filtered[i].total;
+            
+            if (filtered[i].session_topic == sessionTopic) {
+                sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);
     });
-
     return sums;
 }
 

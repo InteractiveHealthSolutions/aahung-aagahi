@@ -1,17 +1,7 @@
-import React from 'react';
-import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartSeriesItem,
-    ChartSeriesLabels,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-} from '@progress/kendo-react-charts';
+import { Chart, ChartCategoryAxis, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesLabels, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import { Grid, GridColumn as Column } from '@progress/kendo-react-grid';
+import 'hammerjs';
+import React from 'react';
 
 const chartData = [
     { 'foodType': 'Beverages', 'percentSold': 16.5 },

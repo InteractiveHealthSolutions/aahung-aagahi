@@ -19,43 +19,41 @@
  * @desc [description]
  */
 
-import React from "react";
-import ReactDOM from 'react-dom';
-import '../css/dashboard.css';
-import 'bootstrap-4-grid/css/grid.min.css';
 import { Button } from '@progress/kendo-react-buttons';
-import { savePDF, PDFExport } from '@progress/kendo-react-pdf';
-import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBCol, MDBContainer, MDBIcon, MDBMask, MDBNav, MDBNavbar, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBRow, MDBTabContent, MDBTable, MDBTableBody, MDBTableHead, MDBTabPane, MDBView } from "mdbreact";
+import '@progress/kendo-react-dropdowns';
+import '@progress/kendo-react-intl';
+import { TabStrip, TabStripTab } from '@progress/kendo-react-layout';
+import { PDFExport, savePDF } from '@progress/kendo-react-pdf';
 import '@progress/kendo-theme-material/dist/all.css';
-import { PieChartContainer, GridContainer } from './DashboardDataContainer';
-import PrimaryStatsContainer from './PrimaryStatsContainer';
-import OneTouchSessions from './OneTouchSessions';
-import TrainingDataSummary from './TrainingDataSummary';
-import PartnerSchoolsChart from './PartnerSchoolsChart';
-import PartnerSchoolsByYearChart from './PartnerSchoolsByYearChart';
-import TeachersTrainedSummaryChart from './TeachersTrainedSummaryChart';
-import ExitPlanning from './ExitPlanning';
-import IndividualsReached from './IndividualsReached';
-import SocialMediaTraffic from './SocialMediaTraffic';
-import DashboardFilterContainer from "./DashboardFilterContainer";
-import { Navbar, Form, FormControl, Nav } from 'react-bootstrap';
-import { TabStrip, TabStripTab, PanelBar, PanelBarItem, PanelBarUtils, Menu, MenuItem, MenuItemModel, MenuItemLink, MenuItemArrow, Splitter } from '@progress/kendo-react-layout'
-import '@progress/kendo-react-intl'
-import '@progress/kendo-react-dropdowns'
-import RadioLiveCall from "./RadioLiveCall";
-import SchoolMonitoringScoresByProvince from "./SchoolMonitoringScoresByProvince";
-import SchoolMonitoringScoresByDistrict from "./SchoolMonitoringScoresByDistrict";
-import MobileCinema from "./MobileCinema";
-import MaterialDistribution from "./MatrialDistribution";
-import CommunicationsTraining from "./CommunicationsTraining";
-import ParticipantTraining from "./ParticipantTraining";
-import PartnerInstitutions from "./PartnerInstitution";
+import 'bootstrap-4-grid/css/grid.min.css';
+import { MDBBtn, MDBIcon, MDBMask, MDBView } from "mdbreact";
+import moment from 'moment';
+import React from "react";
+import { Form, Nav, Navbar } from 'react-bootstrap';
+import DatePicker from "react-datepicker";
+import ReactDOM from 'react-dom';
+import Select from 'react-select';
+import '../css/dashboard.css';
+import { getDistrictListFilter, getDistrictsByMultipleProvinces, getProvinceListFilter, location } from "../util/LocationUtil.js";
 import AmplifyChangeParticipant from "./AmplifyChangeParticipants";
 import AmplifyChangeParticipantsStudent from "./AmplifyChangeParticipantsStudent";
-import Select from 'react-select';
-import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location, getProvinceListFilter, getDistrictListFilter } from "../util/LocationUtil.js";
-import DatePicker from "react-datepicker";
-import moment from 'moment';
+import CommunicationsTraining from "./CommunicationsTraining";
+import ExitPlanning from './ExitPlanning';
+import IndividualsReached from './IndividualsReached';
+import MaterialDistribution from "./MatrialDistribution";
+import MobileCinema from "./MobileCinema";
+import OneTouchSessions from './OneTouchSessions';
+import ParticipantTraining from "./ParticipantTraining";
+import PartnerInstitutions from "./PartnerInstitution";
+import PartnerSchoolsByYearChart from './PartnerSchoolsByYearChart';
+import PartnerSchoolsChart from './PartnerSchoolsChart';
+import PrimaryStatsContainer from './PrimaryStatsContainer';
+import RadioLiveCall from "./RadioLiveCall";
+import SchoolMonitoringScoresByDistrict from "./SchoolMonitoringScoresByDistrict";
+import SchoolMonitoringScoresByProvince from "./SchoolMonitoringScoresByProvince";
+import SocialMediaTraffic from './SocialMediaTraffic';
+import TeachersTrainedSummaryChart from './TeachersTrainedSummaryChart';
+import TrainingDataSummary from './TrainingDataSummary';
 
 class DashboardMain extends React.Component {
 

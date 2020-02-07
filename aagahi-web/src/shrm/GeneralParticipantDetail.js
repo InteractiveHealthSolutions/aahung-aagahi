@@ -20,8 +20,8 @@
 
 // Contributors: Tahira Niazi
 
-import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
+import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
@@ -31,11 +31,11 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant, updateParticipant } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { clearCheckedFields, getObject, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const participantAffiliations = [
     { label: 'Hospital', value: 'hospital' },
