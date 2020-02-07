@@ -610,7 +610,7 @@ public class ReportController extends BaseController {
     }
     
     @ApiOperation(value = "Get data for SRHM Amplify Change Participant (Students) Training summary (ref: D2 - Amplify Change Trained Participants - Students)")
-    @GetMapping(value = "/report/amplifychangeparticipantdata/studnets")
+    @GetMapping(value = "/report/amplifychangeparticipantdata/students")
     public ResponseEntity<?> getStudensAmplifyChangeParticipantData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
 	try {
 	    StringBuilder query = new StringBuilder();
