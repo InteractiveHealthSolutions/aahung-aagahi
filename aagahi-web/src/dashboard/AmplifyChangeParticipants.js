@@ -135,7 +135,7 @@ function filterData(data, educationLevel) {
         var maleArray = [];
         var femaleArray = [];
         var otherArray = [];
-        if (data !== null && data !== undefined && data.length > 0) {
+        if (data !== null && data != undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "College" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "College" && element.gender === "Female");
             otherArray = data.filter(element => element.education_level === "College" && element.gender === "Other");

@@ -63,7 +63,7 @@ class TeachersTrainedSummaryChart extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/teacherstrainingdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: addAggregateRecord(resultSet)
                 })
@@ -150,8 +150,8 @@ function filterData(data, level, tier) {
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
         // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
-        // filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
-        filtered = data.filter(element => element.school_level === level);
+        filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+        // filtered = data.filter(element => element.school_level === level);
     }
     var sums = [];
         programs.forEach(program => {
