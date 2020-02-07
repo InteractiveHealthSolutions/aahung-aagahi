@@ -173,7 +173,7 @@ class DashboardMain extends React.Component {
                                     <Navbar.Brand href="#home" className="white-text">Aagahi Dashboard</Navbar.Brand>
                                     <Nav className="mr-auto"></Nav>
                                     <Form inline>
-                                        <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white'}} onClick={this.exportPDFWithComponent}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button>
+                                        <Button variant="outline-info" style={{ backgroundColor: "#ef6c00", color: 'white' }} onClick={this.exportPDFWithComponent}>Export PDF<MDBIcon icon="export" className="ml-2" /></Button>
                                         <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{ backgroundColor: "#ef6c00" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
                                     </Form>
                                 </Navbar>
@@ -183,7 +183,6 @@ class DashboardMain extends React.Component {
                                     </div>
                                 </div>
                                 <div id="filtersDiv">
-                                    {/* <DashboardFilterContainer handleRefresh={this.handleRefresh}/> */}
                                     <div class="card" style={{ marginLeft: "2%", marginRight: "2%" }}>
                                         <h5 class="card-header h5" style={{ color: 'black' }}>Filter Data</h5>
                                         <div class="card-body">
@@ -234,98 +233,95 @@ class DashboardMain extends React.Component {
                                 </div>
 
                                 <PDFExport ref={(component) => this.pdfExportComponent = component} paperSize="auto">
-                                <div ref={(chartsDiv) => this.chartsDiv = chartsDiv}>
-                                <TabStrip style={{ color: "white", fontWeight: "bold", width: "100%;" }} selected={this.state.selected} onSelect={this.handleSelect}>
-                                    <TabStripTab style={{ width: "33%" }} title="LSE">
-                                        {/* <DashboardFilterContainer /> */}
-                                        <div class="component-container">
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <SchoolMonitoringScoresByProvince endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="w-100">
-                                                    <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <SchoolMonitoringScoresByDistrict endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                    <div ref={(chartsDiv) => this.chartsDiv = chartsDiv}>
+                                        <TabStrip style={{ color: "white", fontWeight: "bold", width: "100%;" }} selected={this.state.selected} onSelect={this.handleSelect}>
+                                            <TabStripTab style={{ width: "33%" }} title="LSE">
+                                                <div class="component-container">
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <SchoolMonitoringScoresByProvince endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="w-100">
+                                                            <div class="col" style={{ marginBottom: '12px' }}>
+                                                                <SchoolMonitoringScoresByDistrict endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <TrainingDataSummary endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <OneTouchSessions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <TrainingDataSummary endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                
-                                            </div>
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <OneTouchSessions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </TabStripTab>
-                                    <TabStripTab title="SRHM">
-                                        {/* <DashboardFilterContainer /> */}
-                                        <div class="component-container">
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                            </div>
-                                            <div class="w-100">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <AmplifyChangeParticipant endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <AmplifyChangeParticipantsStudent endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </TabStripTab>
-                                    <TabStripTab title="COMMS">
-                                        {/* <DashboardFilterContainer /> */}
-                                        <div class="component-container">
-                                            <div class="row">
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <SocialMediaTraffic endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
-                                                </div>
-                                                <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <RadioLiveCall endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
-                                                </div>
-                                                <div class="w-100">
-                                                    <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <MobileCinema endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                            </TabStripTab>
+                                            <TabStripTab title="SRHM">
+                                                <div class="component-container">
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
                                                     </div>
-                                                    <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <MaterialDistribution endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
+                                                    <div class="w-100">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
                                                     </div>
-                                                    <div class="col">
-                                                        <CommunicationsTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component}/>
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <AmplifyChangeParticipant endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <AmplifyChangeParticipantsStudent endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </TabStripTab>
-                                </TabStrip>
-                                </div>
+                                            </TabStripTab>
+                                            <TabStripTab title="COMMS">
+                                                <div class="component-container">
+                                                    <div class="row">
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <SocialMediaTraffic endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="col" style={{ marginBottom: '12px' }}>
+                                                            <RadioLiveCall endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
+                                                        </div>
+                                                        <div class="w-100">
+                                                            <div class="col" style={{ marginBottom: '12px' }}>
+                                                                <MobileCinema endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                            </div>
+                                                            <div class="col" style={{ marginBottom: '12px' }}>
+                                                                <MaterialDistribution endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
+                                                            </div>
+                                                            <div class="col">
+                                                                <CommunicationsTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </TabStripTab>
+                                        </TabStrip>
+                                    </div>
                                 </PDFExport>
                             </div>
                         </div>

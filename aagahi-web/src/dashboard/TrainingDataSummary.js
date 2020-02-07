@@ -32,7 +32,6 @@ class TrainingDataSummary extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.state.data = trainingData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 

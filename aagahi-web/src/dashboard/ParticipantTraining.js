@@ -31,7 +31,7 @@ class ParticipantTraining extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = participantTrainingData; // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {

@@ -32,8 +32,7 @@ class OneTouchSessions extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = oneTouchData;
-        // console.log(this.data); // TODO: replace with the correct resource
+        this.getData = this.getData.bind(this);
     }
 
     state = {

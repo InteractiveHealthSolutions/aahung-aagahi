@@ -32,7 +32,6 @@ class CommunicationsTraining extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = communicationsTrainingData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 

@@ -31,7 +31,6 @@ class PartnerSchoolsByYearChart extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = partnerSchoolDataByFiscalYear; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 

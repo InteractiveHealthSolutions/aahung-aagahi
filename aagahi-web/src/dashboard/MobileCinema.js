@@ -32,7 +32,6 @@ class MobileCinema extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = mobileCinemaData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 

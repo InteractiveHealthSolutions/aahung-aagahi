@@ -30,7 +30,6 @@ class TeachersTrainedSummaryChart extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = addAggregateRecord(teachersTrainingData); // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 

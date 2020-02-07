@@ -32,7 +32,6 @@ class IndividualsReached extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = individualReachData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
