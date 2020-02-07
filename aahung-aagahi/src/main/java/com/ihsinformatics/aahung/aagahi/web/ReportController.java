@@ -367,7 +367,6 @@ public class ReportController extends BaseController {
 	    query.append("inner join location as l on l.location_id = p.location_id ");
 	    query.append(schoolLevelAttribute);
 	    query.append(schoolLevelDefinition);
-	    query.append("inner join definition as level_name on level_name.definition_id = level.attribute_value ");
 	    query.append(schoolTierAttribute);
 	    query.append(schoolTierDefinition);
 	    query.append("inner join _lse_training_detail as lse on lse.form_id = fd.form_id ");
