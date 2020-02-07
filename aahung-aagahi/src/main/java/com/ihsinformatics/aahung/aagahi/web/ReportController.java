@@ -609,6 +609,64 @@ public class ReportController extends BaseController {
 	}
     }
     
+    @ApiOperation(value = "Get data for SRHM Amplify Change Participant (Students) Training summary (ref: D2 - Amplify Change Trained Participants - Students)")
+    @GetMapping(value = "/report/amplifychangeparticipantdata/studnets")
+    public ResponseEntity<?> getStudensAmplifyChangeParticipantData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
+	try {
+	    StringBuilder query = new StringBuilder();
+	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, l.city_village as city_village, d.definition as education_level, count(*) as total, per.gender as gender from form_data as fd "); 
+	    query.append(locationJoinFormData);  
+	    query.append(formParticipntJoinFormData);  
+	    query.append(participantJoinPerson);  
+	    query.append("inner join person as per on p.person_id = per.person_id "); 
+	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 65 ");
+	    query.append("inner join person_attribute as pa2 on pa2.person_id = p.person_id and pa2.attribute_type_id = 14 ");
+	    query.append("inner join definition as d on d.definition_id = pa2.attribute_value ");
+	    query.append(formDataVoidClause);
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append("and fd.form_type_id = 15 ");
+	    if (stateProvince != null) 
+	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
+	    if (cityVillage != null)
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    query.append("group by fd.form_date, l.state_province, pa2.attribute_value, per.gender ");
+	    JSONArray data = service.getTableDataAsJson(query.toString());
+	    return ResponseEntity.ok().body(data.toString());
+	} catch (SQLException | JSONException e) {
+	    return exceptionFoundResponse("Executing getAmplifyChangeParticipantData", e);
+	}
+    }
+    
+    @ApiOperation(value = "Get data for SRHM Amplify Change Participant (Teachers) Training summary (ref: D2 - Amplify Change Trained Participants - Teachers)")
+    @GetMapping(value = "/report/amplifychangeparticipantdata/teachers")
+    public ResponseEntity<?> getTeachersAmplifyChangeParticipantData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
+	try {
+	    StringBuilder query = new StringBuilder();
+	    query.append("select date(fd.form_date) as form_date, ifnull(l.state_province, 'Unknown') as state_province, l.city_village as city_village, d.definition as education_level, count(*) as total, per.gender as gender from form_data as fd "); 
+	    query.append(locationJoinFormData);  
+	    query.append(formParticipntJoinFormData);  
+	    query.append(participantJoinPerson);  
+	    query.append("inner join person as per on p.person_id = per.person_id "); 
+	    query.append("inner join person_attribute as pa on pa.person_id = pt.person_id and pa.attribute_type_id = 10 and pa.attribute_value = 66 ");
+	    query.append("inner join person_attribute as pa2 on pa2.person_id = p.person_id and pa2.attribute_type_id = 7 ");
+	    query.append("inner join definition as d on d.definition_id = pa2.attribute_value ");
+	    query.append(formDataVoidClause);
+	    query.append(andDateFilter);
+	    query.append(dateFilterToFrom.replace(dateFromPlaceholder, from).replace(dateToPlaceholder, to));
+	    query.append("and fd.form_type_id = 15 ");
+	    if (stateProvince != null) 
+	    	query.append(provinceFilter.replace(provincePlaceholder,stateProvince)); // "and find_in_set(l.state_province, '<stateProvince>') "
+	    if (cityVillage != null)
+	    	query.append(districtFilter.replace(districtPlaceholder,cityVillage));   // "and find_in_set(l.cityVillage, '<cityVillage>') "
+	    query.append("group by fd.form_date, l.state_province, pa2.attribute_value, per.gender ");
+	    JSONArray data = service.getTableDataAsJson(query.toString());
+	    return ResponseEntity.ok().body(data.toString());
+	} catch (SQLException | JSONException e) {
+	    return exceptionFoundResponse("Executing getAmplifyChangeParticipantData", e);
+	}
+    }
+    
     @ApiOperation(value = "Get data for SRHM Amplify Change Participant Training summary (ref: D2 - Amplify Change Trained Participants)")
     @GetMapping(value = "/report/amplifychangeparticipantdata")
     public ResponseEntity<?> getAmplifyChangeParticipantData(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(required = false, name = "state_province") String stateProvince, @RequestParam(required = false, name = "city_village") String cityVillage) throws HibernateException {
