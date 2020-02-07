@@ -418,6 +418,7 @@ public class ReportController extends BaseController {
 	    query.append("json_extract(event_attendant, '$.values') like '%parents%' as parents_attending, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%school_staff%' as school_staff_attending, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%call_agents%' as call_agents_attending, ");
+	    query.append("json_extract(event_attendant, '$.values') like '%other_professionals%' as other_professionals_attending, ");
 	    query.append("json_extract(event_attendant, '$.values') like '%other%' as others_attending, ");
 	    query.append("count(*) as total from _lse_one_touch_session_detail as otd ");
 	    query.append("where date(otd.form_date) between ");
