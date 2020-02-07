@@ -712,6 +712,10 @@ body {
   background-color: #ffb74d  !important;
 }
 
-.provinceDashboard, .districtDashboard{
+.provinceDashboard, .districtDashboard {
   z-index: 1000 !important;
+} 
+
+.react-datepicker-popper {
+  z-index: 100000 !important;
 } 

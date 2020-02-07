@@ -43,12 +43,15 @@ import { TabStrip, TabStripTab, PanelBar, PanelBarItem, PanelBarUtils, Menu, Men
 import '@progress/kendo-react-intl'
 import '@progress/kendo-react-dropdowns'
 import RadioLiveCall from "./RadioLiveCall";
+import SchoolMonitoringScoresByProvince from "./SchoolMonitoringScoresByProvince";
+import SchoolMonitoringScoresByDistrict from "./SchoolMonitoringScoresByDistrict";
 import MobileCinema from "./MobileCinema";
 import MaterialDistribution from "./MatrialDistribution";
 import CommunicationsTraining from "./CommunicationsTraining";
 import ParticipantTraining from "./ParticipantTraining";
 import PartnerInstitutions from "./PartnerInstitution";
 import AmplifyChangeParticipant from "./AmplifyChangeParticipants";
+import AmplifyChangeParticipantsStudent from "./AmplifyChangeParticipantsStudent";
 import Select from 'react-select';
 import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location, getProvinceListFilter, getDistrictListFilter } from "../util/LocationUtil.js";
 import DatePicker from "react-datepicker";
@@ -203,6 +206,7 @@ class DashboardMain extends React.Component {
                                                     <DatePicker style={{ border: "none !important" }}
                                                         selected={this.state.start_date}
                                                         onChange={(date) => this.handleDate(date, "start_date")}
+                                                        className="dashboardDate"
                                                         selectsStart
                                                         startDate={this.state.start_date}
                                                         endDate={this.state.end_date}
@@ -214,6 +218,7 @@ class DashboardMain extends React.Component {
                                                     <DatePicker style={{ borderTop: "none !important", borderLeft: "none !important", borderRight: "none !important" }}
                                                         selected={this.state.end_date}
                                                         onChange={(date) => this.handleDate(date, "end_date")}
+                                                        className="dashboardDate"
                                                         selectsEnd
                                                         endDate={this.state.end_date}
                                                         minDate={this.state.start_date}
@@ -238,14 +243,22 @@ class DashboardMain extends React.Component {
                                         <div class="component-container">
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} component={this.state.component} />
+                                                    <PartnerSchoolsChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} component={this.state.component} />
+                                                    <PartnerSchoolsByYearChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <SchoolMonitoringScoresByProvince endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                </div>
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="w-100">
                                                     <div class="col" style={{ marginBottom: '12px' }}>
-                                                        <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                        <SchoolMonitoringScoresByDistrict endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                     </div>
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
@@ -253,6 +266,12 @@ class DashboardMain extends React.Component {
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
                                                     <ExitPlanning endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <OneTouchSessions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                         </div>
@@ -265,15 +284,20 @@ class DashboardMain extends React.Component {
                                                     <IndividualsReached endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
+                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                </div>
+                                            </div>
+                                            <div class="w-100">
+                                                <div class="col" style={{ marginBottom: '12px' }}>
                                                     <ParticipantTraining endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <PartnerInstitutions endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                    <AmplifyChangeParticipant endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                                 <div class="col" style={{ marginBottom: '12px' }}>
-                                                    <AmplifyChangeParticipant endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                    <AmplifyChangeParticipantsStudent endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                 </div>
                                             </div>
                                         </div>

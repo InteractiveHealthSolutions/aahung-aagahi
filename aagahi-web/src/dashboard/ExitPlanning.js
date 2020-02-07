@@ -79,9 +79,6 @@ class ExitPlanning extends React.Component {
             var resourceUrl = serverAddress + "/report/exitschoolplanningdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
             if (resultSet != null && resultSet !== undefined) {
-                console.log("printing result set >>>>>>>>>");
-                console.log(resultSet.length);
-                console.log(resultSet);
                 this.setState({
                     data: resultSet
                 })

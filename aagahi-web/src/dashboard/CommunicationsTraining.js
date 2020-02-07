@@ -146,7 +146,7 @@ function sum(key) {
     return this.reduce((a, b) => a + (b[key] || 0), 0);
 }
 
-function filterData(data, materialType, parType) {
+function filterData(data, materialType) {
     // For each tier, attach tier as name and data as the sums for each province
     var locations = getUniqueValues(data, 'city_village');
     var sums = [];
@@ -208,9 +208,6 @@ function filterData(data, materialType, parType) {
         console.log(sums);
         return sums;
     }
-
-
-
 }
 
 export default CommunicationsTraining;

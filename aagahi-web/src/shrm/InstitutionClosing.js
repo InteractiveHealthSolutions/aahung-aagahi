@@ -87,6 +87,7 @@ class InstitutionClosing extends React.Component {
         this.checkValid = this.checkValid.bind(this);
 
         this.isOtherInstitution = false;
+        this.requiredFields = ["institution_id", "end_partnership_reason"]; //rest of the required fields are checked automatically by 'required' tag
         this.errors = {};
         this.fetchedLocation = {};
         this.isEndDateExists = false;
@@ -468,9 +469,9 @@ class InstitutionClosing extends React.Component {
 
         let formIsValid = true;
         // console.log(this.requiredFields);
-        // this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-        // formIsValid = this.checkValid(this.requiredFields);
-        // this.setState({errors: this.errors});
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
@@ -573,7 +574,7 @@ class InstitutionClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="institution_id" >Select Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
+                                                                            <Label for="institution_id" >Select Institution ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
                                                                             <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={this.state.institutions} />
 
                                                                         </FormGroup>
@@ -596,7 +597,7 @@ class InstitutionClosing extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended</Label> <span class="errorMessage">{this.state.errors["partnership_end_date"]}</span>
+                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["partnership_end_date"]}</span>
                                                                             <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => { this.inputChange(e, "partnership_end_date") }} max={moment().format("YYYY-MM-DD")} required />
                                                                         </FormGroup>
                                                                     </Col>
@@ -629,8 +630,8 @@ class InstitutionClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
-                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} placeholder="Specify reason" required />
+                                                                            <Label for="end_partnership_reason" >Reason for end of partnership <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
+                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} placeholder="Specify reason" />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>

@@ -838,7 +838,7 @@ class GeneralParticipantDetail extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Participant Name</Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Label for="participant_name" >Participant Name <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Input name="participant_name" id="participant_name" value={this.state.participant_name} onChange={(e) => { this.inputChange(e, "participant_name") }} maxLength='50' pattern="^[A-Za-z ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -846,13 +846,13 @@ class GeneralParticipantDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="age" >Age</Label> <span class="errorMessage">{this.state.errors["age"]}</span>
+                                                                        <Label for="age" >Age <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["age"]}</span>
                                                                         <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => { this.inputChange(e, "age") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter age in years"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
+                                                                        <Label for="dob" >Date of Birth <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => { this.inputChange(e, "dob") }} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -860,7 +860,7 @@ class GeneralParticipantDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup tag="fieldset" row>
-                                                                        <legend className="col-form-label col-sm-2">Sex</legend>
+                                                                        <legend className="col-form-label col-sm-2">Sex <span className="required">*</span></legend>
                                                                         <Col sm={10}>
                                                                             <FormGroup check inline>
                                                                                 <Label check>
@@ -887,7 +887,7 @@ class GeneralParticipantDetail extends React.Component {
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_affiliation" >Participant Affiliation</Label> <span class="errorMessage">{this.state.errors["participant_affiliation"]}</span>
+                                                                        <Label for="participant_affiliation" >Participant Affiliation <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_affiliation"]}</span>
                                                                         <Select onChange={(e) => this.valueChangeMulti(e, "participant_affiliation")} value={this.state.participant_affiliation} id="participant_affiliation" options={participantAffiliations} isMulti />
                                                                     </FormGroup>
                                                                 </Col>
@@ -941,7 +941,7 @@ class GeneralParticipantDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
+                                                                        <Label for="institution_id" >Institution ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
                                                                         <Select id="institution_id"
                                                                             name="institution_id"
                                                                             value={this.state.institution_id}

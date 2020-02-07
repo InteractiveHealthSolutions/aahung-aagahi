@@ -148,23 +148,23 @@ class IndividualsReached extends React.Component {
                 <ChartSeries>
                     {HCPTrained.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} name={item.name} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
 
                     {GeneralStepDown.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                     {AmplifyChangeStudent.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                     {AmplifyChangeTeacher.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
