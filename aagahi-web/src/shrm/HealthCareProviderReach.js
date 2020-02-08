@@ -31,12 +31,12 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const participantSex = [
     { value: 'male', label: 'Male' },
@@ -915,7 +915,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -924,7 +924,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="instituition_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["instituition_id"]}</span>
+                                                                            <Label for="instituition_id" >Institution ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["instituition_id"]}</span>
                                                                             <Select id="instituition_id" name="instituition_id" value={this.state.instituition_id} onChange={(e) => this.handleChange(e, "instituition_id")} options={this.state.institutions} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -939,14 +939,14 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_name" >Participant Name</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Participant Name <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select onChange={(e) => this.handleChange(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_id" >Participant ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
+                                                                            <Label for="participant_id" >Participant ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
@@ -978,14 +978,14 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -994,7 +994,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="first_fup" >Is this the first follow up?</Label> <span class="errorMessage">{this.state.errors["first_fup"]}</span>
+                                                                            <Label for="first_fup" >Is this the first follow up? <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["first_fup"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "first_fup")} value={this.state.first_fup} name="first_fup" id="first_fup">
                                                                                 <option value="">Select...</option>
                                                                                 <option value="yes">Yes</option>
@@ -1020,7 +1020,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_sex" >Sex of people reached</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                            <Label for="participants_sex" >Sex of people reached <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1048,7 +1048,7 @@ class HealthCareProviderReach extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_age_group" >Age of people reached</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                            <Label for="participants_age_group" >Age of people reached <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1097,7 +1097,7 @@ class HealthCareProviderReach extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="services_provided_type" >Type of services provided</Label> <span class="errorMessage">{this.state.errors["services_provided_type"]}</span>
+                                                                            <Label for="services_provided_type" >Type of services provided <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["services_provided_type"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "services_provided_type")} value={this.state.services_provided_type} id="services_provided_type" options={servicesTypes} isMulti />
                                                                         </FormGroup>
                                                                     </Col>

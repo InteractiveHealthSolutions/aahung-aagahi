@@ -19,29 +19,12 @@
  * @desc [description]
  */
 
-import React from "react";
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTooltip,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesLabels,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartSeriesItemTooltip,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip, 
-    exportVisual
-} from '@progress/kendo-react-charts';
 import { exportPDF } from '@progress/kendo-drawing';
 import { saveAs } from '@progress/kendo-file-saver';
-import { getUniqueValues } from '../util/AahungUtil';
-import { partnerSchoolData } from '../service/ReportService';
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem, exportVisual } from '@progress/kendo-react-charts';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -58,6 +41,7 @@ class PartnerSchoolsChart extends React.Component {
         startDate: this.props.startDate,
         endDate: this.props.endDate,
         provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
         data: []
     }
 
@@ -68,7 +52,8 @@ class PartnerSchoolsChart extends React.Component {
             component: nextProps.component,
             startDate: nextProps.startDate,
             endDate: nextProps.endDate,
-            provincesString: nextProps.provincesString
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
         })
 
         await this.getData();
@@ -77,11 +62,10 @@ class PartnerSchoolsChart extends React.Component {
     async getData() {
         // calling the appropriate resource with url params
         if (this.state.component === "lse") {
-            // TODO: include param for city_village, when Rabbia is done with the query chan
-            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/partnerschooldata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -175,9 +159,7 @@ function filterData(data, level, tier) {
     var provinces = getUniqueValues(data, 'state_province');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
-        // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
-        // var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
-        var filtered = data.filter(element => element.school_level === level);
+        var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
     }
     var sums = [];
     provinces.forEach(province => {

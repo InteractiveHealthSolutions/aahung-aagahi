@@ -75,7 +75,7 @@ code {
   background: #522a71 !important;
 }
 
-.sc-dxgOiQ { /* in SHRM main page */
+.sc-EHOje { /* in COMMS main page */
   /* background: #fff !important; */
   padding: 0 0 !important;
   background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
@@ -85,7 +85,7 @@ code {
   min-height: 100vh;
 }
 
-.sc-gZMcBi { /* in COMMS main page */
+.sc-gZMcBi { /* in LSE main page */
   /* background: #fff !important; */
   padding: 0 0 !important;
   background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
@@ -95,7 +95,7 @@ code {
   min-height: 100vh;
 }
 
-.sc-cSHVUG { /* in LSE main page */
+.sc-cSHVUG { /* in SRHM main page */
   /* background: #fff !important; */
   padding: 0 0 !important;
   background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
@@ -712,6 +712,10 @@ body {
   background-color: #ffb74d  !important;
 }
 
-.provinceDashboard, .districtDashboard{
+.provinceDashboard, .districtDashboard {
   z-index: 1000 !important;
+} 
+
+.react-datepicker-popper {
+  z-index: 100000 !important;
 } 

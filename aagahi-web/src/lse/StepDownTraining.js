@@ -1188,7 +1188,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1197,14 +1197,14 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1214,13 +1214,13 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Label for="school_id" >School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                             <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
+                                                                            <Label for="school_name" >School Name<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
                                                                             <Input name="school_name" id="school_name" value={this.state.school_name} disabled />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1229,7 +1229,7 @@ class StepDownTraining extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                            <Label for="monitor" >Monitored By<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1262,28 +1262,22 @@ class StepDownTraining extends React.Component {
                                                             <TabPane tabId="2" id="csa">
                                                                 <Row>
                                                                     <Col md="6">
-
                                                                         <Label><h6><u><b>CSA Program</b></u></h6></Label>
-
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
-
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="csa_mt_count">Total Number of Master Trainers</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
+                                                                            <Label for="csa_mt_count">Total Number of Master Trainers <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
                                                                             <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => { this.inputChange(e, "csa_mt_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
-
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="participant_name" >Name of Master Trainer</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Name of Master Trainer <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name"
                                                                                 name="participant_name"
                                                                                 value={this.state.participant_name}
@@ -1306,7 +1300,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_csa_subject"]}</span>
+                                                                            <Label for="mt_csa_subject" >Subject Master Trainer is facilitating <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["mt_csa_subject"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csaSubjectOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1756,7 +1750,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content</Label>
+                                                                            <Label for="mt_csa_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1800,7 +1794,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_understanding" >Master Trainer demonstrates good understanding of the training content</Label>
+                                                                            <Label for="mt_csa_understanding" >Master Trainer demonstrates good understanding of the training content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1844,7 +1838,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_material_prep" >Master Trainer had all materials prepared in advance for the session</Label>
+                                                                            <Label for="mt_csa_material_prep" >Master Trainer had all materials prepared in advance for the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1888,7 +1882,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_content_prep" >Master Trainer was well prepared in their facilitation of the content</Label>
+                                                                            <Label for="mt_csa_content_prep" >Master Trainer was well prepared in their facilitation of the content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1932,7 +1926,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic</Label>
+                                                                            <Label for="mt_csa_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1976,7 +1970,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_subject_comfort" >Master Trainer is comfortable speaking about this subject</Label>
+                                                                            <Label for="mt_csa_subject_comfort" >Master Trainer is comfortable speaking about this subject <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2020,7 +2014,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="mt_csa_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2064,7 +2058,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants</Label>
+                                                                            <Label for="mt_csa_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2108,7 +2102,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes</Label>
+                                                                            <Label for="mt_csa_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2152,7 +2146,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_pts_engagement" >Participants are actively participating in discussion</Label>
+                                                                            <Label for="mt_csa_pts_engagement" >Participants are actively participating in discussion <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2196,7 +2190,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_pts_attention" >Participants are actively paying attention to the session while the Master Trainer is instructing</Label>
+                                                                            <Label for="mt_csa_pts_attention" >Participants are actively paying attention to the session while the Master Trainer is instructing <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2265,7 +2259,7 @@ class StepDownTraining extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="lsbe_mt_count">Total Number of Master Trainers</Label> <span class="errorMessage">{this.state.errors["lsbe_mt_count"]}</span>
+                                                                            <Label for="lsbe_mt_count">Total Number of Master Trainers <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["lsbe_mt_count"]}</span>
                                                                             <Input type="number" value={this.state.lsbe_mt_count} name="lsbe_mt_count" id="lsbe_mt_count" onChange={(e) => { this.inputChange(e, "lsbe_mt_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter in number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -2275,7 +2269,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="participant_name" >Name of Master Trainer</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Name of Master Trainer <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name"
                                                                                 name="participant_name"
                                                                                 value={this.state.participant_name}
@@ -2296,7 +2290,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_subject"]}</span>
+                                                                            <Label for="mt_lsbe_subject" >Subject Master Trainer is facilitating <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["mt_lsbe_subject"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "mt_lsbe_subject")} value={this.state.mt_lsbe_subject} id="mt_lsbe_subject" options={lsbeSubjectOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -2914,7 +2908,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content</Label>
+                                                                            <Label for="mt_lsbe_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -2958,7 +2952,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_understanding" >Master Trainer demonstrates good understanding of the training content</Label>
+                                                                            <Label for="mt_lsbe_understanding" >Master Trainer demonstrates good understanding of the training content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3001,7 +2995,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_material_prep" >Master Trainer had all materials prepared in advance for the session</Label>
+                                                                            <Label for="mt_lsbe_material_prep" >Master Trainer had all materials prepared in advance for the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3044,7 +3038,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_content_prep" >Master Trainer was well prepared in their facilitation of the content</Label>
+                                                                            <Label for="mt_lsbe_content_prep" >Master Trainer was well prepared in their facilitation of the content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3087,7 +3081,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic</Label>
+                                                                            <Label for="mt_lsbe_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3130,7 +3124,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_subject_comfort" >Master Trainer is comfortable speaking about this subject</Label>
+                                                                            <Label for="mt_lsbe_subject_comfort" >Master Trainer is comfortable speaking about this subject <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3173,7 +3167,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="mt_lsbe_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3216,7 +3210,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants</Label>
+                                                                            <Label for="mt_lsbe_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -3259,7 +3253,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes</Label>
+                                                                            <Label for="mt_lsbe_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -3303,7 +3297,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_pts_engagement" >Participants are actively participating in discussion</Label>
+                                                                            <Label for="mt_lsbe_pts_engagement" >Participants are actively participating in discussion <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -3347,7 +3341,7 @@ class StepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_pts_attention" >Participants are actively paying attention to the session while the Master Trainer is instructing</Label>
+                                                                            <Label for="mt_lsbe_pts_attention" >Participants are actively paying attention to the session while the Master Trainer is instructing <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >

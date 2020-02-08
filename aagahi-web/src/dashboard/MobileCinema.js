@@ -20,25 +20,11 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { mobileCinemaData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -46,7 +32,6 @@ class MobileCinema extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = mobileCinemaData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
@@ -80,7 +65,7 @@ class MobileCinema extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/mobilecinemadata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })

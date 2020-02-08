@@ -776,8 +776,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            {/* TODO: autopopulate current date */}
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -788,7 +787,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
+                                                                            <Label for="institution_id" >Institution ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
                                                                             <Select id="institution_id" name="institution_id" onChange={(e) => this.handleChange(e, "institution_id")} value={this.state.institution_id} id="institution_id" options={this.state.institutions} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -801,12 +800,10 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
-
-
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -814,16 +811,14 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={eventAttendantOptions} isMulti />
 
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
-
                                                                     <Col md="6" style={teacherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="teacher_count" >Number of Teachers</Label> <span class="errorMessage">{this.state.errors["teacher_count"]}</span>
@@ -840,7 +835,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topics covered in previous sessions</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topics covered in previous sessions <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -854,7 +849,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Label for="training_days" >Number of Days <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
                                                                             <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter days count"></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -862,7 +857,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name" >Participant(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants} formatOptionLabel={formatOptionLabel} isMulti />
                                                                         </FormGroup>
                                                                     </Col>

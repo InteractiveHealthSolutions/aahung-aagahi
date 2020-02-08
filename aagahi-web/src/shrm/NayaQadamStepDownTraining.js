@@ -31,11 +31,11 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { getObject, loadFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const topicCoveredOptions = [
     { label: 'VCAT', value: 'vcat' },
@@ -544,7 +544,7 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -553,7 +553,7 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="province">Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province">Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "province")} value={this.state.province} name="province" id="province">
                                                                                 <option value="">Select...</option>
                                                                                 <option value="Sindh">Sindh</option>
@@ -589,7 +589,7 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="facilitator_name" >Facilitator Name</Label> <span class="errorMessage">{this.state.errors["facilitator_name"]}</span>
+                                                                            <Label for="facilitator_name" >Facilitator Name <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["facilitator_name"]}</span>
                                                                             <Input name="facilitator_name" id="facilitator_name" value={this.state.facilitator_name} onChange={(e) => { this.inputChange(e, "facilitator_name") }} maxLength="100" placeholder="Enter name" pattern="^[A-Za-z ]+" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -609,7 +609,7 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topics Covered <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -623,7 +623,7 @@ class NayaQadamStepDownTraining extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="nqsd_participant_count" >Number of Participants</Label> <span class="errorMessage">{this.state.errors["nqsd_participant_count"]}</span>
+                                                                            <Label for="nqsd_participant_count" >Number of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["nqsd_participant_count"]}</span>
                                                                             <Input type="number" value={this.state.nqsd_participant_count} name="nqsd_participant_count" id="nqsd_participant_count" onChange={(e) => { this.inputChange(e, "nqsd_participant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>

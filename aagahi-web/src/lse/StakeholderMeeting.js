@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 12:37:37
+ * @Last Modified time: 2020-02-06 17:04:16
  */
 
 
@@ -633,7 +633,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
 
                                                                         </FormGroup>
@@ -643,14 +643,14 @@ class StakeholderMeeting extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -660,7 +660,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="meeting_venue" >Meeting Venue</Label> <span class="errorMessage">{this.state.errors["meeting_venue"]}</span>
+                                                                            <Label for="meeting_venue" >Meeting Venue <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["meeting_venue"]}</span>
                                                                             <Input name="meeting_venue" id="meeting_venue" value={this.state.meeting_venue} onChange={(e) => { this.inputChange(e, "meeting_venue") }} maxLength="200" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -669,14 +669,14 @@ class StakeholderMeeting extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="aahung_staff" >Aahung Staff Members</Label> <span class="errorMessage">{this.state.errors["aahung_staff"]}</span>
+                                                                            <Label for="aahung_staff" >Aahung Staff Members <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["aahung_staff"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "aahung_staff")} value={this.state.aahung_staff} id="aahung_staff" options={this.state.users} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="aahung_staff" options={participantTypeOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -740,7 +740,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="meeting_purpose">Purpose of Meeting</Label> <span class="errorMessage">{this.state.errors["meeting_purpose"]}</span>
+                                                                            <Label for="meeting_purpose">Purpose of Meeting <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["meeting_purpose"]}</span>
                                                                             <Input type="textarea" name="text" value={this.state.meeting_purpose} id="meeting_purpose" onChange={(e) => { this.inputChange(e, "meeting_purpose") }} maxLength="400" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>

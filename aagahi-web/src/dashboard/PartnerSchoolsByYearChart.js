@@ -19,26 +19,11 @@
  * @desc [description]
  */
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartTooltip,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { partnerSchoolDataByFiscalYear } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -46,7 +31,6 @@ class PartnerSchoolsByYearChart extends React.Component {
 
     constructor(props) {
         super(props);
-        this.data = partnerSchoolDataByFiscalYear; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
@@ -55,6 +39,8 @@ class PartnerSchoolsByYearChart extends React.Component {
         component: this.props.component,
         startDate: this.props.startDate,
         endDate: this.props.endDate,
+        provincesString: this.props.provincesString,
+        citiesString: this.props.citiesString,
         data: []
     }
 
@@ -64,7 +50,9 @@ class PartnerSchoolsByYearChart extends React.Component {
         await this.setState({
             component: nextProps.component,
             startDate: nextProps.startDate,
-            endDate: nextProps.endDate
+            endDate: nextProps.endDate,
+            provincesString: nextProps.provincesString,
+            citiesString: nextProps.citiesString
         })
 
         await this.getData();
@@ -73,11 +61,10 @@ class PartnerSchoolsByYearChart extends React.Component {
     async getData() {
         // calling the appropriate resource with url params
         if(this.state.component === "lse") {
-            // TODO: add params FROM date and TO date
-            // var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
-            var resourceUrl = serverAddress + "/report/partnerschooldata/year";
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/partnerschooldata/year?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -91,8 +78,6 @@ class PartnerSchoolsByYearChart extends React.Component {
         let years = getUniqueValues(this.state.data, 'fiscal_year');
         let min = Math.min(...years);
         let max = Math.max(...years);
-        // We need to create a series from minimum year to maximum year
-        years = Array.from({ length: max - min }, (el, index) => (min + index + 1));
         
         let primary = [
             { name: 'Primary', data: filterData(this.state.data, 'Primary')},
@@ -164,6 +149,8 @@ function filterData(data, level) {
         sums.push(sum);
     });
 
+    console.log("printing sums array ==========================================")
+    console.log(sums);
     return sums;
 }
 

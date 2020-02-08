@@ -20,26 +20,11 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip,
-    ChartTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { individualReachData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -47,7 +32,6 @@ class IndividualsReached extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = individualReachData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
@@ -81,7 +65,7 @@ class IndividualsReached extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/individualreachdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -148,23 +132,23 @@ class IndividualsReached extends React.Component {
                 <ChartSeries>
                     {HCPTrained.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} name={item.name} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
 
                     {GeneralStepDown.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                     {AmplifyChangeStudent.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                     {AmplifyChangeTeacher.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} gap={2}>
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>

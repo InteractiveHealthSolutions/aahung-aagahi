@@ -20,29 +20,14 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip,
-    ChartTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { amplifyChangeParticipantData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
+// for AC Participant - teacher
 class AmplifyChangeParticipant extends React.Component {
 
     constructor(props) {
@@ -78,13 +63,12 @@ class AmplifyChangeParticipant extends React.Component {
     async getData() {
         // calling the appropriate resource with url params
         if(this.state.component === "srhm") {
-            // TODO: add cities param after Rabbia updates the query
-            // var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
-            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString;
-            var resourceUrl = serverAddress + "/report/amplifychangeparticipantdata?" + params;
+            var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
+            var resourceUrl = serverAddress + "/report/amplifychangeparticipantdata/teachers?" + params;
             var resultSet = await getGraphData(resourceUrl);
             if(resultSet != null && resultSet !== undefined) {
                 this.setState({
+                    // data: [{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-02"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-08"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-14"},{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-17"},{"total":4,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-17"},{"total":5,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-18"},{"total":4,"gender":"Male","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-18"},{"total":1,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-20"},{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-21"},{"total":1,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-25"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-27"},{"total":7,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-30"},{"total":4,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-06"},{"total":2,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-07"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-13"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-27"}]
                     data: resultSet
                 })
             }
@@ -93,27 +77,15 @@ class AmplifyChangeParticipant extends React.Component {
 
     render() {
 
-        // TODO: implement changes according to result set returned
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        const names = this.state.name;
-
-        const type = ['Student', 'Faculty', 'Other', 'Pre-service', 'Providers'];
-
-        let studentData = [
-            { data: filterData(this.state.data, 'male', 'Student') },
-            { data: filterData(this.state.data, 'female', 'Student') },
-            { data: filterData(this.state.data, 'othery', 'Student') }
-        ];
-        let facultyData = [
-            { data: filterData(this.state.data, 'male', 'Faculty') },
-            { data: filterData(this.state.data, 'female', 'Faculty') },
-            { data: filterData(this.state.data, 'other', 'Faculty') }
+        const toolTipRender = ({ point }) => (`${point.value}`);
+        let data = [
+            { name: 'College', data: filterData(this.state.data, 'College') },
+            { name: 'Undergraduate', data: filterData(this.state.data, 'Undergraduate') },
+            { name: 'Post-graduate', data: filterData(this.state.data, 'Post-graduate') }
         ];
 
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
-
-
         const crosshair = {
             visible: true,
             tooltip: {
@@ -125,25 +97,20 @@ class AmplifyChangeParticipant extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="AC Participant Summary" color="black" font="19pt sans-serif" />
+                <ChartTitle text="AC Trained Teacher Summary" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={type} startAngle={45}>
+                    <ChartCategoryAxisItem categories={['Male', 'Female', 'Other']} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
-                    {studentData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Student' }}
-                            data={item.data} visible={seriesVisible[index]} name={names[index]}>
-                        </ChartSeriesItem>
-                    ))}
-                    {facultyData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: 'Faculty' }}
-                            data={item.data} visible={seriesVisible[index]}>
+                {data.map((item, index) => (
+                        <ChartSeriesItem type="column"
+                            data={item.data} visible={seriesVisible[index]} spacing={0.5} name={item.name} gap={2}>
+                            <ChartSeriesItemTooltip render={toolTipRender} />
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -161,49 +128,60 @@ class AmplifyChangeParticipant extends React.Component {
     }
 }
 
-function filterData(data, gender, type) {
-    // For each tier, attach tier as name and data as the sums for each province
-    var provinces = getUniqueValues(data, 'state_province');
-    var filtered = [];
-    if (data !== null && data !== undefined && data.length > 0)
-        filtered = data.filter(element => element.participant_type === type);
+function filterData(data, educationLevel) {
     var sums = [];
-
-    if (gender === 'male') {
-        provinces.forEach(province => {
-            var sumMale = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
-                    sumMale += parseInt(filtered[i].male);
-                }
-            }
-            sums.push(sumMale);
-        });
-
+    if (educationLevel === "College") {
+        
+        var maleArray = [];
+        var femaleArray = [];
+        var otherArray = [];
+        if (data !== null && data != undefined && data.length > 0) {
+            maleArray = data.filter(element => element.education_level === "College" && element.gender === "Male");
+            femaleArray = data.filter(element => element.education_level === "College" && element.gender === "Female");
+            otherArray = data.filter(element => element.education_level === "College" && element.gender === "Other");
+        }
+        // male
+        sums.push(maleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // female
+        sums.push(femaleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // other
+        sums.push(otherArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
         return sums;
-    } else if (gender === 'female') {
-        provinces.forEach(province => {
-            var sumFemale = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
-                    sumFemale += parseInt(filtered[i].female);
-                }
-            }
-            sums.push(sumFemale);
-        });
+    }
+    else if(educationLevel === "Undergraduate") {
 
+        var maleArray = [];
+        var femaleArray = [];
+        var otherArray = [];
+        if (data !== null && data !== undefined && data.length > 0) {
+            maleArray = data.filter(element => element.education_level === "Undergraduate" && element.gender === "Male");
+            femaleArray = data.filter(element => element.education_level === "Undergraduate" && element.gender === "Female");
+            otherArray = data.filter(element => element.education_level === "Undergraduate" && element.gender === "Other");
+        }
+        // male
+        sums.push(maleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // female
+        sums.push(femaleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // other
+        sums.push(otherArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
         return sums;
-    } else {
-        provinces.forEach(province => {
-            var sumOther = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
-                    sumOther += parseInt(filtered[i].other);
-                }
-            }
-            sums.push(sumOther);
-        });
-
+    }
+    else if(educationLevel === "Post-graduate") {
+        
+        var maleArray = [];
+        var femaleArray = [];
+        var otherArray = [];
+        if (data !== null && data !== undefined && data.length > 0) {
+            maleArray = data.filter(element => element.education_level === "Post-graduate" && element.gender === "Male");
+            femaleArray = data.filter(element => element.education_level === "Post-graduate" && element.gender === "Female");
+            otherArray = data.filter(element => element.education_level === "Post-graduate" && element.gender === "Other");
+        }
+        // male
+        sums.push(maleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // female
+        sums.push(femaleArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
+        // other
+        sums.push(otherArray.reduce(function (cnt, o) { return cnt + o.total; }, 0));
         return sums;
     }
 }

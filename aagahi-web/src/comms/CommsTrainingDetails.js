@@ -682,7 +682,7 @@ class CommsTrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -714,7 +714,7 @@ class CommsTrainingDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <Label for="trainer" >Aahung Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti />
 
                                                                         </FormGroup>
@@ -742,7 +742,7 @@ class CommsTrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Label for="training_days" >Number of Days <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
                                                                             <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="15" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -764,7 +764,7 @@ class CommsTrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topics Covered <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -778,7 +778,7 @@ class CommsTrainingDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
