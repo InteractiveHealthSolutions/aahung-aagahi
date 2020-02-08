@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 13:37:43
+ * @Last Modified time: 2020-02-07 22:05:12
  */
 
 
@@ -544,7 +544,7 @@ class RadioAppearance extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -572,14 +572,14 @@ class RadioAppearance extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
+                                                                            <Label for="radio_channel_name" >Name of Radio <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
                                                                             <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => { this.inputChange(e, "radio_channel_name") }} maxLength="200" placeholder="Enter name" pattern="^[A-Za-z0-9. ]+" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
+                                                                            <Label for="radio_channel_frequency" >Radio Frequency <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
                                                                             <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => { this.inputChange(e, "radio_channel_frequency") }} maxLength="5" pattern="^\d{1,10}(\.\d{1,4})?$" placeholder="Enter input" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -588,7 +588,7 @@ class RadioAppearance extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
+                                                                            <Label for="city" >City <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["city"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city" >
                                                                                 <option value="">Select</option>
                                                                                 <option value="Karachi">Karachi</option>
@@ -603,7 +603,6 @@ class RadioAppearance extends React.Component {
                                                                         </FormGroup>
 
                                                                     </Col>
-
                                                                     <Col md="6" style={cityOtherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["city_other"]}</span>
@@ -616,7 +615,7 @@ class RadioAppearance extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topics Covered <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} required isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -634,14 +633,14 @@ class RadioAppearance extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
+                                                                            <Label for="aahung_staff_appearance">Aahung Staff on Radio <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={this.state.users} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="live_call_count" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_call_count"]}</span>
+                                                                            <Label for="live_call_count" >Number of Live Calls During Show <span className="required">*</span> </Label> <span class="errorMessage">{this.state.errors["live_call_count"]}</span>
                                                                             <Input type="number" value={this.state.live_call_count} name="live_call_count" id="live_call_count" onChange={(e) => { this.inputChange(e, "live_call_count") }} max="999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>

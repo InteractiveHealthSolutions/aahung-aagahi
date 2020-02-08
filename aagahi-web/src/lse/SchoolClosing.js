@@ -75,7 +75,7 @@ class SchoolClosing extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.locationObj = {};
-        this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
+        this.requiredFields = ["school_id", "partnership_end_date", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
         this.errors = {};
         this.fetchedLocation = {};
         this.isEndDateExists = false;
@@ -534,7 +534,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >Select School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Label for="school_id" >Select School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                             <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required />
                                                                         </FormGroup>
                                                                     </Col>
@@ -556,7 +556,7 @@ class SchoolClosing extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended</Label>
+                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended <span className="required">*</span></Label>
                                                                             <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => { this.inputChange(e, "partnership_end_date") }} max={moment().format("YYYY-MM-DD")} required />
                                                                         </FormGroup>
                                                                     </Col>
@@ -565,7 +565,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
+                                                                            <Label for="partnership_years">Number of years of partnership <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
                                                                             <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers" disabled required></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -611,7 +611,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
+                                                                            <Label for="end_partnership_reason" >Reason for end of partnership <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
                                                                             <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" />
                                                                         </FormGroup>
                                                                     </Col>

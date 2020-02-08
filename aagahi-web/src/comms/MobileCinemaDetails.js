@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 13:09:14
+ * @Last Modified time: 2020-02-07 22:08:53
  */
 
 
@@ -703,7 +703,7 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -712,18 +712,17 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required />
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
 
                                                                 <Row>
@@ -740,7 +739,7 @@ class MobileCinemaDetails extends React.Component {
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="topic_covered" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Label for="topic_covered" >Topic Screened <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -755,14 +754,14 @@ class MobileCinemaDetails extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="performance_title">Name of Video or Performance</Label> <span class="errorMessage">{this.state.errors["performance_title"]}</span>
+                                                                            <Label for="performance_title">Name of Video or Performance <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["performance_title"]}</span>
                                                                             <Input name="performance_title" id="performance_title" value={this.state.performance_title} onChange={(e) => { this.inputChange(e, "performance_title") }} maxLength="200" placeholder="Enter name" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                            <Label for="participants_sex" >Sex of Audience <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={audienceSex} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
@@ -788,10 +787,9 @@ class MobileCinemaDetails extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
 
-
                                                                     <Col md="6" >
                                                                         <FormGroup >
-                                                                            <Label for="participants_age_group" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                            <Label for="participants_age_group" >Age of Audience <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeGroup} isMulti />
                                                                         </FormGroup>
                                                                     </Col>

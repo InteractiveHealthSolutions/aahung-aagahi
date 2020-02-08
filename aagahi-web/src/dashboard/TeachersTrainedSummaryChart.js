@@ -19,25 +19,10 @@
  * @desc [description]
  */
 
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import React from "react";
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartTooltip,
-    ChartSeriesItemTooltip,
-    ChartSeriesItem,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { teachersTrainingData } from '../service/ReportService';
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -45,7 +30,6 @@ class TeachersTrainedSummaryChart extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = addAggregateRecord(teachersTrainingData); // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
@@ -79,7 +63,7 @@ class TeachersTrainedSummaryChart extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/teacherstrainingdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: addAggregateRecord(resultSet)
                 })
@@ -166,8 +150,8 @@ function filterData(data, level, tier) {
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
         // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
-        // filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
-        filtered = data.filter(element => element.school_level === level);
+        filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+        // filtered = data.filter(element => element.school_level === level);
     }
     var sums = [];
         programs.forEach(program => {

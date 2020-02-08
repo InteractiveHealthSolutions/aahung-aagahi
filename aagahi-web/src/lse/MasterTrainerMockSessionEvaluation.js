@@ -945,7 +945,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -954,7 +954,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Label for="school_id" >School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                             <Select id="school_id"
                                                                                 name="school_id"
                                                                                 value={this.state.school_id}
@@ -974,7 +974,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="monitor">Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                            <Label for="monitor">Monitored By <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                             <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} required isMulti />
                                                                         </FormGroup>
 
@@ -982,7 +982,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                            <Label for="participant_name">Name of Teacher <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                             <Select id="participant_name"
                                                                                 name="participant_name"
                                                                                 value={this.state.participant_name}
@@ -995,7 +995,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
+                                                                            <Label for="participant_id" >Teacher ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                             <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled />
                                                                         </FormGroup>
                                                                     </Col>
@@ -1055,7 +1055,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_prompts" >Master Trainer is using the prompts provided in the CSA flashcard guide</Label>
+                                                                            <Label for="mt_csa_prompts" >Master Trainer is using the prompts provided in the CSA flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1100,7 +1100,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_flashcard_objective" >Master Trainer is meeting the objective of their flashcard even if they are not using all prompts provided in the CSA flashcard guide</Label>
+                                                                            <Label for="mt_csa_flashcard_objective" >Master Trainer is meeting the objective of their flashcard even if they are not using all prompts provided in the CSA flashcard guide<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1144,7 +1144,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_understanding" >Master Trainer shows good understanding of the message of the flashcard</Label>
+                                                                            <Label for="mt_csa_understanding" >Master Trainer shows good understanding of the message of the flashcard<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1188,7 +1188,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_subject_comfort" >Master Trainer is comfortable speaking about this subject</Label>
+                                                                            <Label for="mt_csa_subject_comfort" >Master Trainer is comfortable speaking about this subject<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1232,7 +1232,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="mt_csa_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -1276,7 +1276,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants</Label>
+                                                                            <Label for="mt_csa_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1319,7 +1319,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_csa_probing_style" >Master Trainer is leading participants to the main message of the flashcard through probes and not providing the message to participants in a lecture style presentation</Label>
+                                                                            <Label for="mt_csa_probing_style" >Master Trainer is leading participants to the main message of the flashcard through probes and not providing the message to participants in a lecture style presentation<span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
                                                                                 <Col >
                                                                                     <FormGroup check inline>
@@ -1437,7 +1437,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12" style={level1CommunicationStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="imp_communication" >Master Trainer was able to effectively relay the importance of communication</Label>
+                                                                            <Label for="imp_communication" >Master Trainer was able to effectively relay the importance of communication <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2361,7 +2361,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content</Label>
+                                                                            <Label for="mt_lsbe_prompts" >Master Trainer is actively using the training guide to aid in facilitation of content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2405,7 +2405,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_understanding" >Master Trainer demonstrates good understanding of the training content</Label>
+                                                                            <Label for="mt_lsbe_understanding" >Master Trainer demonstrates good understanding of the training content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2449,7 +2449,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_material_prep" >Master Trainer had all materials prepared in advance for the session</Label>
+                                                                            <Label for="mt_material_prep" >Master Trainer had all materials prepared in advance for the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2493,7 +2493,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_content_prep" >Master Trainer was well prepared in their facilitation of the content</Label>
+                                                                            <Label for="mt_content_prep" >Master Trainer was well prepared in their facilitation of the content <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2537,7 +2537,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic</Label>
+                                                                            <Label for="mt_activity_time_allotment" >An appropriate amount of time is allotted to each activity and topic <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2581,7 +2581,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_subject_comfort" >Master Trainer is comfortable speaking about this subject</Label>
+                                                                            <Label for="mt_lsbe_subject_comfort" >Master Trainer is comfortable speaking about this subject <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2625,7 +2625,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session</Label>
+                                                                            <Label for="mt_lsbe_nonjudmental_tone" >Master Trainer uses a non-judgmental tone while facilitating the session <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2669,7 +2669,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants</Label>
+                                                                            <Label for="mt_lsbe_impartial_opinions" >Master Trainer is not imposing their own values or opinions on the participants <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >
@@ -2713,7 +2713,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="mt_lsbe_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes</Label>
+                                                                            <Label for="mt_lsbe_probing_style" >Master Trainer is engaging participants in discussion throughout session by providing probes <span className="required">*</span></Label>
                                                                             <FormGroup tag="fieldset" row>
 
                                                                                 <Col >

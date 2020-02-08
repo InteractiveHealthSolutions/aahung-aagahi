@@ -20,26 +20,11 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip,
-    ChartTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { partnerInstitutionData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -81,7 +66,7 @@ class PartnerInstitutions extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/partnerinstitutiondata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 console.log(resultSet);
                 this.setState({
                     data: resultSet

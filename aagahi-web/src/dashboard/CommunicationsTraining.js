@@ -20,25 +20,11 @@
  */
 
 
-import React from "react";
+import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesItemTooltip,
-    ChartCategoryAxis,
-    ChartCategoryAxisItem,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { communicationsTrainingData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
+import { getUniqueValues } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -46,7 +32,6 @@ class CommunicationsTraining extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.data = communicationsTrainingData; // TODO: replace with the correct resource
         this.getData = this.getData.bind(this);
     }
 
@@ -80,7 +65,7 @@ class CommunicationsTraining extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
             var resourceUrl = serverAddress + "/report/communicationstrainingdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -146,7 +131,7 @@ function sum(key) {
     return this.reduce((a, b) => a + (b[key] || 0), 0);
 }
 
-function filterData(data, materialType, parType) {
+function filterData(data, materialType) {
     // For each tier, attach tier as name and data as the sums for each province
     var locations = getUniqueValues(data, 'city_village');
     var sums = [];
@@ -208,9 +193,6 @@ function filterData(data, materialType, parType) {
         console.log(sums);
         return sums;
     }
-
-
-
 }
 
 export default CommunicationsTraining;

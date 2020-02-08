@@ -20,23 +20,9 @@
  */
 
 
-import React from "react";
+import { Chart, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesLabels, ChartTitle } from '@progress/kendo-react-charts';
 import 'hammerjs';
-import {
-    Chart,
-    ChartLegend,
-    ChartSeries,
-    ChartTitle,
-    ChartSeriesItem,
-    ChartSeriesLabels,
-    ChartCategoryAxis,
-    ChartValueAxis,
-    ChartValueAxisItem,
-    ChartCategoryAxisCrosshair,
-    ChartCategoryAxisCrosshairTooltip
-} from '@progress/kendo-react-charts';
-import { getUniqueValues } from '../util/AahungUtil';
-import { exitSchoolPlanningData } from '../service/ReportService';
+import React from "react";
 import { getGraphData } from "../service/GetService";
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
@@ -78,10 +64,7 @@ class ExitPlanning extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
             var resourceUrl = serverAddress + "/report/exitschoolplanningdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
-                console.log("printing result set >>>>>>>>>");
-                console.log(resultSet.length);
-                console.log(resultSet);
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })

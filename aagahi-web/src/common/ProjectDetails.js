@@ -395,7 +395,6 @@ class ProjectDetails extends React.Component {
         }
 
         return (
-
             <div id="formDiv">
                 <Router>
                     <header>

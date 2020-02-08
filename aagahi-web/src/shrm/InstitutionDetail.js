@@ -21,8 +21,8 @@
 
 // Contributors: Tahira Niazi
 
-import moment from 'moment';
 import { MDBIcon } from 'mdbreact';
+import moment from 'moment';
 import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
@@ -32,11 +32,11 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getLocationByRegexValue, getProjectByRegexValue } from '../service/GetService';
 import { saveLocation, updateLocation } from "../service/PostService";
+import { UserService } from '../service/UserService';
 import { getObject } from "../util/AahungUtil.js";
 import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { UserService } from '../service/UserService';
 
 const institutionTypes = [
     { label: 'Medical', value: 'medical' },
@@ -854,13 +854,13 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                        <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                         <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                        <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                         <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required />
                                                                     </FormGroup>
                                                                 </Col>
@@ -869,7 +869,7 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
+                                                                        <Label for="institution_name">Institution Name <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
                                                                         <Input id="institution_name" name="institution_name" value={this.state.institution_name} onChange={(e) => { this.inputChange(e, "institution_name") }} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -885,13 +885,13 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partnership_start_date" >Date of Partnership with Aahung</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
+                                                                        <Label for="partnership_start_date" >Date of Partnership with Aahung <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
                                                                         <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => { this.inputChange(e, "partnership_start_date") }} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="institution_type" >Type of Institution</Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
+                                                                        <Label for="institution_type" >Type of Institution <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
                                                                         <Select onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} isMulti />
                                                                     </FormGroup>
                                                                 </Col>
@@ -917,13 +917,13 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_name" >Name of point of contact for institution</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
+                                                                        <Label for="point_person_name" >Name of point of contact for institution <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
                                                                         <Input name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => { this.inputChange(e, "point_person_name") }} pattern="^[A-Za-z. ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_contact" >Phone number for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
+                                                                        <Label for="point_person_contact" >Phone number for point of contact at institution <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
                                                                         <div id="phone_extension_div">
                                                                             <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => { this.inputChange(e, "point_person_contact") }} value={this.state.point_person_contact} maxLength="12" placeholder="Contact Number" />
                                                                             <Input type="text" style={extensionStyle} name="extension" id="extension" onChange={(e) => { this.inputChange(e, "extension") }} value={this.state.extension} maxLength="4" placeholder="Extension" />
@@ -940,7 +940,7 @@ class InstitutionDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="student_count" >Approximate number of students</Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
+                                                                        <Label for="student_count" >Approximate number of students <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
                                                                         <Input type="number" name="student_count" id="student_count" value={this.state.student_count} onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number" />
                                                                     </FormGroup>
                                                                 </Col>
