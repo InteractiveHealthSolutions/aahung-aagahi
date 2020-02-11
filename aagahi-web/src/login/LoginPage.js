@@ -28,6 +28,7 @@ import aahunglogo from "../img/aahung-logo.svg";
 import "../index.css";
 import { UserService } from '../service/UserService';
 import CarouselPage from "./LoginCarousel";
+import { appVersion } from "../util/AahungUtil";
 
 class LoginPage extends React.Component {
 
@@ -165,19 +166,14 @@ class LoginPage extends React.Component {
                   </div>
                 </form>
                 <MDBModalFooter id="loginPageFooter">
-                  {/* <div className="font-weight-light" > */}
-                  <Label style={{ fontSize: '0.8em' }}>© {new Date().getFullYear()} Aahung-Aagahi v1.2.2</Label>
-                  {/* </div> */}
+                  <Label style={{ fontSize: '0.8em' }}>© {new Date().getFullYear()} Aahung-Aagahi {appVersion}</Label>
                 </MDBModalFooter>
               </MDBCardBody>
 
             </MDBCol>
           </MDBRow>
 
-          {/* }   */}
-          {/* closing tertiary operator */}
           <MDBContainer>
-            {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
             <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
               <MDBModalHeader toggle={this.toggle}>Could not login!</MDBModalHeader>
               <MDBModalBody>
@@ -185,15 +181,12 @@ class LoginPage extends React.Component {
               </MDBModalBody>
               <MDBModalFooter>
                 <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                {/* <MDBBtn color="primary">OK!</MDBBtn> */}
               </MDBModalFooter>
             </MDBModal>
           </MDBContainer>
           <Loader text="Saving Trees..." textStyle={{ color: "#616161", display: "inline-block", width: "100%", textAlign: "center" }} loading={this.state.loading} />
         </LoadingOverlay>
       </MDBContainer>
-
-
     );
   }
 };

@@ -158,12 +158,14 @@ class ParentSessions extends React.Component {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
                             var radios = document.getElementsByName(element.key.shortName);
-                            for (let i = 0; i < radios.length; i++) {
-                                if (parseInt(radios[i].value) === parseInt(String(element.value))) {
-                                    radios[i].checked = true;
-                                    var indicator = radios[i].id; // e.g "strongly_agree"
-                                    var indicatorCode = getIndicatorCode(indicator);
-                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                            if(radios.length > 1) {
+                                for (let i = 0; i < radios.length; i++) {
+                                    if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                        radios[i].checked = true;
+                                        var indicator = radios[i].id; // e.g "strongly_agree"
+                                        var indicatorCode = getIndicatorCode(indicator);
+                                        self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                                    }
                                 }
                             }
                         }
@@ -450,9 +452,6 @@ class ParentSessions extends React.Component {
 
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                            // if (count != attrValueObj.length) {
-                            //     multiSelectString = multiSelectString.concat(", ");
-                            // }
                             multiSelectString = multiSelectString.concat(" ");
                             multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                             if (attrTypeName === "program_implemented")
