@@ -107,7 +107,7 @@ class FormSearch extends React.Component {
             if (allFormTypes != null && allFormTypes.length > 0) {
                 let array = [];
                 allFormTypes.forEach(function (obj) {
-                    if (!obj.isRetired) {
+                    if (!obj.retired) {
                         array.push({ "id": obj.id, "value": obj.uuid, "uuid": obj.uuid, "label": obj.name });
                     }
                 })

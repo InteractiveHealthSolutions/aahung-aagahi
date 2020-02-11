@@ -158,22 +158,32 @@ class SrhrPolicy extends React.Component {
                         if (dataType === 'int') {
                             var radios = document.getElementsByName(element.key.shortName);
 
-                            for (let i = 0; i < radios.length; i++) {
-                                // Edits are painful!!
-                                // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
-                                if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
-                                    radios[i].checked = true;
-                                    var indicator = radios[i].id; // e.g "strongly_agree"
-                                    var indicatorCode = getIndicatorCode(indicator);
-                                    self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                            if (radios.length > 1) {
+                                for (let i = 0; i < radios.length; i++) {
+                                    // Edits are painful!!
+                                    // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
+
+                                    if (parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                        radios[i].checked = true;
+                                        var indicator = radios[i].id; // e.g "strongly_agree"
+                                        var indicatorCode = getIndicatorCode(indicator);
+                                        self.calculate(indicator, element.key.shortName, String(element.value), indicatorCode);
+                                    }
                                 }
                             }
                         }
                     })
 
                     if (this.state.first_aid_kit != undefined && this.state.first_aid_kit.length > 0) {
+                        let newAnswered = {}
+                        newAnswered.id = "first_aid_kit";
+                        newAnswered.elementName = "first_aid_kit";
+                        newAnswered.value = this.state.first_aid_kit.length;
                         this.score += this.state.first_aid_kit.length;
                         this.totalScore += 8; // 8 for total options
+                        newAnswered.score = this.score;
+                        newAnswered.totalScore = this.totalScore;
+                        this.scoreArray.push(newAnswered);
                         var score = parseInt(this.score);
                         var totalScore = parseInt(this.totalScore);
                         var percent = (score / totalScore) * 100;
@@ -351,8 +361,29 @@ class SrhrPolicy extends React.Component {
         });
 
         if (name == "first_aid_kit" && e !== null) {
-            this.score += e.length;
-            this.totalScore += 8; // 8 for total options
+            let answered = [];
+            if (this.scoreArray != undefined || this.scoreArray != null) {
+                answered = this.scoreArray.filter(question => question.elementName == "first_aid_kit");
+            }
+            if (answered[0] != null) {
+                answered[0].id = "first_aid_kit";
+                answered[0].elementName = "first_aid_kit";
+                this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                answered[0].value = e.length;
+                this.score += parseInt(e.length);
+            }
+            else {
+                let newAnswered = {}
+                newAnswered.id = "first_aid_kit";
+                newAnswered.elementName = "first_aid_kit";
+                newAnswered.value = e.length;
+                this.score += parseInt(e.length);
+                this.totalScore += 8;
+                newAnswered.score = this.score;
+                newAnswered.totalScore = this.totalScore;
+                this.scoreArray.push(newAnswered);
+            }
+
             var score = parseInt(this.score);
             var totalScore = parseInt(this.totalScore);
             var percent = (score / totalScore) * 100;
@@ -414,8 +445,8 @@ class SrhrPolicy extends React.Component {
 
                 if (attrTypeName === "school_sex") {
                     var isEditAllowed = true;
-                    if(self.state.school_sex !== '' && self.state.school_sex !== undefined) {
-                        if(self.state.school_sex === "Girls")
+                    if (self.state.school_sex !== '' && self.state.school_sex !== undefined) {
+                        if (self.state.school_sex === "Girls")
                             isEditAllowed = attributeValue === "Boys" ? false : true;
                         else if (self.state.school_sex === "Boys")
                             isEditAllowed = attributeValue !== "Boys" ? false : true;
@@ -812,8 +843,8 @@ class SrhrPolicy extends React.Component {
             formNavVisible = false;
         }
         // if the user does not have edit rights
-        var buttonDisabled = false; 
-        if(this.editMode) {
+        var buttonDisabled = false;
+        if (this.editMode) {
             buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
@@ -945,13 +976,13 @@ class SrhrPolicy extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="srhr_policy_implemented" id="yes" value="1" onChange={(e) => this.scoreChange(e, "srhr_policy_implemented")} disabled={this.editMode}/>{' '}
+                                                                                            <Input type="radio" name="srhr_policy_implemented" id="yes" value="1" onChange={(e) => this.scoreChange(e, "srhr_policy_implemented")} disabled={this.editMode} />{' '}
                                                                                             Yes
                                                                                 </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                         <Label check>
-                                                                                            <Input type="radio" name="srhr_policy_implemented" id="no" value="0" onChange={(e) => this.scoreChange(e, "srhr_policy_implemented")} disabled={this.editMode}/>{' '}
+                                                                                            <Input type="radio" name="srhr_policy_implemented" id="no" value="0" onChange={(e) => this.scoreChange(e, "srhr_policy_implemented")} disabled={this.editMode} />{' '}
                                                                                             No
                                                                                 </Label>
                                                                                     </FormGroup>
@@ -2511,7 +2542,7 @@ class SrhrPolicy extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
                         </div>

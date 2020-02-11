@@ -7,6 +7,7 @@ export const apiUrl = 'http://ihs.ihsinformatics.com:9990/aahung-aagahi/api'; //
 export const parentLocationDefinitionUuid = 'cce863e8-d09b-11e9-b422-0242ac130002';
 export const schoolDefinitionUuid = 'cce57479-d09b-11e9-b422-0242ac130002';
 export const institutionDefinitionUuid = 'cce6ea85-d09b-11e9-b422-0242ac130002';
+export const appVersion = "v1.4.6";
 
 export const entityUrl = [
     { id: 1, name: 'school', url: "/schoolDetails" },
@@ -90,28 +91,6 @@ export const getEntry = function (value, arr, prop) {
     }
     return -1; //to handle the case where the value doesn't exist
 };
-
-export const getHandler = function (resourceName, subResource, parameter) {
-
-    let axios = require('axios');
-    var categoryUuid = 'cce863e8-d09b-11e9-b422-0242ac130002';
-    let URL = 'http://199.172.1.76:8080/aahung-aagahi/api/locations/category/' + categoryUuid;
-
-    console.log(sessionStorage.getItem('auth_header'));
-    axios.get(URL, {
-        'headers': {
-            'Authorization': sessionStorage.getItem('auth_header'),
-        }
-    }
-    )
-        .then(response => {
-            console.log(response.data);
-
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-}
 
 export const matchPattern = function (pattern, value) {
     return value.match(pattern) != value ? false : true;
