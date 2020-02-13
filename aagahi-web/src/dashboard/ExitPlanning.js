@@ -35,7 +35,7 @@ class ExitPlanning extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true],
+        seriesVisible: [true, true, true, true],
         component: this.props.component,
         startDate: this.props.startDate,
         endDate: this.props.endDate,
@@ -94,8 +94,7 @@ class ExitPlanning extends React.Component {
         }
 
         return (
-            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
-                onLegendItemClick={this.onLegendItemClick} >
+            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }} >
                 <ChartTitle text="Exit Planning Graph" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" visible={true} />
                 <ChartSeries>
@@ -105,12 +104,6 @@ class ExitPlanning extends React.Component {
                 </ChartSeries>
             </Chart>
         )
-    }
-
-    onLegendItemClick = (e) => {
-        var newState = this.state.seriesVisible;
-        newState[e.seriesIndex] = !newState[e.seriesIndex];
-        this.setState(newState);
     }
 }
 
@@ -130,16 +123,16 @@ function filterData(data, type) {
     }
 
     if (type === "srhr_policy_implemented") {
-        return srhrData.length === 0 ? 0 : srhrData.total;
+            return srhrData === undefined || srhrData.length === 0 ? 0 : srhrData.total;
     }
     else if (type === "parent_session_conducted") {
-        return parentSessionData.length === 0 ? 0 : parentSessionData.total;
+            return parentSessionData === undefined || parentSessionData.length === 0 ? 0 : parentSessionData.total;
     }
     else if (type === "both") {
-        return bothData.length === 0 ? 0 : bothData.total;
+            return bothData === undefined || bothData.length === 0 ? 0 : bothData.total;
     }
     else {
-        return neitherData.length === 0 ? 0 : neitherData.total;
+            return neitherData === undefined || neitherData.length === 0 ? 0 : neitherData.total;
     }
 }
 

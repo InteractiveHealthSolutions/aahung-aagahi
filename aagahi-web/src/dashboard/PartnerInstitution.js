@@ -77,8 +77,7 @@ class PartnerInstitutions extends React.Component {
 
     render() {
 
-        // TODO: fix tooltips
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
+        const defaultTooltip = ({ point }) => (`${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
         const locations = getUniqueValues(this.state.data, 'state_province');
@@ -138,27 +137,27 @@ class PartnerInstitutions extends React.Component {
                 <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
                     {sindhData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ type: '100%', group: 'Sindh'}}
+                        <ChartSeriesItem type="column" stack={{ type: '100%'}}
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
                         </ChartSeriesItem>
                     ))}
                     {punjabData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Punjab'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {balochistanData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Balochistan'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {gilgitBaltistanData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'Gilgit-Baltistan'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                     {kpData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{type: '100%', group: 'KP'}}
+                        <ChartSeriesItem type="column" stack={{type: '100%'}}
                             data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}

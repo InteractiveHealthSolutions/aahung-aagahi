@@ -100,8 +100,7 @@ class ParticipantTraining extends React.Component {
         }
 
         return (
-            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
-                onLegendItemClick={this.onLegendItemClick} >
+            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}>
                 <ChartTitle text="Participant Training" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>

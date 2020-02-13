@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-07 22:01:39
+ * @Last Modified time: 2020-02-13 12:51:47
  */
 
 
@@ -681,11 +681,9 @@ class DistributionCommunicationMaterial extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
 
-            console.log("in submission");
-
             this.setState({
-                // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);

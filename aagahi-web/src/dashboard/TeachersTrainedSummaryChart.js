@@ -22,7 +22,7 @@
 import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import React from "react";
 import { getGraphData } from "../service/GetService";
-import { getUniqueValues } from '../util/AahungUtil';
+import { getUniqueValues, capitalize } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -76,6 +76,10 @@ class TeachersTrainedSummaryChart extends React.Component {
         const secondaryToolTipRender = ({ point }) => (`Secondary: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let programs = getUniqueValues(this.state.data, 'program');
+        const programTypes = [];
+        programs.forEach(program => {
+            programTypes.push(capitalize(program));
+        })
 
         let primary = [
             { name: 'New', data: filterData(this.state.data, 'Primary', 'New') },
@@ -102,7 +106,7 @@ class TeachersTrainedSummaryChart extends React.Component {
                 <ChartTitle text="Summary of Teachers Trained" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={programs} startAngle={45}>
+                    <ChartCategoryAxisItem categories={programTypes} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>
@@ -146,12 +150,9 @@ function addAggregateRecord(data) {
 
 function filterData(data, level, tier) {
     var programs = getUniqueValues(data, 'program');
-    // var levels = getUniqueValues(data, 'school_level');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
-        // TODO: uncomment the below line later, after when Rabbia is returning correct data for school_tier in query
         filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
-        // filtered = data.filter(element => element.school_level === level);
     }
     var sums = [];
         programs.forEach(program => {

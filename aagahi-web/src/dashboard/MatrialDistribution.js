@@ -78,11 +78,17 @@ class MaterialDistribution extends React.Component {
         const distributions = ['Aahung Office', 'Conference', 'Other', 'School', 'Stakeholder Meeting', 'Festival Stall']
         let chartData = [
             { name: 'Pamphlet', data: filterData(this.state.data, 'pamphlet_count') },
-            { name: 'Brochure', data: filterData(this.state.data, 'booklet_count') },
-            { name: 'Files', data: filterData(this.state.data, 'aahung_notebooks_count') }
+            { name: 'Booklet', data: filterData(this.state.data, 'booklet_count') },
+            { name: 'Notebook', data: filterData(this.state.data, 'aahung_notebooks_count') },
+            { name: 'Report', data: filterData(this.state.data, 'report_count') },
+            { name: 'Annual Report', data: filterData(this.state.data, 'annual_report_count') },
+            { name: 'Mug', data: filterData(this.state.data, 'aahung_mugs_count') },
+            { name: 'Folder', data: filterData(this.state.data, 'aahung_folders_count') },
+            { name: 'Profile', data: filterData(this.state.data, 'aahung_profile_count') },
+            { name: 'Other', data: filterData(this.state.data, 'other_material_count') }
 
         ];
-        const colors = ['green', 'red', 'blue'];
+        const colors = ['#4a148c', '#42a5f5 ', '#ff5252', '#00796b', '#b388ff', '#cddc39', '#00e676', '#ffc107', '#929fba'];
         const crosshair = {
             visible: true,
             tooltip: {
@@ -92,7 +98,7 @@ class MaterialDistribution extends React.Component {
         }
 
         return (
-            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
+            <Chart seriesColors={colors} style={{ height: 550 }} pannable={{ lock: 'x' }} zoomable={{ mousewheel: { lock: 'x' } }}
                 onLegendItemClick={this.onLegendItemClick} >
                 <ChartTitle text="IEC Material Distribution" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
@@ -133,46 +139,58 @@ function filterData(data, materialType) {
     var filtered;
     var sums = [];
 
-    if (materialType === 'pamphlet_count') {
-        locations.forEach(location => {
-            var pamphletSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].distribution_location == location) {
-                    pamphletSum += data[i].pamphlet_count;
-                }
+    locations.forEach(location => {
+        var sum = 0;
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].distribution_location == location) {
+                sum += parseInt(data[i][materialType]);
             }
-            sums.push(pamphletSum);
-        });
+        }
+        sums.push(sum);
+    });
 
-        return sums;
+    return sums;
 
-    } else if (materialType === 'booklet_count') {
+    // if (materialType === 'pamphlet_count') {
+    //     locations.forEach(location => {
+    //         var pamphletSum = 0;
+    //         for (var i = 0; i < data.length; i++) {
+    //             if (data[i].distribution_location == location) {
+    //                 pamphletSum += data[i].pamphlet_count;
+    //             }
+    //         }
+    //         sums.push(pamphletSum);
+    //     });
 
-        locations.forEach(location => {
-            var bookletSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].distribution_location == location) {
-                    bookletSum += parseInt(data[i].booklet_count);
-                }
-            }
-            sums.push(bookletSum);
-        });
+    //     return sums;
 
-        return sums;
+    // } else if (materialType === 'booklet_count') {
 
-    } else {
-        locations.forEach(location => {
-            var notebookSum = 0;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].distribution_location == location) {
-                    notebookSum += parseInt(data[i].aahung_notebooks_count);
-                }
-            }
-            sums.push(notebookSum);
-        });
+    //     locations.forEach(location => {
+    //         var bookletSum = 0;
+    //         for (var i = 0; i < data.length; i++) {
+    //             if (data[i].distribution_location == location) {
+    //                 bookletSum += parseInt(data[i].booklet_count);
+    //             }
+    //         }
+    //         sums.push(bookletSum);
+    //     });
 
-        return sums;
-    }
+    //     return sums;
+
+    // } else {
+    //     locations.forEach(location => {
+    //         var notebookSum = 0;
+    //         for (var i = 0; i < data.length; i++) {
+    //             if (data[i].distribution_location == location) {
+    //                 notebookSum += parseInt(data[i].aahung_notebooks_count);
+    //             }
+    //         }
+    //         sums.push(notebookSum);
+    //     });
+
+    //     return sums;
+    // }
 }
 
 export default MaterialDistribution;

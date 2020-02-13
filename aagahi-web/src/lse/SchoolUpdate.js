@@ -364,14 +364,14 @@ class SchoolUpdate extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
             this.setState({
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             var fetchedAttributes = this.fetchedLocation.attributes;
             fetchedAttributes.forEach(async function (obj) {
 
                 delete obj.createdBy;
-
                 // Type of program(s) implemented in school - program_implemented
                 if (obj.attributeType.shortName === "program_implemented") {
 
