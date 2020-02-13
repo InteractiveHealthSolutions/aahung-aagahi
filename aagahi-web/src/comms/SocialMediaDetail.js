@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-07 21:59:24
+ * @Last Modified time: 2020-02-13 12:52:37
  */
 
 
@@ -791,9 +791,7 @@ class SocialMediaDetail extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
 
-            console.log("in submission");
             this.setState({
-                // form_disabled: true,
                 loading: true,
                 loadingMsg: "Saving trees..."
             })

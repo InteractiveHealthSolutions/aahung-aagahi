@@ -35,8 +35,8 @@ class SocialMediaTraffic extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true],
-        name : ['Facebook', 'Twitter', 'Other', 'Instagram', 'Web Portal'],
+        seriesVisible: [true, true, true, true, true],
+        name: ['Facebook', 'Twitter', 'Other', 'Instagram', 'Web Portal'],
         component: this.props.component,
         startDate: this.props.startDate,
         endDate: this.props.endDate,
@@ -61,11 +61,11 @@ class SocialMediaTraffic extends React.Component {
 
     async getData() {
         // calling the appropriate resource with url params
-        if(this.state.component === "comms") {
+        if (this.state.component === "comms") {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/socialmediatraffic?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet != undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -75,23 +75,60 @@ class SocialMediaTraffic extends React.Component {
 
     render() {
 
-        const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
+        const defaultTooltip = ({ point }) => (`${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const names = this.state.name;
-        let dayName = getUniqueValues(this.state.data, 'day_name');
-        const dayNameStr = JSON.parse(JSON.stringify(dayName));
-        let myData = [];
-        
+        let dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-        for (var i=0; i<dayNameStr.length; i++){
-            myData.push(
-                { data: filterData(this.state.data, 'facebook', dayNameStr[i]) },
-                { data: filterData(this.state.data, 'twitter', dayNameStr[i]) },
-                { data: filterData(this.state.data, 'other', dayNameStr[i]) },
-                { data: filterData(this.state.data, 'Instagram', dayNameStr[i]) },
-                { data: filterData(this.state.data, 'web_portal', dayNameStr[i]) }  
-            );
-        }
+        let mondayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'MONDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'MONDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'MONDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'MONDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'MONDAY') }
+        ];
+        let tuesdayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'TUESDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'TUESDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'TUESDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'TUESDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'TUESDAY') }
+        ];
+        let wednesdayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'WEDNESDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'WEDNESDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'WEDNESDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'WEDNESDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'WEDNESDAY') }
+        ];
+        let thursdayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'THURSDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'THURSDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'THURSDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'THURSDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'THURSDAY') }
+        ];
+        let fridayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'FRIDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'FRIDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'FRIDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'FRIDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'FRIDAY') }
+        ];
+        let saturdayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'SATURDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'SATURDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'SATURDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'SATURDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'SATURDAY') }
+        ];
+        let sundayData = [
+            { data: filterData(this.state.data, 'facebook'.toUpperCase(), 'SUNDAY') },
+            { data: filterData(this.state.data, 'twitter'.toUpperCase(), 'SUNDAY') },
+            { data: filterData(this.state.data, 'other'.toUpperCase(), 'SUNDAY') },
+            { data: filterData(this.state.data, 'Instagram'.toUpperCase(), 'SUNDAY') },
+            { data: filterData(this.state.data, 'web_portal'.toUpperCase(), 'SUNDAY') }
+        ];
 
         const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#8A2BE2'];
         const crosshair = {
@@ -105,7 +142,7 @@ class SocialMediaTraffic extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Social Media Traffic" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Daily Social Media Traffic" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={dayName} startAngle={45}>
@@ -114,11 +151,46 @@ class SocialMediaTraffic extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip render={defaultTooltip}/>
+                <ChartTooltip render={defaultTooltip} />
                 <ChartSeries>
-                    {myData.map((item, index) => (
-                        <ChartSeriesItem type="column" stack={{ group: dayNameStr}}
+                    {mondayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
                             data={item.data} visible={seriesVisible[index]} name={names[index]}>
+                        </ChartSeriesItem>
+                    ))}
+
+                    {tuesdayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+
+                    {wednesdayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+
+                    {thursdayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+
+                    {fridayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+                    {saturdayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
+                        </ChartSeriesItem>
+                    ))}
+
+                    {sundayData.map((item, index) => (
+                        <ChartSeriesItem type="column" stack={true}
+                            data={item.data} visible={seriesVisible[index]}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -128,7 +200,7 @@ class SocialMediaTraffic extends React.Component {
             </Chart>
         )
     }
-    
+
     onLegendItemClick = (e) => {
         var newState = this.state.seriesVisible;
         newState[e.seriesIndex] = !newState[e.seriesIndex];
@@ -139,10 +211,11 @@ class SocialMediaTraffic extends React.Component {
 
 function filterData(data, platforms, day) {
     // For each tier, attach tier as name and data as the sums for each province
-    var days = getUniqueValues(data, 'day_name');
+    // var days = getUniqueValues(data, 'day_name');
+    var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0)
-        filtered = data.filter(element => element.platform === platforms && element.day_name === day);
+        filtered = data.filter(element => element.platform.toUpperCase() === platforms && element.day_name.toUpperCase() === day);
     var sums = [];
 
     days.forEach(day => {

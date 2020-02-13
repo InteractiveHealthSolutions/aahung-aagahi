@@ -457,11 +457,9 @@ class TrainingDetails extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
 
-            console.log("in submission");
-
             this.setState({
-                // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);

@@ -19,7 +19,6 @@
  * @desc [description]
  */
 
-
 import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartTooltip, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
 import React from "react";
@@ -75,45 +74,16 @@ class TrainingDataSummary extends React.Component {
 
     render() {
 
-        const punjabTooltip = ({ point }) => (`Punjab: ${point.value}`);
-        const sindhTooltip = ({ point }) => (`Sindh: ${point.value}`);
-        const balochistanTooltip = ({ point }) => (`Balochistan: ${point.value}`);
-        const kpTooltip = ({ point }) => (`KP: ${point.value}`);
-        
+        const toolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let trainingType = ['Initial Training', 'MT Training', 'Refresher Training', 'Roll Out Step Down'];
 
-
-        let initialTraining = [
-            { name: 'Punjab', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.state.data, 'INITIAL_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.state.data, 'INITIAL_TRAINING', 'Sindh') },
-            
-        ];
-        let refresherTraining = [
-            { name: 'Punjab', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.state.data, 'REFRESHER_TRAINING', 'Sindh') },
-            
-        ];
-        let mtTraining = [
-            { name: 'Punjab', data: filterData(this.state.data, 'MT_TRAINING', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.state.data, 'MT_TRAINING', 'Balochistan') },
-            { name: 'KP', data: filterData(this.state.data, 'MT_TRAINING', 'KP') },
-            { name: 'Sindh', data: filterData(this.state.data, 'MT_TRAINING', 'Sindh') },
-            
-        ];
-        let rollOutStepDown = [
-            { name: 'Punjab', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Punjab') },
-            { name: 'Balochistan', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Balochistan') },
-            { name: 'KP', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'KP') },
-            { name: 'Sindh', data: filterData(this.state.data, 'ROLL_OUT_STEP_DOWN', 'Sindh') },
-            
-        ];
-
-        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
+        let graphData = [];
+        var provinces = ["Sindh", "Punjab", "Balochistan", "KP", "Gilgit-Baltistan"];
+        for(let i=0; i< provinces.length; i++) {
+            graphData.push({ name: provinces[i], data: filterData(this.state.data, provinces[i]) });
+        }
+        const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080', '#0099CC'];
         const crosshair = {
             visible: true,
             tooltip: {
@@ -134,32 +104,11 @@ class TrainingDataSummary extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartTooltip render={punjabTooltip} />
+                <ChartTooltip render={toolTipRender} />
                 <ChartSeries>
-                    {initialTraining.map((item, index) => (
-                        <ChartSeriesItem type="column" 
-                            data={item.data} visible={seriesVisible[index]} name={item.name}>
-                        </ChartSeriesItem>
-                    ))}
-                
-                    {mtTraining.map((item, index) => (
-                        <ChartSeriesItem type="column" 
-                            data={item.data} visible={seriesVisible[index]} >
-                            <ChartSeriesItemTooltip render={sindhTooltip} />
-                        </ChartSeriesItem>
-                    ))}
-
-                    {refresherTraining.map((item, index) => (
+                    {graphData.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]}>
-                            <ChartSeriesItemTooltip render={balochistanTooltip} />
-                        </ChartSeriesItem>
-                    ))}
-                    
-                    {rollOutStepDown.map((item, index) => (
-                        <ChartSeriesItem type="column" 
-                            data={item.data} visible={seriesVisible[index]}>
-                            <ChartSeriesItemTooltip render={kpTooltip} />
+                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={3}>
                         </ChartSeriesItem>
                     ))}
                     
@@ -179,18 +128,17 @@ class TrainingDataSummary extends React.Component {
 
 }
 
-function filterData(data, trainingType, location) {
-    // For each tier, attach tier as name and data as the sums for each province
+function filterData(data, location) {
     var trainingTypes = getUniqueValues(data, 'training_type');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0)
-        filtered = data.filter(element => element.training_type === trainingType && element.state_province === location);
+        filtered = data.filter(element => element.state_province === location);
     var sums = [];
 
     trainingTypes.forEach(trainingType => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].training_type == trainingType) {
+            if (filtered[i].training_type === trainingType) {
                 sum += parseInt(filtered[i].total);
             }
         }

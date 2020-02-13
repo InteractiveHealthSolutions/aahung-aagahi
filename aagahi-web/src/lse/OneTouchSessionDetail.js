@@ -426,8 +426,8 @@ class OneTouchSessionDetail extends React.Component {
         if (this.handleValidation()) {
 
             this.setState({
-                // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);

@@ -285,8 +285,8 @@ class NayaQadamStepDownTraining extends React.Component {
 
             console.log("in submission");
             this.setState({
-                // form_disabled: true,
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);

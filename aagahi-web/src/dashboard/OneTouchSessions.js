@@ -24,7 +24,7 @@ import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxis
 import 'hammerjs';
 import React from "react";
 import { getGraphData } from "../service/GetService";
-import { getUniqueValues } from '../util/AahungUtil';
+import { getUniqueValues, capitalize } from '../util/AahungUtil';
 import { apiUrl } from "../util/AahungUtil.js";
 var serverAddress = apiUrl;
 
@@ -36,7 +36,7 @@ class OneTouchSessions extends React.Component {
     }
 
     state = {
-        seriesVisible: [true, true, true,true,true,true],
+        seriesVisible: [true, true, true,true,true,true, true],
         component: this.props.component,
         startDate: this.props.startDate,
         endDate: this.props.endDate,
@@ -65,8 +65,6 @@ class OneTouchSessions extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
             var resourceUrl = serverAddress + "/report/onetouchdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            console.log("printing url >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            console.log(resourceUrl);
             if(resultSet != null && resultSet !== undefined) {
                 this.setState({
                     data: resultSet
@@ -76,11 +74,14 @@ class OneTouchSessions extends React.Component {
     }
 
     render() {
-        // const defaultTooltip = ({ point }) => (`${point.series.name}: ${point.value}`);
         const defaultTooltip = ({ point }) => (`${point.series.name}: ${(point.percentage)*100}%`);
         const seriesVisible = this.state.seriesVisible;
-        const participants = getUniqueValues(this.state.data, 'session_topic');
-        // const names = getUniqueValues(this.state.data, 'gender');
+        const sessionTopics = getUniqueValues(this.state.data, 'session_topic');
+        const topics = [];
+        sessionTopics.forEach(topic => {
+            topics.push(capitalize(topic));
+        })
+        
         const names = ['Parents', 'Teachers', 'Students', 'School Staff', 'Call Agents', 'Other Professional', 'Other'];
         
         let parentsData = [
@@ -116,12 +117,11 @@ class OneTouchSessions extends React.Component {
         }
 
         return (
-            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
-                onLegendItemClick={this.onLegendItemClick} >
+            <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}>
                 <ChartTitle text="One Touch Sessions Summary" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={participants} startAngle={45}>
+                    <ChartCategoryAxisItem categories={topics} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>

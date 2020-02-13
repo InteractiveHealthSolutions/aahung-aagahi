@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-06 11:53:30
+ * @Last Modified time: 2020-02-13 12:58:07
  */
 
  // TODO: ### NOTE: ###
@@ -501,7 +501,6 @@ class SchoolDetails extends React.Component {
         if (this.handleValidation()) {
 
             this.setState({
-                // form_disabled: true,
                 loading: true,
                 loadingMsg: "Saving trees..."
             })

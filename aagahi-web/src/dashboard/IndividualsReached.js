@@ -76,36 +76,13 @@ class IndividualsReached extends React.Component {
     render() {
 
         const defaultTooptip = ({ point }) => (`${point.series.name}: ${point.value}`);
-
+        let genders = ['male_count', 'female_count', 'other_sex_count'];
         const seriesVisible = this.state.seriesVisible;
-        const activityType = ['HCP', 'Step Down', 'AC - Students', 'AC - Teachers'];
-
-        let HCPTrained = [
-            { name: 'Male', data: filterData(this.state.data, 'HCP', 'male_count') },
-            { name: 'Female', data: filterData(this.state.data, 'HCP', 'female_count') },
-            { name: 'Other', data: filterData(this.state.data, 'HCP', 'other_sex_count') },
-
-        ];
-        let GeneralStepDown = [
-            { name: 'Male', data: filterData(this.state.data, 'Step Down', 'male_count') },
-            { name: 'Female', data: filterData(this.state.data, 'Step Down', 'female_count') },
-            { name: 'Other', data: filterData(this.state.data, 'Step Down', 'other_sex_count') },
-
-        ];
-        let AmplifyChangeStudent = [
-            { name: 'Male', data: filterData(this.state.data, 'AC - Students', 'male_count') },
-            { name: 'Female', data: filterData(this.state.data, 'AC - Students', 'female_count') },
-            { name: 'Other', data: filterData(this.state.data, 'AC - Students', 'other_sex_count') },
-
-        ];
-
-        let AmplifyChangeTeacher = [
-            { name: 'Male', data: filterData(this.state.data, 'AC - Teachers', 'male_count') },
-            { name: 'Female', data: filterData(this.state.data, 'AC - Teachers', 'female_count') },
-            { name: 'Other', data: filterData(this.state.data, 'AC - Teachers', 'other_sex_count') },
-
-        ];
-
+        const activityTypes = ['HCP', 'Step Down', 'AC - Students', 'AC - Teachers'];
+        let graphData = [];
+        for(let i=0; i< genders.length; i++) {
+            graphData.push({ name: genders[i] === "male_count" ? "Male" : genders[i] === "female_count" ? "Female" : "Other", data: filterData(this.state.data, genders[i]) });
+        }
         const colors = ['#DC143C', '#FFA500', '#32CD32'];
 
         const crosshair = {
@@ -119,10 +96,10 @@ class IndividualsReached extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Individuals Reached" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Individuals Reached Through SRHM Activities" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
-                    <ChartCategoryAxisItem categories={activityType} startAngle={45}>
+                    <ChartCategoryAxisItem categories={activityTypes} startAngle={45}>
                         <ChartCategoryAxisCrosshair>
                             <ChartCategoryAxisCrosshairTooltip />
                         </ChartCategoryAxisCrosshair>
@@ -130,25 +107,9 @@ class IndividualsReached extends React.Component {
                 </ChartCategoryAxis>
                 <ChartTooltip render={defaultTooptip} />
                 <ChartSeries>
-                    {HCPTrained.map((item, index) => (
+                {graphData.map((item, index) => (
                         <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} name={item.name} spacing={0.5} gap={1}>
-                        </ChartSeriesItem>
-                    ))}
-
-                    {GeneralStepDown.map((item, index) => (
-                        <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
-                        </ChartSeriesItem>
-                    ))}
-                    {AmplifyChangeStudent.map((item, index) => (
-                        <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
-                        </ChartSeriesItem>
-                    ))}
-                    {AmplifyChangeTeacher.map((item, index) => (
-                        <ChartSeriesItem type="column"
-                            data={item.data} visible={seriesVisible[index]} spacing={0.5} gap={1}>
+                            data={item.data} visible={seriesVisible[index]} name={item.name} gap={3}>
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>
@@ -166,55 +127,25 @@ class IndividualsReached extends React.Component {
     }
 }
 
-function filterData(data, activitytype, gender) {
-    // For each tier, attach tier as name and data as the sums for each province
-    var activitytypes = getUniqueValues(data, 'activity_type');
-    var filtered;
+function filterData(data, gender) {
+    
+    const activityTypes = ['HCP', 'Step Down', 'AC - Students', 'AC - Teachers'];
+    var filtered = [];
+    if (data !== null && data !== undefined && data.length > 0)
+        filtered = data.filter(element => parseInt(element[gender]) !== 0);
+
     var sums = [];
-
-    if (gender === 'male_count') {
-        if (data !== null && data !== undefined && data.length > 0)
-            filtered = data.filter(element => element.activity_type === activitytype);
-        activitytypes.forEach(activitytype => {
-            var sumMale = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].activity_type == activitytype) {
-                    sumMale += parseInt(filtered[i].male_count);
-                }
+    activityTypes.forEach(activityType => {
+        var sum = 0;
+        for (var i = 0; i < filtered.length; i++) {
+            if (filtered[i].activity_type === activityType) {
+                sum += parseInt(filtered[i][gender]);
             }
-            sums.push(sumMale);
-        });
-        return sums;
+        }
+        sums.push(sum);
+    });
 
-    } else if (gender === 'female_count') {
-        if (data !== null && data !== undefined && data.length > 0)
-            filtered = data.filter(element => element.activity_type === activitytype);
-        activitytypes.forEach(activitytype => {
-            var sumFemale = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].activity_type == activitytype) {
-                    sumFemale += parseInt(filtered[i].female_count);
-                }
-            }
-            sums.push(sumFemale);
-        });
-        return sums;
-
-    } else {
-        if (data !== null && data !== undefined && data.length > 0)
-            filtered = data.filter(element => element.activity_type === activitytype);
-        activitytypes.forEach(activitytype => {
-            var sumOthers = 0;
-            for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].activity_type == activitytype) {
-                    sumOthers += parseInt(filtered[i].other_sex_count);
-                }
-            }
-            sums.push(sumOthers);
-        });
-
-        return sums;
-    }
+    return sums;
 }
 
 export default IndividualsReached;

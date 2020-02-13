@@ -20,7 +20,7 @@
  */
 
 
-import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
+import { Chart, ChartCategoryAxis, ChartTooltip, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
 import React from "react";
 import { getGraphData } from "../service/GetService";
@@ -75,6 +75,7 @@ class MobileCinema extends React.Component {
 
     render() {
 
+        const toolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         const provinces = getUniqueValues(this.state.data, 'city_village');
         let defaultData = [
@@ -103,6 +104,7 @@ class MobileCinema extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
+                <ChartTooltip render={toolTipRender} />
                 <ChartSeries>
                     {defaultData.map((item, index) => (
                         <ChartSeriesItem type="column"

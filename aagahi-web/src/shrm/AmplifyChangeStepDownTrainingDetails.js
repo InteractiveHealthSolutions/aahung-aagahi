@@ -468,8 +468,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
 
-            console.log("in submission");
-
             this.setState({
                 loading: true,
                 loadingMsg: "Saving trees..."

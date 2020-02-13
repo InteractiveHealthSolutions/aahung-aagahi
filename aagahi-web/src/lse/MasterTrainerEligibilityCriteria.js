@@ -372,9 +372,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
 
-            console.log("in submission");
             this.setState({
-                // form_disabled: true,
                 loading: true,
                 loadingMsg: "Saving trees..."
             })

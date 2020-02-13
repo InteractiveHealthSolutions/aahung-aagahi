@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-07 22:05:12
+ * @Last Modified time: 2020-02-13 12:52:12
  */
 
 
@@ -261,9 +261,7 @@ class RadioAppearance extends React.Component {
         if (this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({
-                // form_disabled: true,
                 loading: true,
                 loadingMsg: "Saving trees..."
             })

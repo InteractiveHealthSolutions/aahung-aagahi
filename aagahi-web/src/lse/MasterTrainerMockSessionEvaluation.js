@@ -525,7 +525,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         if (this.handleValidation()) {
 
             this.setState({
-                // form_disabled: true,
                 loading: true,
                 loadingMsg: "Saving trees..."
             })
