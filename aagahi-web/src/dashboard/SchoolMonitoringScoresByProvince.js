@@ -74,10 +74,8 @@ class SchoolMonitoringScoresByProvince extends React.Component {
     }
 
     render() {
-        const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
-        const secondaryToolTipRender = ({ point }) => (`Secondary - ${point.value}`);
+        const primaryToolTipRender = ({ point }) => (`${point.series.name}: ${point.value}%`);
         const seriesVisible = this.state.seriesVisible;
-        const labelContent = (e) => (e.category);
         let provinces = getUniqueValues(this.state.data, 'state_province');
         let data = [
             { name: 'Primary', data: filterData(this.state.data, 'Primary') },
@@ -96,7 +94,7 @@ class SchoolMonitoringScoresByProvince extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Monitoring Scores by Province" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Average Monitoring Scores % by Province" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" orientation="horizontal" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={provinces} startAngle={45}>

@@ -414,9 +414,8 @@ class InstitutionDetails extends React.Component {
             console.log("in submission");
 
             this.setState({
-                // form_disabled: true,
                 loading: true,
-                loadingMsg: "Fetching data..."
+                loadingMsg: "Saving data..."
             })
             try {
 

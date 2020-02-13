@@ -309,7 +309,6 @@ class ParticipantSearch extends React.Component {
             response.json().then(json => {
                 if (response.status === 200) { // ok: success
                     showAlert("Data is restored successfully!", "SUCCESS");
-                    // let self = this;
                     this.setState({
                         modal: false
                     })

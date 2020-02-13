@@ -74,7 +74,7 @@ class SchoolMonitoringScoresByDistrict extends React.Component {
     }
 
     render() {
-        const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
+        const primaryToolTipRender = ({ point }) => (`${point.series.name} - ${point.value}%`);
         const seriesVisible = this.state.seriesVisible;
         let districts = getUniqueValues(this.state.data, 'city_village');
         let data = [
@@ -93,7 +93,7 @@ class SchoolMonitoringScoresByDistrict extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Monitoring Scores by District" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Average Monitoring Scores % by District" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={districts} startAngle={45}>

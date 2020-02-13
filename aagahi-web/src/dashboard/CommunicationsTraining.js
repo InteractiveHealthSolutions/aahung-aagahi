@@ -20,7 +20,7 @@
  */
 
 
-import { Chart, ChartCategoryAxis, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
+import { Chart, ChartCategoryAxis, ChartTooltip, ChartCategoryAxisCrosshair, ChartCategoryAxisCrosshairTooltip, ChartCategoryAxisItem, ChartLegend, ChartSeries, ChartSeriesItem, ChartSeriesItemTooltip, ChartTitle, ChartValueAxis, ChartValueAxisItem } from '@progress/kendo-react-charts';
 import 'hammerjs';
 import React from "react";
 import { getGraphData } from "../service/GetService";
@@ -75,7 +75,7 @@ class CommunicationsTraining extends React.Component {
 
     render() {
         const seriesVisible = this.state.seriesVisible;
-        const toolTipRender = ({ point }) => (`${point.value}`);
+        const toolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         let data = [
             { name: 'SRHR', data: filterData(this.state.data, 'covered_srhr') },
             { name: 'Agency and Choice', data: filterData(this.state.data, 'covered_agency_choice') },
@@ -95,7 +95,7 @@ class CommunicationsTraining extends React.Component {
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }}
                 onLegendItemClick={this.onLegendItemClick} >
-                <ChartTitle text="Communications Training" color="black" font="19pt sans-serif" />
+                <ChartTitle text="Type of Individuals Trained by Communications" color="black" font="19pt sans-serif" />
                 <ChartLegend position="bottom" />
                 <ChartCategoryAxis>
                     <ChartCategoryAxisItem categories={['Journalists', 'Screenwriters', 'Bloggers', 'Media', 'Other']} startAngle={45}>
@@ -104,11 +104,12 @@ class CommunicationsTraining extends React.Component {
                         </ChartCategoryAxisCrosshair>
                     </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
-                <ChartSeries>
+                <ChartTooltip render={toolTipRender} />
+                <ChartSeries >
                 {data.map((item, index) => (
                         <ChartSeriesItem type="column"
                             data={item.data} visible={seriesVisible[index]} spacing={0.5} name={item.name} gap={2}>
-                            <ChartSeriesItemTooltip render={toolTipRender} />
+                            {/* <ChartSeriesItemTooltip /> */}
                         </ChartSeriesItem>
                     ))}
                 </ChartSeries>

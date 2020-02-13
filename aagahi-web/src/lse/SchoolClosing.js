@@ -297,7 +297,8 @@ class SchoolClosing extends React.Component {
         event.preventDefault();
         if (this.handleValidation()) {
             this.setState({
-                loading: true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);
@@ -644,7 +645,7 @@ class SchoolClosing extends React.Component {
                                                         <Col md="2">
                                                         </Col>
                                                         <Col md="2">
-                                                            <LoadingIndicator loading={this.state.loading} />
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>

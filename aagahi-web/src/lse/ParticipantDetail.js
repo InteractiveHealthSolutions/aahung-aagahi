@@ -331,7 +331,6 @@ class ParticipantDetails extends React.Component {
     handleSubmit = async event => {
         event.preventDefault();
         if (this.handleValidation()) {
-            console.log("in submission");
 
             this.setState({
                 loading: true,

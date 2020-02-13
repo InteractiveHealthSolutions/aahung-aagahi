@@ -247,10 +247,10 @@ class DashboardMain extends React.Component {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col" style={{ marginBottom: '12px' }}>
-                                                            <SchoolMonitoringScoresByProvince endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                            <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                         </div>
                                                         <div class="col" style={{ marginBottom: '12px' }}>
-                                                            <TeachersTrainedSummaryChart endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
+                                                            <SchoolMonitoringScoresByProvince endDate={this.state.endDateParam} startDate={this.state.startDateParam} provincesString={this.state.provincesStringParam} citiesString={this.state.citiesStringParam} component={this.state.component} />
                                                         </div>
                                                         <div class="w-100">
                                                             <div class="col" style={{ marginBottom: '12px' }}>
