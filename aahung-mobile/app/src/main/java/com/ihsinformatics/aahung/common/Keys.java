@@ -257,6 +257,7 @@ public class Keys {
     public static final String MASTER_TRAINER_PROBES = "mt_csa_probing_style";
     public static final String MASTER_TRAINER_QUANTITY = "csa_mt_count";
     public static final String MASTER_TRAINER_SEXUAL_HEALTH = "mt_def_sexual_health";
+    public static final String MASTER_TRAINER_SEXUAL_HEALTH_LSBE = "mt_def_sexual_health_lsbe";
     public static final String PARTICIPATING_DEMO = "pts_link_health_aspects";
     public static final String PARTICIPATING_SEX_GENDER = "pts_dif_sex_gender";
     public static final String PARTICIPATING_NORM = "pts_gender_norm_sterotype";
@@ -396,7 +397,7 @@ public class Keys {
     public static final String TYPE_OF_MATERIAL = "distribution_material_type";
     public static final String ANNUAL_REPORT = "annual_report_count";
     public static final String AAHUNG_PROFILE = "aahung_profile_count";
-    public static final String PAMPHLET = "phamplet_count";
+    public static final String PAMPHLET = "pamphlet_count";//pamphlet_count
     public static final String BOOKLET = "booklet_count";
     public static final String REPORT = "report_count";
     public static final String OTHER_NUMBER = "otherNmuber";
@@ -774,5 +775,7 @@ public class Keys {
     public static final String ROLE_ADMIN = "Admin";
     public static final String ROLE_IMPLEMENTER = "Implementer";
     public static final String PARTICIPANT = "participantId";
+
+    public static final String Warning = "warning";
 
 }

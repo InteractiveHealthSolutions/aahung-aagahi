@@ -12,7 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.json.JSONException;
@@ -24,6 +27,7 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -325,4 +329,25 @@ public interface LocationService {
      */
     LocationDesearlizeDto getLocationDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) throws HibernateException;
 
+    /**
+     * Restore the voided {@link Location} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void voidLocation(Location obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Restore the voided {@link Location} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    Location unvoidLocation(Location obj) throws HibernateException, ValidationException, IOException;
+
+    
 }

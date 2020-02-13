@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="1750" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1710" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="831"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -40,16 +40,16 @@ if(school_level='Primary',pmn1.date_created,smn1.date_created) as date_created1,
 if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct) as monitoring_score_pct1,
 
 sum(if(meca.mt_eligible='281',1,0)) as no_eligible_mt,
-if(if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct)>=85 and if(school_level='Primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct)>=85 and sum(if(meca.mt_eligible='281',1,0))>0,'yes','No' ) as diff_score
+if(if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct)>=85 and if(school_level='Primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct)>=85 and sum(if(meca.mt_eligible='281',1,0))>0,'yes','No' ) as eligible
 
 
 FROM `aagahi`.`school_detail` sd
 
 
-left join _lse_primary_monitoring_running as pmn1 on sd.location_id=pmn1.location_id and pmn1.date_created=(select date_created from _lse_primary_monitoring_running where location_id=pmn1.location_id order by date_created desc limit 0,1)
-left join _lse_secondary_monitoring_running as smn1 on sd.location_id=smn1.location_id and smn1.date_created=(select date_created from _lse_secondary_monitoring_running where location_id=smn1.location_id order by date_created desc limit 0,1)
-left join _lse_primary_monitoring_running as pmn2 on sd.location_id=pmn2.location_id and pmn2.date_created=(select date_created from _lse_primary_monitoring_running where location_id=pmn2.location_id order by date_created desc limit 1,1)
-left join _lse_secondary_monitoring_running as smn2 on sd.location_id=smn2.location_id and smn2.date_created=(select date_created from _lse_secondary_monitoring_running where location_id=smn2.location_id order by date_created desc limit 1,1)
+left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id and pmn1.date_created=(select date_created from _lse_primary_monitoring where location_id=pmn1.location_id order by date_created desc limit 0,1)
+left join _lse_secondary_monitoring as smn1 on sd.location_id=smn1.location_id and smn1.date_created=(select date_created from _lse_secondary_monitoring where location_id=smn1.location_id order by date_created desc limit 0,1)
+left join _lse_primary_monitoring as pmn2 on sd.location_id=pmn2.location_id and pmn2.date_created=(select date_created from _lse_primary_monitoring where location_id=pmn2.location_id order by date_created desc limit 1,1)
+left join _lse_secondary_monitoring as smn2 on sd.location_id=smn2.location_id and smn2.date_created=(select date_created from _lse_secondary_monitoring where location_id=smn2.location_id order by date_created desc limit 1,1)
 
 left join _lse_mt_eligibility_criteria_assessment as meca on meca.location_id=sd.location_id
 
@@ -84,11 +84,11 @@ group by sd.location_id;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="date_created2" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct2" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct2" class="java.lang.Double"/>
 	<field name="date_created1" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct1" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct1" class="java.lang.Double"/>
 	<field name="no_eligible_mt" class="java.math.BigDecimal"/>
-	<field name="diff_score" class="java.lang.String"/>
+	<field name="eligible" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -188,7 +188,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[diff_score]]></text>
+				<text><![CDATA[eligible]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -262,7 +262,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{diff_score}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{eligible}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="0" y="37" width="1693" height="1" uuid="2720e5cc-ad34-467e-9b46-f93b56f866cc"/>

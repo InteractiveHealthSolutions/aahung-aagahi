@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -199,11 +200,10 @@ public class LocationControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteLocation() throws Exception {
 	when(locationService.getLocationByUuid(any(String.class))).thenReturn(diagonalley);
-	doNothing().when(locationService).deleteLocation(diagonalley, true);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}", diagonalley.getUuid()));
-	actions.andExpect(status().isNoContent());
+	doNothing().when(locationService).voidLocation(diagonalley);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}?reasonVoided=Test123", diagonalley.getUuid()));
 	verify(locationService, times(1)).getLocationByUuid(diagonalley.getUuid());
-	verify(locationService, times(1)).deleteLocation(diagonalley, true);
+	verify(locationService, times(1)).voidLocation(diagonalley);
 	verifyNoMoreInteractions(locationService);
     }
 
@@ -715,5 +715,32 @@ public class LocationControllerTest extends BaseTestData {
 	verify(locationService, times(1)).getLocationDesearlizeDtoUuid(any(String.class),any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
     }
     
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#unvoidLocation(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidLocation() throws Exception {
+	when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+	when(locationService.unvoidLocation(any(Location.class))).thenReturn(hogwartz);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "location/{uuid}", hogwartz.getUuid()));
+	verify(locationService, times(1)).getLocationByUuid(hogwartz.getUuid());
+	verify(locationService, times(1)).unvoidLocation(hogwartz);
+	verifyNoMoreInteractions(locationService);
+    }
+    
+    @Test
+    public void shouldUpdateLocationAttributeType() throws Exception {
+	when(locationService.getLocationAttributeTypeByUuid(any(String.class))).thenReturn(noOfStudents);
+	when(locationService.updateLocationAttributeType(any(LocationAttributeType.class))).thenReturn(noOfStudents);
+	String content = BaseEntity.getGson().toJson(noOfStudents);
+	ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattributetype/{uuid}", noOfStudents.getUuid())
+		.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+	actions.andExpect(status().isOk());
+	verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
+	verify(locationService, times(1)).updateLocationAttributeType(any(LocationAttributeType.class));
+    }
 
 }

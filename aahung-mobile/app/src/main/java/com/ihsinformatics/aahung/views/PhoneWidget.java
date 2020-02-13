@@ -35,8 +35,8 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     private boolean isMandatory;
     private String key;
     private WidgetPhoneBinding binding;
-    private String mobileRegex = "[0][3][0-9]{2}[-][0-9]{7}";
-    private String landlineRegex = "^(?:(([+]|00)92)|0)((([0-2]|[4-9])(\\d[0-9]{0,1})))-(\\d{6,8})$";
+    private String mobileRegex = "[0][3][0-9]{2}[0-9]{7}";
+    private String landlineRegex = "^(?:(([+]|00)92)|0)((([0-2]|[4-9])(\\d[0-9]{0,1})))(\\d{6,8})$";
     private BaseAttribute attribute;
     private WidgetContract.PhoneListener phoneListener;
 
@@ -63,7 +63,6 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
         String sterric = context.getResources().getString(R.string.is_mandatory);
         binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.phoneExtention.addTextChangedListener(this);
-        binding.phoneCode.addTextChangedListener(this);
     }
 
 
@@ -103,11 +102,11 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
         String phoneNo = getFullNumber();
 
         if (isMandatory) {
-            if (isEmpty(binding.phoneCode.getText().toString()) || isEmpty(binding.phoneExtention.getText().toString())) {
-                binding.title.setError("This field is empty");
+            if (isEmpty(binding.phoneExtention.getText().toString())) {
+                binding.phoneExtention.setError("This field is empty");
                 isValid = false;
             } else if (!(phoneNo.matches(mobileRegex) || phoneNo.matches(landlineRegex))) {
-                binding.title.setError("Phone number is not valid");
+                binding.phoneExtention.setError("Phone number is not valid");
                 isValid = false;
             } else {
                 binding.title.setError(null);
@@ -120,10 +119,7 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
 
     @NotNull
     private String getFullNumber() {
-        return new StringBuilder()
-                .append(binding.phoneCode.getText().toString())
-                .append("-")
-                .append(binding.phoneExtention.getText().toString()).toString();
+        return binding.phoneExtention.getText().toString();
     }
 
     @Override
@@ -166,9 +162,16 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     }
 
     public void setText(String value) {
-        String[] split = value.split("-");
-        binding.phoneCode.setText(split[0]);
-        binding.phoneExtention.setText(split[1]);
+
+        if (!isEmpty(value)) {
+            if (value.contains("-")) {
+                String replace = value.replace("-", "");
+                binding.phoneExtention.setText(replace);
+            } else
+                binding.phoneExtention.setText(value);
+        }
+
+
     }
 
     public Widget setPhoneListener(WidgetContract.PhoneListener phoneListener) {

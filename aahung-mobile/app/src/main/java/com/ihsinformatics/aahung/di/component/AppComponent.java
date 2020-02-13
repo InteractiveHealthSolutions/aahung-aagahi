@@ -9,6 +9,7 @@ import com.ihsinformatics.aahung.di.module.DatabaseModule;
 
 import com.ihsinformatics.aahung.di.module.NetworkModule;
 import com.ihsinformatics.aahung.di.module.PresenterModule;
+import com.ihsinformatics.aahung.fragments.FormListFragment;
 import com.ihsinformatics.aahung.fragments.TabFragment;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
 import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
@@ -32,4 +33,5 @@ public interface AppComponent {
     void inject(FormUI formUI);
     void inject(FormUploadWorker formUploadWorker);
     void inject(TabFragment tabFragment);
+    void inject(FormListFragment formListFragment);
 }

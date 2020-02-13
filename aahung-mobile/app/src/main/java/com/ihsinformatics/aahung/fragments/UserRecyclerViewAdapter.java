@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.UserContract;
+import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.model.BaseItem;
 
 import java.util.ArrayList;
@@ -24,15 +25,16 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     private final UserContract.AdapterInteractionListener mListener;
 
     public UserRecyclerViewAdapter(List<? extends BaseItem> items, UserContract.AdapterInteractionListener listener) {
-        mValues = (List<BaseItem>) items;
-        mValuesFiltered = (List<BaseItem>) items;
+        List<BaseItem> filteredList = Utils.getNonVoidList(items);
+        mValues = (List<BaseItem>) filteredList;
+        mValuesFiltered = (List<BaseItem>) filteredList;
         mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_user, parent, false);
+                .inflate(R.layout.dialog_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -41,8 +43,6 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         holder.mItem = mValuesFiltered.get(position);
         holder.id.setText("" + mValuesFiltered.get(position).getShortName());
         holder.name.setText(mValuesFiltered.get(position).getName());
-        // holder.type.setText(mValuesFiltered.get(position).getType());
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,11 +113,10 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                     List<BaseItem> filteredList = new ArrayList<>();
                     for (BaseItem row : mValues) {
 
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getShortName()).contains(charSequence)) {
+                        if ((row.getName().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getShortName()).contains(charSequence)) && !row.isVoided()) {
                             filteredList.add(row);
                         }
                     }
-
                     mValuesFiltered = filteredList;
                 }
 

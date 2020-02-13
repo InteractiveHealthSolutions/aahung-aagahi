@@ -15,9 +15,11 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -33,4 +35,8 @@ public interface UserRepository extends CustomUserRepository, JpaRepository<User
     User findByUuid(String uuid);
 
     List<User> findUsersByUserRolesRoleId(Integer roleId);
+    
+    @Query("UPDATE User d set d.isVoided = true WHERE d = :user")
+    @Modifying
+    void softDelete(@Param("user") User user);
 }

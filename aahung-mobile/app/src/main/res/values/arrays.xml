@@ -690,7 +690,7 @@
         <item>csa</item>
         <item>gender_discrimination</item>
         <item>puberty</item>
-        <item>sexual_harassment</item>
+        <item>sexual_harrassment</item>
         <item>early_age_marriage</item>
         <item>family_planning</item>
         <item>other</item>
@@ -824,6 +824,20 @@
         <item>institution_management</item>
         <item>other_professionals</item>
         <item>other</item>
+
+    </string-array>
+    <string-array name="type_of_material_comm" >
+    <item>annual_report</item>
+    <item>aahung_profile</item>
+    <item>pamphlet</item>
+    <item>booklet</item>
+    <item>report</item>
+    <item>aahung_mugs</item>
+    <item>aahung_folders</item>
+    <item>aahung_notebooks</item>
+    <item>other</item>
+
+
 
     </string-array>
 </resources>

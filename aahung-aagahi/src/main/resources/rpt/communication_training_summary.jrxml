@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2600" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="1117"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -259,119 +259,119 @@ date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="117" height="20" uuid="0e2ef5e3-d0ab-4ed7-9dbb-dfb19dd57a9b"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="0" width="117" height="20" uuid="0e2ef5e3-d0ab-4ed7-9dbb-dfb19dd57a9b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="117" y="0" width="90" height="20" uuid="492c5202-11df-442c-a0e0-bcb9626ba1f2"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="117" y="0" width="90" height="20" uuid="492c5202-11df-442c-a0e0-bcb9626ba1f2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="207" y="0" width="126" height="20" uuid="489267ce-bf1a-4b41-aca6-b21db75dea8e"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="207" y="0" width="126" height="20" uuid="489267ce-bf1a-4b41-aca6-b21db75dea8e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="333" y="0" width="175" height="20" uuid="8d5f7c3f-8ff1-45ff-bf43-b3e99f33a178"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="333" y="0" width="175" height="20" uuid="8d5f7c3f-8ff1-45ff-bf43-b3e99f33a178"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{trainer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="508" y="0" width="132" height="20" uuid="3b3735a5-dd37-4da7-8e1d-4d7f21462197"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="508" y="0" width="132" height="20" uuid="3b3735a5-dd37-4da7-8e1d-4d7f21462197"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_venue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="640" y="0" width="187" height="20" uuid="ccf6d789-7977-4b9f-8fa8-e8d0e0e7d9e4"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="640" y="0" width="187" height="20" uuid="ccf6d789-7977-4b9f-8fa8-e8d0e0e7d9e4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_venue_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="827" y="0" width="124" height="20" uuid="7d6b9fc6-74cb-4424-8dd5-5e9a09ebd7db"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="827" y="0" width="124" height="20" uuid="7d6b9fc6-74cb-4424-8dd5-5e9a09ebd7db"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_days}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1136" y="0" width="153" height="20" uuid="1beab7a3-7b79-4bc5-9a30-51bf66a5fe81"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1136" y="0" width="153" height="20" uuid="1beab7a3-7b79-4bc5-9a30-51bf66a5fe81"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1289" y="0" width="159" height="20" uuid="f4bff79a-8ce1-4674-83b6-9de8d23a22d4"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1289" y="0" width="159" height="20" uuid="f4bff79a-8ce1-4674-83b6-9de8d23a22d4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1448" y="0" width="164" height="20" uuid="6bce919c-913c-4504-9128-13c4d0437cae"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1448" y="0" width="164" height="20" uuid="6bce919c-913c-4504-9128-13c4d0437cae"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1612" y="0" width="182" height="20" uuid="3464566b-91ed-4351-8054-6339cae51e14"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1612" y="0" width="182" height="20" uuid="3464566b-91ed-4351-8054-6339cae51e14"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1794" y="0" width="139" height="20" uuid="f7b430b0-2f13-4717-82d7-ae579a4da75f"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1794" y="0" width="139" height="20" uuid="f7b430b0-2f13-4717-82d7-ae579a4da75f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{journalist_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="2056" y="0" width="154" height="20" uuid="6a8ee648-9bce-42d6-ac7c-08739346cb80"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="2056" y="0" width="154" height="20" uuid="6a8ee648-9bce-42d6-ac7c-08739346cb80"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{screenwriter_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="2210" y="0" width="161" height="20" uuid="f0310195-959f-436d-a096-2d4ee2222150"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="2210" y="0" width="161" height="20" uuid="f0310195-959f-436d-a096-2d4ee2222150"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_media_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="2371" y="0" width="179" height="20" uuid="165ad79a-bf72-43ff-8a25-8c32ac7bb2bd"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="2371" y="0" width="179" height="20" uuid="165ad79a-bf72-43ff-8a25-8c32ac7bb2bd"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_attendant_count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement isPrintRepeatedValues="false" x="1933" y="0" width="123" height="20" uuid="328b1927-d1fd-476b-bfb2-42b5cdfe080e"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1933" y="0" width="123" height="20" uuid="328b1927-d1fd-476b-bfb2-42b5cdfe080e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{blogger_count}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="951" y="1" width="185" height="20" uuid="1808c3f8-add2-44e1-a85f-b704c2a974b4"/>
+				<reportElement stretchType="RelativeToTallestObject" x="951" y="1" width="185" height="20" uuid="1808c3f8-add2-44e1-a85f-b704c2a974b4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>

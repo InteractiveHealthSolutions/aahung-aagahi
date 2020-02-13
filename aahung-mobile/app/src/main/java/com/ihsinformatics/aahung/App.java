@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.droidnet.DroidNet;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.di.component.AppComponent;
 
@@ -19,6 +20,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        DroidNet.init(this);
         Fabric.with(this, new Crashlytics());
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Montserrat-Light.otf")
@@ -33,4 +35,9 @@ public class App extends Application {
         return component;
     }
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        DroidNet.getInstance().removeAllInternetConnectivityChangeListeners();
+    }
 }

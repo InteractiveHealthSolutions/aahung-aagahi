@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 17:02:11
+ * @Last Modified time: 2020-02-11 10:06:41
  */
 
 
@@ -32,7 +32,7 @@ import { getAllRoles, getAllUsers, getUserByRegexValue } from "../service/GetSer
 import { saveUser, updateUser } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { hasPrivilege } from "../util/AahungUtil.js";
+import { UserService } from '../service/UserService';
 
 class AddUser extends React.Component {
 
@@ -77,7 +77,6 @@ class AddUser extends React.Component {
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
-
     }
 
     componentWillUnmount() {
@@ -220,8 +219,6 @@ class AddUser extends React.Component {
                     delete this.fetchedUser.roles;
                     delete this.fetchedUser.createdBy;
                     delete this.fetchedUser.updatedBy;
-                    console.log("printing created json object below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                    console.log(this.fetchedUser);
     
                     updateUser(this.fetchedUser, this.fetchedUser.uuid)
                     .then(
@@ -489,11 +486,14 @@ class AddUser extends React.Component {
     render() {
 
         // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
         const passwordDisable = this.disablePassword && this.editMode ? "disabled" : "";
         const usernameDisable = this.editMode ? "disabled" : "";
         const changePasswordDisplay = this.editMode ? "block" : "none";
-        const buttonDisable = false;
+        // if the user does not have edit rights
+        var buttonDisabled = false;
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit User') ? false : true;
+        }
 
         return (
             
@@ -637,8 +637,8 @@ class AddUser extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisable}>Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>

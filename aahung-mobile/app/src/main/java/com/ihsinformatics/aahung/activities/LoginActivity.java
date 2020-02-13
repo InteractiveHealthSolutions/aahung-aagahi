@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
 
-
     @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -57,24 +56,36 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void dismissLoading() {
-        binding.loginButton.setClickable(true);
-        if (loading.isVisible())
-            loading.dismiss();
+        enableLoginButton();
+        if (loading.isVisible()) {
+            try {
+                loading.dismiss();
+            } catch (IllegalStateException ignored) {
+                ignored.printStackTrace();
+            }
+        }
     }
 
     public void onLoginButtonClicked(View view) {
 
-        view.setClickable(false);
         if (isEmpty(binding.username.getText().toString().trim()) || isEmpty(binding.password.getText().toString().trim())) {
             Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
         } else {
-
+            view.setEnabled(false);
             if (isInternetAvailable(this)) {
-                if (!loading.isAdded())
-                    loading.show(getSupportFragmentManager(), LOADING_TAG);
+                showLoadingDialog();
                 presenter.validateUserOnline(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
             } else
                 presenter.validateUserOffine(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
+        }
+    }
+
+    private void showLoadingDialog() {
+        try {
+            if (!loading.isAdded())
+                loading.show(getSupportFragmentManager(), LOADING_TAG);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -91,17 +102,26 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         binding.rememberMe.setChecked(isRemember);
     }
 
+    @Override
+    public void enableLoginButton() {
+        binding.loginButton.setEnabled(true);
+    }
+
+    @Override
+    public void enableSyncButton() {
+        binding.sync.setEnabled(true);
+    }
+
     public void onSettingButtonClicked(View view) {
         startActivity(new Intent(LoginActivity.this, SettingsActivity.class));
     }
 
     public void onSyncButtonClicked(View view) {
         if (isInternetAvailable(this)) {
-            if (!loading.isAdded())
-                loading.show(getSupportFragmentManager(), LOADING_TAG);
+            view.setEnabled(false);
+            showLoadingDialog();
             presenter.syncMetadata(true);
-        }
-        else {
+        } else {
             showToast("Internet is not available");
         }
     }
@@ -110,6 +130,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     protected void onResume() {
         super.onResume();
         presenter.restoreLastSavedUsed();
-        binding.loginButton.setClickable(true);
+        enableLoginButton();
     }
 }

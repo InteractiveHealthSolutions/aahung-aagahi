@@ -12,8 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,19 +23,21 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
-import org.json.JSONException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
-import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
@@ -224,5 +228,80 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 		return  new ParticipantDesearlizeDto(part, locationService, metadataService, userService, donorService);
 	}
 	return null;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidParticipant(com.
+     * ihsinformatics.aahung.aagahi.model.Participant)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Participant")
+    @Transactional
+    public void voidParticipant(Participant obj) throws HibernateException {
+	obj = (Participant) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	Person person = (Person) setSoftDeleteAuditAttributes(obj.getPerson());
+	person.setIsVoided(Boolean.TRUE);
+	person.setReasonVoided(obj.getReasonVoided() + " (Participant voided)");
+	for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+		if(Boolean.FALSE.equals(attribute.getIsVoided())){
+			attribute.setIsVoided(Boolean.TRUE);
+			attribute.setVoidedBy(obj.getVoidedBy());
+			attribute.setDateVoided(obj.getDateVoided());
+			attribute.setReasonVoided(obj.getReasonVoided() + " (Participant voided)");
+			personAttributeRepository.softDelete(attribute);
+		}
+	}
+	personRepository.softDelete(person);
+	participantRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidParticipant(com.
+     * ihsinformatics.aahung.aagahi.model.Participant)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Participant")
+    @Transactional
+    public Participant unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    String voidedReason = obj.getReasonVoided();
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+	    
+	    Person person = obj.getPerson();
+	    if(Boolean.TRUE.equals(person.getIsVoided()) && person.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+			person.setIsVoided(Boolean.FALSE);
+			if (person.getReasonVoided() == null) {
+				person.setReasonVoided("");
+			 }
+			person.setReasonVoided(person.getReasonVoided() + "(Participant unvoided on "
+				    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+			personService.updatePerson(person);
+		}
+	    
+	    for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (Participant voided)")){
+				attribute.setIsVoided(Boolean.FALSE);
+				if (attribute.getReasonVoided() == null) {
+					attribute.setReasonVoided("");
+				 }
+				attribute.setReasonVoided(attribute.getReasonVoided() + "(Participant unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+				personService.updatePersonAttribute(attribute);
+			}
+		}
+	    
+	    return updateParticipant(obj);
+	}
+	 return obj;
     }
 }

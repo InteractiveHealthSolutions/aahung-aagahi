@@ -227,7 +227,7 @@ public interface FormService {
      * @throws IOException
      * @throws ValidationException
      */
-    void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException;
+    FormData unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
     /**
      * @param obj

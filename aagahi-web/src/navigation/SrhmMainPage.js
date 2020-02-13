@@ -269,22 +269,19 @@ render() {
               <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator" onClick={this.toggleSidebar}  >
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeParticipantDetail">
-                  <b>Amplify Change Participant Details</b>
+                  <b>AC Participant Details</b>
                   </Link>
                   </NavText>
               </NavItem>
 
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
-                  
                   <Link className="link formLink" to="/oneTouchSensitizationDetails">
                   <b>One Touch Sensitization Details</b>
                   </Link>
-                  
                   </NavText>
               </NavItem>
 
-              
               <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
@@ -308,7 +305,7 @@ render() {
               <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeTrainingDetails">
-                  <b>Amplify Change Training Details Form</b>
+                  <b>AC Training Details Form</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -317,7 +314,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/generalStepDownTrainingDetails">
-                  <b>General Step Down Training Details</b>
+                  General Step Down Training Details
                   </Link>
                   
                   </NavText>
@@ -327,7 +324,7 @@ render() {
                   <NavText>
                   
                   <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
-                  <b>Amplify Change Step Down Training Details</b>
+                  <b>AC Step Down Training Details</b>
                   </Link>
                   
                   </NavText>

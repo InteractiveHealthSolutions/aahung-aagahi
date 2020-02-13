@@ -25,10 +25,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.junit.Before;
@@ -39,6 +42,8 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -393,5 +398,72 @@ public class LocationServiceTest extends BaseServiceTest {
 	when(locationAttributeTypeRepository.save(any(LocationAttributeType.class))).thenReturn(noOfStudents);
 	assertNotNull(locationService.updateLocationAttributeType(noOfStudents).getDateUpdated());
 	verify(locationAttributeTypeRepository, times(1)).save(any(LocationAttributeType.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#unvoidLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidLocation() throws HibernateException, ValidationException, IOException {
+    hogwartz.setIsVoided(true);
+    hogwartz.setReasonVoided("Testing");
+    
+    List<LocationAttribute> locationAttributes = Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers);
+    hogwartz.setAttributes(locationAttributes);
+    
+	when(locationRepository.save(any(Location.class))).thenReturn(hogwartz);
+	locationService.unvoidLocation(hogwartz);
+	verify(locationRepository, times(1)).save(any(Location.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#voidLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+     */
+    @Test
+    public void shouldVoidLocation() {
+	doNothing().when(locationRepository).softDelete(any(Location.class));
+	try {
+		List<LocationAttribute> locationAttributes = Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers);
+	    hogwartz.setAttributes(locationAttributes);		
+		locationService.voidLocation(hogwartz);
+	} catch (HibernateException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ValidationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	verify(locationRepository, times(1)).softDelete(any(Location.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeByUuid(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetLocationAttributeByUuid() {
+	when(locationAttributeRepository.findByUuid(any(String.class))).thenReturn(noOfHogwartzStudents);
+	assertEquals(locationService.getLocationAttributeByUuid(noOfHogwartzStudents.getUuid()).getUuid(), noOfHogwartzStudents.getUuid());
+	verify(locationAttributeRepository, times(1)).findByUuid(any(String.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeByUuid(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetLocationAttributeTypeByUuid() {
+	when(locationAttributeTypeRepository.findByUuid(any(String.class))).thenReturn(noOfStudents);
+	assertEquals(locationService.getLocationAttributeTypeByUuid(noOfStudents.getUuid()).getUuid(), noOfStudents.getUuid());
+	verify(locationAttributeTypeRepository, times(1)).findByUuid(any(String.class));
     }
 }

@@ -12,16 +12,24 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.ValidationException;
+
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Project;
+import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -265,5 +273,106 @@ public class DonorServiceImpl extends BaseService implements DonorService {
     public Project updateProject(Project obj) {
 	obj = (Project) setUpdateAuditAttributes(obj);
 	return projectRepository.save(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Project")
+    @Transactional
+    public void voidProject(Project obj) throws HibernateException {
+	obj = (Project) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	projectRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Project")
+    @Transactional
+    public Project unvoidProject(Project obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+	    return updateProject(obj);
+	}
+	return obj;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Donor")
+    @Transactional
+    public void voidDonor(Donor obj) throws HibernateException {
+	obj = (Donor) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	
+	List<Project> projects = projectRepository.findByDonor(obj);
+	for(Project project: projects){
+		if(Boolean.FALSE.equals(project.getIsVoided())){
+			project.setIsVoided(Boolean.TRUE);
+			project.setVoidedBy(obj.getVoidedBy());
+			project.setDateVoided(obj.getDateVoided());
+			project.setReasonVoided(obj.getReasonVoided() + " (Donor voided)");
+			projectRepository.softDelete(project);
+		}
+	}
+	
+	donorRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void Donor")
+    @Transactional
+    public Donor unvoidDonor(Donor obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    String voidedReason = obj.getReasonVoided();
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+	    
+	    List<Project> projects = projectRepository.findByDonor(obj);
+		for(Project project: projects){
+			if(Boolean.TRUE.equals(project.getIsVoided()) && project.getReasonVoided().equals(voidedReason + " (Donor voided)")){
+				project.setIsVoided(Boolean.FALSE);
+				if (project.getReasonVoided() == null) {
+					project.setReasonVoided("");
+				 }
+				project.setReasonVoided(project.getReasonVoided() + "(Donor unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+				updateProject(project);
+			}
+		}
+		
+		return updateDonor(obj);
+	}
+	return obj;
     }
 }

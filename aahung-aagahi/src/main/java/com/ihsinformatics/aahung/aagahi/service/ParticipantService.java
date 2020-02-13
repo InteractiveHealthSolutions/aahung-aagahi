@@ -12,12 +12,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.json.JSONException;
+import javax.validation.ValidationException;
 
-import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import org.hibernate.HibernateException;
+
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
@@ -111,4 +112,25 @@ public interface ParticipantService {
      */
     ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService,  UserService userService, DonorService donorService);
 
+    /**
+     * Restore the voided {@link Participant} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void voidParticipant(Participant obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Restore the voided {@link Participant} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    Participant unvoidParticipant(Participant obj) throws HibernateException, ValidationException, IOException;
+
+    
 }

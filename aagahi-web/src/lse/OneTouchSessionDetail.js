@@ -20,22 +20,23 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, CardHeader, Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, Row, Col } from 'reactstrap';
-import "../index.css";
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBIcon } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getFormDataById, getRoleByName, getUsersByRole} from "../service/GetService";
-import { saveFormData, updateFormData } from "../service/PostService";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getFormDataById, getFormTypeByUuid, getRoleByName, getUsersByRole } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
+import { getObject, loadFormState } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 const participantGenderOptions = [
     { value: 'female', label: 'Female' },
@@ -87,7 +88,7 @@ class OneTouchSessionDetail extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-        
+
         this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
@@ -105,10 +106,10 @@ class OneTouchSessionDetail extends React.Component {
         this.isParticipantTypeProfessional = false;
         this.isMale = false;
         this.isFemale = false;
-        this.isOtherSex = false; 
+        this.isOtherSex = false;
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "province", "district", "institution_session_conducted", "trainer", "session_topic", 
-        "participants_sex", "event_attendant", "participants_age_group", "training_days"];
+        this.requiredFields = ["date_start", "province", "district", "institution_session_conducted", "trainer", "session_topic",
+            "participants_sex", "event_attendant", "participants_age_group", "training_days"];
         this.errors = {};
         this.editMode = false;
         this.fetchedForm = {};
@@ -135,21 +136,21 @@ class OneTouchSessionDetail extends React.Component {
             })
             let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SESSION_DETAIL_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
-            
+
             let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
-            console.log( "Role ID:" + role.roleId);
+            console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
-            if(trainersArray != null && trainersArray.length > 0) {
+            let trainersArray = await getUsersByRole(role.uuid, false);
+            if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
-                    trainers : trainersArray
+                    trainers: trainersArray
                 })
             }
 
-            if(this.editMode) {
+            if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
-                
-                if(this.fetchedForm !== null) {
+
+                if (this.fetchedForm !== null) {
                     this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
                     this.setState({
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
@@ -160,18 +161,18 @@ class OneTouchSessionDetail extends React.Component {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
-            this.setState({ 
+            this.setState({
                 loading: false
             })
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
             var errorMsg = String(error);
-            this.setState({ 
+            this.setState({
                 loading: false,
-                modalHeading : 'Fail!',
-                okButtonStyle : { display: 'none' },
-                modalText : errorMsg,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
                 modal: !this.state.modal
             });
         }
@@ -179,9 +180,9 @@ class OneTouchSessionDetail extends React.Component {
 
     updateDisplay() {
         this.setState({
-            session_topic : 'puberty',
+            session_topic: 'puberty',
         })
-        
+
         this.isSessionTypeOther = false;
         this.isParticipantTypeOther = false;
         this.isParticipantTypeStudent = false;
@@ -194,11 +195,11 @@ class OneTouchSessionDetail extends React.Component {
         this.isMale = false;
         this.isOtherSex = false;
     }
-   
+
     editUpdateDisplay() {
 
         if (this.state.session_topic !== undefined && this.state.session_topic !== '') {
-            this.isSessionTypeOther =  this.state.session_topic === "other" ? true : false;
+            this.isSessionTypeOther = this.state.session_topic === "other" ? true : false;
         }
 
         if (this.state.event_attendant !== undefined && this.state.event_attendant.length > 0) {
@@ -218,12 +219,12 @@ class OneTouchSessionDetail extends React.Component {
             }
 
             if (getObject('parents', this.state.event_attendant, 'value') != -1) {
-                this.isParticipantTypeParent = true; 
+                this.isParticipantTypeParent = true;
             }
             if (getObject('parents', this.state.event_attendant, 'value') == -1) {
                 this.isParticipantTypeParent = false;
             }
-            
+
             if (getObject('teachers', this.state.event_attendant, 'value') != -1) {
                 this.isParticipantTypeTeacher = true;
             }
@@ -275,7 +276,7 @@ class OneTouchSessionDetail extends React.Component {
             }
         }
     }
- 
+
     toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
@@ -339,12 +340,12 @@ class OneTouchSessionDetail extends React.Component {
             }
 
             if (getObject('parents', e, 'value') != -1) {
-                this.isParticipantTypeParent = true; 
+                this.isParticipantTypeParent = true;
             }
             if (getObject('parents', e, 'value') == -1) {
                 this.isParticipantTypeParent = false;
             }
-            
+
             if (getObject('teachers', e, 'value') != -1) {
                 this.isParticipantTypeTeacher = true;
             }
@@ -409,33 +410,33 @@ class OneTouchSessionDetail extends React.Component {
             [name]: e
         });
 
-        if(name === "province"){
+        if (name === "province") {
             let districts = getDistrictsByProvince(e.id); // sending province integer id
             console.log(districts);
             this.setState({
-                districtArray : districts
+                districtArray: districts
             })
         }
     };
 
-    
+
 
     handleSubmit = event => {
         event.preventDefault();
-        if(this.handleValidation()) {
+        if (this.handleValidation()) {
 
-            this.setState({ 
-                // form_disabled: true,
-                loading : true
+            this.setState({
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
 
             const data = new FormData(event.target);
             var jsonData = new Object();
-            jsonData.formDate =  this.state.date_start;
+            jsonData.formDate = this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
             jsonData.referenceId = "";
-            
+
             jsonData.data = {};
             jsonData.data.participants_sex = {};
             jsonData.data.participants_sex.values = [];
@@ -449,149 +450,149 @@ class OneTouchSessionDetail extends React.Component {
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.institution_session_conducted = data.get('institution_session_conducted');
-            
+
             jsonData.data.trainer = [];
-            if((jsonData.data.trainer != null && jsonData.data.trainer != undefined)) {
-                for(let i=0; i< this.state.trainer.length; i++) {
-                    jsonData.data.trainer.push({ 
-                        "userId" : this.state.trainer[i].id
+            if ((jsonData.data.trainer != null && jsonData.data.trainer != undefined)) {
+                for (let i = 0; i < this.state.trainer.length; i++) {
+                    jsonData.data.trainer.push({
+                        "userId": this.state.trainer[i].id
                     });
                 }
             }
-            
+
             jsonData.data.session_topic = data.get('session_topic');
-            if(this.isSessionTypeOther)
+            if (this.isSessionTypeOther)
                 jsonData.data.session_topic_other = data.get('session_topic_other');
 
             // generating multiselect for participants_sex
-            if((this.state.participants_sex != null && this.state.participants_sex != undefined)) {
-                for(let i=0; i< this.state.participants_sex.length; i++) {
+            if ((this.state.participants_sex != null && this.state.participants_sex != undefined)) {
+                for (let i = 0; i < this.state.participants_sex.length; i++) {
                     jsonData.data.participants_sex.values.push(String(this.state.participants_sex[i].value));
                 }
             }
 
             // generating multiselect for participants_sex
-            if((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {
-                for(let i=0; i< this.state.participants_age_group.length; i++) {
+            if ((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {
+                for (let i = 0; i < this.state.participants_age_group.length; i++) {
                     jsonData.data.participants_age_group.values.push(String(this.state.participants_age_group[i].value));
                 }
             }
 
             // generating multiselect for event_attendant
-            if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
-                for(let i=0; i< this.state.event_attendant.length; i++) {
+            if ((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
+                for (let i = 0; i < this.state.event_attendant.length; i++) {
                     jsonData.data.event_attendant.values.push(String(this.state.event_attendant[i].value));
                 }
             }
-        
-            if(this.isParticipantTypeOther) {
-                jsonData.data.event_attendant_other =  data.get('event_attendant_other');
-                jsonData.data.other_attendant_count =  parseInt(data.get('other_attendant_count'));
-                
+
+            if (this.isParticipantTypeOther) {
+                jsonData.data.event_attendant_other = data.get('event_attendant_other');
+                jsonData.data.other_attendant_count = parseInt(data.get('other_attendant_count'));
+
             }
-            
-            if(this.isParticipantTypeStudent) 
+
+            if (this.isParticipantTypeStudent)
                 jsonData.data.student_count = parseInt(data.get('student_count'));
-            
-            if(this.isParticipantTypeParent) 
+
+            if (this.isParticipantTypeParent)
                 jsonData.data.parent_count = parseInt(data.get('parent_count'));
-            
-            if(this.isParticipantTypeTeacher) 
+
+            if (this.isParticipantTypeTeacher)
                 jsonData.data.teacher_count = parseInt(data.get('teacher_count'));
 
-            if(this.isParticipantTypeSchool) 
+            if (this.isParticipantTypeSchool)
                 jsonData.data.school_staff_count = parseInt(data.get('school_staff_count'));
 
-            if(this.isParticipantTypeCall) 
+            if (this.isParticipantTypeCall)
                 jsonData.data.call_agents_count = parseInt(data.get('call_agents_count'));
 
-            if(this.isParticipantTypeProfessional) 
+            if (this.isParticipantTypeProfessional)
                 jsonData.data.other_professional_count = parseInt(data.get('other_professional_count'));
 
-            if(this.isMale)
+            if (this.isMale)
                 jsonData.data.male_count = parseInt(data.get('male_count'));
-            
-            if(this.isFemale)
+
+            if (this.isFemale)
                 jsonData.data.female_count = parseInt(data.get('female_count'));
-            
-            if(this.isOtherSex) 
+
+            if (this.isOtherSex)
                 jsonData.data.other_sex_count = parseInt(data.get('other_sex_count'));
-                
+
             jsonData.data.training_days = parseInt(data.get('training_days'));
-                        
+
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
-            
-            if(this.editMode) {
+
+            if (this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
-                jsonData.referenceId =  this.fetchedForm.referenceId;
+                jsonData.referenceId = this.fetchedForm.referenceId;
 
                 updateFormData(jsonData)
-                .then(
-                    responseData => {
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data updated successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.updateRequiredFieldsArray();
-                            this.resetForm(this.requiredFields);
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to update data. Please see error logs for details. \
+                    .then(
+                        responseData => {
+                            if (!(String(responseData).includes("Error"))) {
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.updateRequiredFieldsArray();
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
                             " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
             }
             else {
                 saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.updateRequiredFieldsArray();
-                            this.resetForm(this.requiredFields);
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.updateRequiredFieldsArray();
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
                             " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
             }
         }
     }
@@ -612,14 +613,14 @@ class OneTouchSessionDetail extends React.Component {
         this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
     }
 
-    handleValidation(){
+    handleValidation() {
         // check each required state
         this.updateRequiredFieldsArray();
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
@@ -641,22 +642,22 @@ class OneTouchSessionDetail extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = errorText;   
-                } 
+                    this.errors[fields[j]] = errorText;
+                }
             }
         }
 
@@ -667,17 +668,17 @@ class OneTouchSessionDetail extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object') {
+            if (typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
+            if (typeof this.state[stateName] != 'object') {
+                this.state[stateName] = '';
             }
         }
 
@@ -690,7 +691,7 @@ class OneTouchSessionDetail extends React.Component {
     // for modal
     toggle = () => {
         this.setState({
-          modal: !this.state.modal
+            modal: !this.state.modal
         });
     }
 
@@ -711,11 +712,16 @@ class OneTouchSessionDetail extends React.Component {
         const participantTypeProfessionalStyle = this.isParticipantTypeProfessional ? {} : { display: 'none' };
 
         var formNavVisible = false;
-        if(this.props.location.state !== undefined) {
-            formNavVisible = this.props.location.state.edit ? true : false ;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
+        }
+
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
         return (
@@ -723,8 +729,8 @@ class OneTouchSessionDetail extends React.Component {
             <div id="formDiv">
                 <Router>
                     <header>
-                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
-                    </header>        
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
                 </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -737,37 +743,37 @@ class OneTouchSessionDetail extends React.Component {
                         <div>
                             <Container >
                                 <Form id="testForm" onSubmit={this.handleSubmit}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>One-Touch Session Details</b>
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>One-Touch Session Details</b>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                    <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br />
+                                                    <br />
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -776,25 +782,25 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
-                                                                        <FormGroup> 
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                        <FormGroup>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
-                                                                    </Col>  
+                                                                    </Col>
 
                                                                 </Row>
 
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="institution_session_conducted" >Name of Institution</Label> <span class="errorMessage">{this.state.errors["institution_session_conducted"]}</span>
-                                                                            <Input name="institution_session_conducted" id="institution_session_conducted" value={this.state.institution_session_conducted} onChange={(e) => {this.inputChange(e, "institution_session_conducted")}} maxLength="100" placeholder="Enter text" />
+                                                                            <Label for="institution_session_conducted" >Name of Institution <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["institution_session_conducted"]}</span>
+                                                                            <Input name="institution_session_conducted" id="institution_session_conducted" value={this.state.institution_session_conducted} onChange={(e) => { this.inputChange(e, "institution_session_conducted") }} maxLength="100" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -802,8 +808,8 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
+                                                                            <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -833,53 +839,53 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
-                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantGenderOptions} isMulti/>
+                                                                            <Label for="participants_sex" >Sex of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantGenderOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" style={femaleStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
-                                                                        <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={maleStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
-                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={otherSexStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="other_sex_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_sex_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_sex_count} name="other_sex_count" id="other_sex_count" onChange={(e) => { this.inputChange(e, "other_sex_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                    <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
-                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeOptions} isMulti/>
+                                                                            <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
+                                                                            <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6" style={maleStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                            <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6" style={otherSexStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="other_sex_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_sex_count"]}</span>
+                                                                            <Input type="number" value={this.state.other_sex_count} name="other_sex_count" id="other_sex_count" onChange={(e) => { this.inputChange(e, "other_sex_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypeOptions} isMulti/>
+                                                                            <Label for="participants_age_group" >Participant Age Group <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeOptions} isMulti />
                                                                         </FormGroup>
                                                                     </Col>
-                                                               
+
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="event_attendant" >Type of Participants <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypeOptions} isMulti />
+                                                                        </FormGroup>
+                                                                    </Col>
+
                                                                     <Col md="12" style={participantTypeOtherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="event_attendant_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
                                                                             <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => { this.inputChange(e, "event_attendant_other") }} maxLength="200" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                
+
                                                                     <Col md="6" style={participantTypeStudentStyle}>
                                                                         <FormGroup >
                                                                             <Label for="student_count" >Number of Students</Label>  <span class="errorMessage">{this.state.errors["student_count"]}</span>
@@ -893,7 +899,7 @@ class OneTouchSessionDetail extends React.Component {
                                                                             <Input type="number" value={this.state.parent_count} name="parent_count" id="parent_count" onChange={(e) => { this.inputChange(e, "parent_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                
+
                                                                     <Col md="6" style={participantTypeTeacherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="teacher_count" >Number of Teachers</Label>  <span class="errorMessage">{this.state.errors["teacher_count"]}</span>
@@ -907,7 +913,7 @@ class OneTouchSessionDetail extends React.Component {
                                                                             <Input type="number" value={this.state.school_staff_count} name="school_staff_count" id="school_staff_count" onChange={(e) => { this.inputChange(e, "school_staff_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                
+
                                                                     <Col md="6" style={participantTypeCallStyle}>
                                                                         <FormGroup >
                                                                             <Label for="call_agents_count" >Number of Call Agents</Label>  <span class="errorMessage">{this.state.errors["call_agents_count"]}</span>
@@ -921,7 +927,7 @@ class OneTouchSessionDetail extends React.Component {
                                                                             <Input type="number" value={this.state.other_professional_count} name="other_professional_count" id="other_professional_count" onChange={(e) => { this.inputChange(e, "other_professional_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-                                                                
+
                                                                     <Col md="6" style={participantTypeOtherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="other_attendant_count" >Number of Other </Label>  <span class="errorMessage">{this.state.errors["other_attendant_count"]}</span>
@@ -931,77 +937,54 @@ class OneTouchSessionDetail extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Label for="training_days" >Number of Days <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
                                                                             <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter days count"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
 
                                                                 {/* please don't remove this div unless you are adding multiple questions here*/}
-                                                                <div style={{height: '250px'}}><span>   </span></div>
+                                                                <div style={{ height: '250px' }}><span>   </span></div>
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
 
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
 
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
 
-                                            <CardHeader>
+                                                <CardHeader>
 
-                                                <Row>
-                                                <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
-                                                    </Col>
-                                                </Row>
-
-
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                    ></CustomModal>
-
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
-                                        </MDBModal>
-                                </MDBContainer>
-                               </Form>
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                        </Col>
+                                                    </Row>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>

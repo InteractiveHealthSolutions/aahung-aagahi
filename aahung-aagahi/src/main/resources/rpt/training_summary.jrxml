@@ -41,19 +41,31 @@
 FROM `aagahi`.`training_detail` td
 JOIN numbers n
 ON n.num <=  100
-inner join school_detail as sd on find_in_set(td.school_id,sd.location_id)
+inner join school_detail as sd on find_in_set(sd.location_id,td.school_id)
 where
 date(sd.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
 find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city})and find_in_set(td.`school_level`,$P{school_level}) and find_in_set(td.`training_type`,$P{training_type})
 
 group by form_id;]]>
 	</queryString>
-	<field name="form_id" class="java.lang.Integer"/>
-	<field name="form_date" class="java.sql.Timestamp"/>
-	<field name="school_level" class="java.lang.String"/>
-	<field name="training_type" class="java.lang.String"/>
-	<field name="progam_level" class="java.lang.String"/>
-	<field name="training_days" class="java.lang.Integer"/>
+	<field name="form_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="form_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_level" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="training_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="progam_level" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="training_days" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="school_total" class="java.lang.Long"/>
 	<field name="participant_total" class="java.lang.Long"/>
 	<field name="pre_test_score_avg" class="java.lang.String"/>

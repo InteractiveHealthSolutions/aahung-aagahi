@@ -401,11 +401,15 @@ public class FormController extends BaseController {
     public ResponseEntity<?> unvoidFormData(@PathVariable String uuid) {
 	LOG.info("Request to restore form data: {}", uuid);
 	try {
-	    service.unvoidFormData(service.getFormDataByUuid(uuid));
+		FormData formData = uuid.matches(RegexUtil.UUID) ? service.getFormDataByUuid(uuid)
+				: service.getFormDataById(Integer.parseInt(uuid));
+		if(formData == null)
+			return noEntityFoundResponse(uuid);
+	    FormData obj = service.unvoidFormData(formData);
+	    return ResponseEntity.ok().body(obj);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Update existing FormData")
@@ -438,11 +442,16 @@ public class FormController extends BaseController {
 	}
     }
 
-    @ApiOperation(value = "Void FormData")
+    @ApiOperation(value = "Void FormData by uuid/id")
     @DeleteMapping("/formdata/{uuid}")
-    public ResponseEntity<?> voidFormData(@PathVariable String uuid) {
+    public ResponseEntity<?> voidFormData(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to void form data: {}", uuid);
-	service.voidFormData(service.getFormDataByUuid(uuid));
-	return ResponseEntity.noContent().build();
+	FormData formData = uuid.matches(RegexUtil.UUID) ? service.getFormDataByUuid(uuid)
+			: service.getFormDataById(Integer.parseInt(uuid));
+	if(formData == null)
+		return noEntityFoundResponse(uuid);
+	formData.setReasonVoided(reasonVoided);
+	service.voidFormData(formData);
+	return ResponseEntity.ok().body("SUCCESS");
     }
 }

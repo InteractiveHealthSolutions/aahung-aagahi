@@ -32,6 +32,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private static final String ARG_SELECTED_USERS = "selectedUsers";
     public static final String ARG_TITLE = "title";
     private static final String ARG_IS_SINGLE_SELECT = "singleSelect";
+    private static final String ARG_IS_UPDATE_TRIGGER = "isUpateTriggered";
     private List<BaseItem> selectedUsers;
     private UserContract.UserFragmentInteractionListener fragmentInteractionListener;
     private List<BaseItem> users;
@@ -41,10 +42,11 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private boolean isSingleSelect;
     private boolean isUpdatedTriggered = false;
 
+
     private SelectUserFragment() {
     }
 
-    public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, boolean isSingleSelect, UserContract.UserFragmentInteractionListener userContract) {
+    public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, boolean isSingleSelect, boolean isUpdateTrigger, UserContract.UserFragmentInteractionListener userContract) {
 
         SelectUserFragment fragment = new SelectUserFragment();
         Bundle args = new Bundle();
@@ -52,6 +54,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         args.putSerializable(ARG_SELECTED_USERS, (Serializable) selectedUsers);
         args.putString(ARG_TITLE, title);
         args.putBoolean(ARG_IS_SINGLE_SELECT, isSingleSelect);
+        args.putBoolean(ARG_IS_UPDATE_TRIGGER, isUpdateTrigger);
         args.putSerializable(ARG_LISTENER, (Serializable) userContract);
         fragment.setArguments(args);
         return fragment;
@@ -66,6 +69,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
             fragmentInteractionListener = (UserContract.UserFragmentInteractionListener) getArguments().getSerializable(ARG_LISTENER);
             title = getArguments().getString(ARG_TITLE);
             isSingleSelect = getArguments().getBoolean(ARG_IS_SINGLE_SELECT);
+            isUpdatedTriggered = getArguments().getBoolean(ARG_IS_UPDATE_TRIGGER);
         }
     }
 
@@ -165,7 +169,12 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
                 users.add(user);
             }
             fragmentInteractionListener.onCompleted(users);
-            SelectUserFragment.this.dismiss();
+
+            try {
+                SelectUserFragment.this.dismiss();
+            } catch (IllegalStateException ignored) {
+                ignored.printStackTrace();
+            }
         } else {
             BaseItem mUser = (BaseItem) v.getTag();
             userRecyclerViewAdapter.addUser(mUser);
@@ -188,7 +197,6 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
     public void updateDialog(List<BaseItem> users) {
         this.users = users;
-        isUpdatedTriggered = true;
         binding.loader.setVisibility(View.GONE);
         userRecyclerViewAdapter.updateData(users);
         userRecyclerViewAdapter.notifyDataSetChanged();
@@ -198,4 +206,5 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
             binding.list.setVisibility(View.VISIBLE);
         }
     }
+
 }

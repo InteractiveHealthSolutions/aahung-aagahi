@@ -1,54 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal"
+        android:layout_height="wrap_content">
 
-        tools:context=".fragments.location.LocationFilterDialogFragment">
-
-        <TextView
-            style="@style/TextLabel"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="@dimen/_20sdp"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
             android:gravity="center"
-            android:text="Select Location"
-            android:textSize="@dimen/text_size_title" />
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            >
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_margin="@dimen/margin_normal"
-            android:background="@color/colorAccent" />
+            <ProgressBar
 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
+                />
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/search"
+            <TextView
+                android:id="@+id/no_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Saving Trees..."
+                 />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
+            android:orientation="vertical"
             android:padding="@dimen/padding_normal"
-            android:background="@drawable/dropdown_background"
-            />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
-            android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/chip_group"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:layout_marginRight="16dp"
-            android:padding="@dimen/padding_normal"
-            tools:context=".fragments.SelectUserFragment"
-            tools:listitem="@layout/fragment_user" />
+            tools:context=".fragments.location.LocationFilterDialogFragment">
+
+            <TextView
+                style="@style/TextLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Select Location"
+                android:textSize="@dimen/text_size_title" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="@dimen/margin_normal"
+                android:background="@color/colorAccent" />
 
 
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_normal"
+                android:background="@drawable/dropdown_background"
+                android:padding="@dimen/padding_normal" />
 
-    </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chip_group"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginRight="16dp"
+                android:padding="@dimen/padding_normal"
+                tools:context=".fragments.SelectUserFragment"
+                tools:listitem="@layout/dialog_item" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
 </layout>

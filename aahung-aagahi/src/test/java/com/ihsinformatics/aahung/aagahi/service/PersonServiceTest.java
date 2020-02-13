@@ -40,6 +40,7 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
@@ -321,6 +322,29 @@ public class PersonServiceTest extends BaseServiceTest {
 	assertThat(personService.savePerson(ron), is(ron));
 	verify(personRepository, times(1)).save(any(Person.class));
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#savePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)}.
+     */
+    @Test
+    public void shouldSavePersonAttributeType() {
+	when(personAttributeTypeRepository.save(any(PersonAttributeType.class))).thenReturn(height);
+	assertThat(personService.savePersonAttributeType(height), is(height));
+	verify(personAttributeTypeRepository, times(1)).save(any(PersonAttributeType.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#savePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)}.
+     */
+    @Test
+    public void shouldSavePersonAttribute() {
+	when(personAttributeRepository.save(any(PersonAttribute.class))).thenReturn(ronHeight);
+	assertThat(personService.savePersonAttribute(ronHeight), is(ronHeight));
+	verify(personAttributeRepository, times(1)).save(any(PersonAttribute.class));
+    }
+
 
     /**
      * Test method for

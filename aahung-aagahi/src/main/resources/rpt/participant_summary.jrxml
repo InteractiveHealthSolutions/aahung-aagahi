@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3000" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3200" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -37,6 +37,7 @@
     pd.`participant_affiliation`,
 	pd.`participant_affiliation_other`,
 	pd.`teacher_subject`,
+pd.`teaching_years`,
     pd.`education_level`,
 	pd.`instituition_role`,
     pd.`instituition_role_other`,
@@ -81,6 +82,7 @@ left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count)
 	</field>
 	<field name="participant_affiliation_other" class="java.lang.String"/>
 	<field name="teacher_subject" class="java.lang.String"/>
+	<field name="teaching_years" class="java.lang.String"/>
 	<field name="education_level" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -217,46 +219,53 @@ left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count)
 				<text><![CDATA[teacher_subject]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2020" y="0" width="134" height="20" uuid="d1e81644-04d6-4ef2-9250-345f635c4911"/>
+				<reportElement x="2156" y="0" width="134" height="20" uuid="d1e81644-04d6-4ef2-9250-345f635c4911"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[education_level]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2154" y="0" width="145" height="20" uuid="b94870c8-f3f8-4be2-85ca-d510105f3e62"/>
+				<reportElement x="2290" y="0" width="145" height="20" uuid="b94870c8-f3f8-4be2-85ca-d510105f3e62"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[instituition_role]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2299" y="0" width="180" height="20" uuid="32ca8974-38a9-4cf0-b98c-8d323f681d2d"/>
+				<reportElement x="2435" y="0" width="180" height="20" uuid="32ca8974-38a9-4cf0-b98c-8d323f681d2d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[instituition_role_other]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2479" y="0" width="145" height="20" uuid="286e55bc-abdc-489c-a958-4639e62f7707"/>
+				<reportElement x="2615" y="0" width="145" height="20" uuid="286e55bc-abdc-489c-a958-4639e62f7707"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[total_hcpr]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2624" y="0" width="145" height="20" uuid="116b10a3-cb4d-4090-b2a4-71871654f704"/>
+				<reportElement x="2760" y="0" width="145" height="20" uuid="116b10a3-cb4d-4090-b2a4-71871654f704"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[total_gsdtd]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2769" y="0" width="145" height="20" uuid="58600582-c38f-4e38-a92c-6dd63124ca22"/>
+				<reportElement x="2905" y="0" width="145" height="20" uuid="58600582-c38f-4e38-a92c-6dd63124ca22"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[total_acsdtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2020" y="0" width="136" height="20" uuid="869b78d7-ed6f-4a4c-bf54-6bd07a99ecf1"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[teaching_years]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -271,135 +280,142 @@ left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count)
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="145" height="20" uuid="2763643a-9e4f-4ffb-b3ed-a5e3c5232922"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{teacher_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="145" y="0" width="145" height="20" uuid="202fe641-cb68-44e6-8c3b-059936ecefc1"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{teacher_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="290" y="0" width="145" height="20" uuid="9e7eb9fe-9054-4c10-b077-f27ef406a80c"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{institution_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="435" y="0" width="145" height="20" uuid="30813b34-0607-4bbd-ab06-0fe449bd0b4a"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{projects}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="580" y="0" width="145" height="20" uuid="af018309-a08c-442e-9a30-c4b7b6297036"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="725" y="0" width="145" height="20" uuid="765bc718-74b3-429f-9968-405015d9e400"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{gender}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="870" y="0" width="145" height="20" uuid="15c6d3a7-01c2-4a9a-a08f-34688164b0c2"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participant_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1015" y="0" width="182" height="20" uuid="3a6316de-139d-46e0-bc93-b724b978fc58"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participant_type_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1197" y="0" width="145" height="20" uuid="2a435844-48e6-4ea6-9be3-d11212ae23fd"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{student_program}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1342" y="0" width="145" height="20" uuid="59b3fbbb-3789-4899-be10-f2ef182b0dce"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{student_year}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1487" y="0" width="173" height="20" uuid="d6e8bf8e-1e0a-40ee-ac75-7de9ec03a39d"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participant_affiliation}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1660" y="0" width="215" height="20" uuid="1bf705e0-0131-43f8-835b-d55ae623dcdb"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participant_affiliation_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="1875" y="0" width="145" height="20" uuid="15bb64a0-4713-43e7-8d53-f604d0b2e97e"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{teacher_subject}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2020" y="1" width="134" height="20" uuid="86f6c6ae-6c2c-41d0-895b-afd3f0de6169"/>
+				<reportElement x="2156" y="1" width="134" height="20" uuid="86f6c6ae-6c2c-41d0-895b-afd3f0de6169"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{education_level}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2154" y="0" width="145" height="20" uuid="438ac7b3-3599-4fae-9045-6e3fc6b4dddb"/>
+				<reportElement x="2290" y="0" width="145" height="20" uuid="438ac7b3-3599-4fae-9045-6e3fc6b4dddb"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instituition_role}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2299" y="0" width="180" height="20" uuid="0cb39080-9f55-4762-b040-4fe68d702d41"/>
+				<reportElement x="2435" y="0" width="180" height="20" uuid="0cb39080-9f55-4762-b040-4fe68d702d41"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instituition_role_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2479" y="0" width="145" height="20" uuid="3e9aaf37-b1d7-4828-9a76-6a9c88601058"/>
+				<reportElement x="2615" y="0" width="145" height="20" uuid="3e9aaf37-b1d7-4828-9a76-6a9c88601058"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_hcpr}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2769" y="1" width="145" height="20" uuid="e7443e61-4aec-4e32-ac25-f1af08416659"/>
+				<reportElement x="2905" y="1" width="145" height="20" uuid="e7443e61-4aec-4e32-ac25-f1af08416659"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_acsdtd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2624" y="0" width="145" height="20" uuid="e6680e36-ce94-4e34-9524-4e7c51030ddc"/>
+				<reportElement x="2760" y="0" width="145" height="20" uuid="e6680e36-ce94-4e34-9524-4e7c51030ddc"/>
 				<textElement>
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_gsdtd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2020" y="0" width="136" height="20" uuid="ed49524e-fba8-41bf-8c99-f8d786d9f6ad"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{teaching_years}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

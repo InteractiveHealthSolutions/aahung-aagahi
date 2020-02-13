@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -100,11 +101,10 @@ public class DonorControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteDonor() throws Exception {
 	when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
-	doNothing().when(donorService).deleteDonor(ministry);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "donor/{uuid}", ministry.getUuid()));
-	actions.andExpect(status().isNoContent());
+	doNothing().when(donorService).voidDonor(ministry);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "donor/{uuid}?reasonVoided=Test123", ministry.getUuid()));
 	verify(donorService, times(1)).getDonorByUuid(ministry.getUuid());
-	verify(donorService, times(1)).deleteDonor(ministry);
+	verify(donorService, times(1)).voidDonor(ministry);
 	verifyNoMoreInteractions(donorService);
     }
 
@@ -204,5 +204,21 @@ public class DonorControllerTest extends BaseTestData {
 	actions.andExpect(status().isOk());
 	verify(donorService, times(1)).getDonorByUuid(any(String.class));
 	verify(donorService, times(1)).updateDonor(any(Donor.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#unvoidDonor(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidDonor() throws Exception {
+	when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
+	when(donorService.unvoidDonor(any(Donor.class))).thenReturn(ministry);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "donor/{uuid}", ministry.getUuid()));
+	verify(donorService, times(1)).getDonorByUuid(ministry.getUuid());
+	verify(donorService, times(1)).unvoidDonor(ministry);
+	verifyNoMoreInteractions(donorService);
     }
 }

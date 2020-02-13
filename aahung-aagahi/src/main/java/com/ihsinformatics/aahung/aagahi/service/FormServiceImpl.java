@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
@@ -40,6 +42,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
+
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -344,7 +347,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		obj.setReasonRetired("");
 	    }
 	    obj.setReasonRetired(obj.getReasonRetired() + "(Unretired on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateRetired()) + ")");
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
 	    updateFormType(obj);
 	}
     }
@@ -357,16 +360,18 @@ public class FormServiceImpl extends BaseService implements FormService {
      */
     @Override
     @CheckPrivilege(privilege = "Void FormData")
-    public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
+    @Transactional
+    public FormData unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 	if (obj.getIsVoided()) {
 	    obj.setIsVoided(Boolean.FALSE);
 	    if (obj.getReasonVoided() == null) {
 		obj.setReasonVoided("");
 	    }
-	    obj.setReasonVoided(obj.getReasonVoided() + "(Unretired on "
-		    + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
-	    updateFormData(obj);
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(Calendar.getInstance().getTime()) + ")");
+	    return updateFormData(obj);
 	}
+	return obj;
     }
 
     /*
@@ -409,6 +414,7 @@ public class FormServiceImpl extends BaseService implements FormService {
      */
     @Override
     @CheckPrivilege(privilege = "Void FormData")
+    @Transactional
     public void voidFormData(FormData obj) throws HibernateException {
 	obj = (FormData) setSoftDeleteAuditAttributes(obj);
 	obj.setIsVoided(Boolean.TRUE);

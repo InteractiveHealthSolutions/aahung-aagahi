@@ -75,7 +75,7 @@ code {
   background: #522a71 !important;
 }
 
-.sc-EHOje { /* in SHRM main page */
+.sc-EHOje { /* in COMMS main page */
   /* background: #fff !important; */
   padding: 0 0 !important;
   background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
@@ -95,7 +95,7 @@ code {
   min-height: 100vh;
 }
 
-.sc-cSHVUG { /* in COMMS main page */
+.sc-cSHVUG { /* in SRHM main page */
   /* background: #fff !important; */
   padding: 0 0 !important;
   background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
@@ -103,11 +103,6 @@ code {
   background-size: cover !important;
   background-position: center center;
   min-height: 100vh;
-}
-
-.sc-dxgOiQ { /* in Report main page */
-  background: #fff !important;
-  padding: 0 0 !important;
 }
 
 .sc-kkGfuU { /* in Admin main page */
@@ -274,6 +269,13 @@ code {
   background-color: #f5f5f5;
 }
 
+.warningBox {
+  border: 1px solid #bdbdbd;
+  padding: 3px 3px 3px 3px;
+  border-radius: 3px;
+  background-color: #f5f5f5;
+}
+
 .react-overlay-loader-spinner:before {
 
   content: "";
@@ -379,6 +381,61 @@ code {
       min-height: 150vh;
     }
   }
+
+
+
+  #apppage2 .gradient {
+    background: linear-gradient(
+         45deg,
+         rgba(252, 175, 61, 0.7),
+         rgb(144, 78, 194, 0.7) 100%
+       );
+       overflow-y: scroll;
+     }
+     
+     #apppage2 .view {
+       background-image: url("https://www.aahung.org/upload/HomeSlider/827-IMG_4930.jpg");
+       background-repeat: no-repeat;
+       background-size: cover;
+       background-position: center center;
+       min-height: 100vh;
+     }
+     
+     #apppage2 h6 {
+       line-height: 1.7;
+     }
+     
+     @media only screen and (max-width: 400px) {
+       #apppage2 .animated img {
+         max-height: 50vh;
+         transform: translateX(-50%);
+         left: 50%;
+         position: absolute;
+       }
+     }
+     @media only screen and (max-width: 767px) {
+       #apppage2 .animated img {
+         max-height: 35vh;
+         transform: translateX(-50%);
+         left: 50%;
+       }
+     }
+     
+     @media (max-width: 767px) and (orientation: landscape) {
+       #apppage2 .animated img {
+         max-height: 50vh;
+         transform: translateX(-50%);
+         left: 50%;
+         position: relative;
+       }
+     }
+     @media (max-width: 1000px) and (orientation: landscape) {
+       #apppage2 .view {
+         min-height: 150vh;
+       }
+     }
+   
+
 
   
 .active2{
@@ -522,7 +579,7 @@ code {
 
 #form_component, #form_type {
   margin-right: 5% !important;
-  width: 50% !important;
+  width: 50%;
   margin-left: 1% !important;
   font-size: 80% !important;
 }
@@ -538,9 +595,14 @@ code {
 }
 
 #firstDateDiv, #secondDateDiv {
-  margin-right: 10% !important;
   display: inline-flex !important;
-  width: 40%;
+  width: 33%;
+}
+#secondDateDiv{
+  margin-right: 1% !important;
+}
+#firstDateDiv{
+  margin-right: 8% !important;
 }
 
 /* Styling multi select widget */
@@ -578,3 +640,82 @@ code {
 #point_person_contact {
   margin-right: 2%;
 }
+
+.voidButton {
+  background-color: transparent;
+  width: inherit;
+  margin-left: 2%;
+  margin-right: 2%;
+  border: 5% solid #f3e5f5 ;
+  border-radius: 5px !important;
+  height: 100%;
+}
+
+.unVoidButton {
+  background-color: transparent;
+  width: inherit;
+  margin-left: 2%;
+  margin-right: 2%;
+  border: 5% solid #f3e5f5 ;
+  border-radius: 5px !important;
+  height: 100%;
+}
+
+.k-item{
+  width: 34% !important;
+}
+
+.k-state-active{
+  background: #522A71;
+  color: white !important;
+}
+
+.k-link{
+  padding-left: 46% !important;
+}
+
+.k-tabstrip-items{
+  background: #efefef !important;
+  color: black !important;
+}
+
+.k-animation-container{
+    position: inherit;
+}
+
+.k-tabstrip>.k-content.k-state-active {
+  display: inline-grid !important;
+}
+
+@font-face {
+  font-family: 'Noto Sans', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.googleapis.com/css?family=Noto+Sans&display=swap'); /* IE9 Compat Modes */
+}
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+#containerId { /* reports page */
+    max-width: 1333px !important;
+}
+
+.container { /* applies to all containers */
+  max-width: 1150px !important;
+}
+.secondaryFilComp{
+  width: 32% !important;
+}
+
+.voided {
+  background-color: #ffb74d  !important;
+}
+
+.provinceDashboard, .districtDashboard {
+  z-index: 1000 !important;
+} 
+
+.react-datepicker-popper {
+  z-index: 100000 !important;
+} 

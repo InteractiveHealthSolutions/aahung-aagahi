@@ -20,15 +20,15 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
+import { MDBIcon } from 'mdbreact';
 import React, { Fragment } from "react";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, Card, CardBody, CardHeader, Row, Col, Container, Form, FormGroup, Input, Label, TabContent, TabPane } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributesByLocation, getLocationAttributeTypeByShortName, getLocationsByCategory, getLocationByRegexValue } from '../service/GetService';
+import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getLocationByRegexValue, getLocationsByCategory } from '../service/GetService';
 import { updateLocation } from "../service/PostService";
 import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -75,7 +75,7 @@ class SchoolClosing extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.locationObj = {};
-        this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
+        this.requiredFields = ["school_id", "partnership_end_date", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
         this.errors = {};
         this.fetchedLocation = {};
         this.isEndDateExists = false;
@@ -96,7 +96,7 @@ class SchoolClosing extends React.Component {
      */
     loadData = async () => {
         try {
-            
+
             let schools = await getLocationsByCategory(schoolDefinitionUuid);
             console.log(schools);
 
@@ -177,7 +177,7 @@ class SchoolClosing extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        
+
         this.setState({
             [name]: e
         });
@@ -197,10 +197,10 @@ class SchoolClosing extends React.Component {
         try {
             if (name === "school_id") {
 
-                    this.setState({
-                        school_name: e.locationName
-                    })
-                
+                this.setState({
+                    school_name: e.locationName
+                })
+
                 // let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.fetchedLocation = await getLocationByRegexValue(e.uuid);
                 this.autopopulateFields(this.fetchedLocation.attributes);
@@ -240,7 +240,7 @@ class SchoolClosing extends React.Component {
                     let definition = await getDefinitionByDefinitionId(definitionId);
                     let attrValue = definition.shortName;
                     attributeValue = attrValue;
-                    if(attrTypeName === "school_tier") {
+                    if (attrTypeName === "school_tier") {
                         document.getElementById(attrTypeName).value = attributeValue;
                         self.setState({
                             school_tier: attributeValue
@@ -266,7 +266,7 @@ class SchoolClosing extends React.Component {
                                 let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
                                 multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                                 multiSelectString = multiSelectString.concat(", ");
-                                
+
                             }
                         })
                         if (attrTypeName === "program_implemented") {
@@ -282,11 +282,11 @@ class SchoolClosing extends React.Component {
 
             })
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
         }
 
-        this.setState({ 
+        this.setState({
             loading: false
         })
     }
@@ -295,45 +295,46 @@ class SchoolClosing extends React.Component {
         let self = this;
 
         event.preventDefault();
-        if(this.handleValidation()) {
-            this.setState({ 
-                loading : true
+        if (this.handleValidation()) {
+            this.setState({
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
-            
+
             const data = new FormData(event.target);
             console.log(data);
             var jsonData = new Object();
-            
+
             var fetchedAttributes = this.fetchedLocation.attributes;
             fetchedAttributes.forEach(async function (obj) {
                 delete obj.createdBy;
 
                 // Number of years of partnership - partnership_years
-                if(obj.attributeType.shortName === "partnership_years") {
+                if (obj.attributeType.shortName === "partnership_years") {
                     var years = self.state.partnership_years;
                     obj.attributeValue = String(years);
                 }
 
                 // School Tier - school_tier
-                if(obj.attributeType.shortName === "school_tier") {
+                if (obj.attributeType.shortName === "school_tier") {
                     obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
                 }
 
                 // School partnership_end_date
-                if(obj.attributeType.shortName === "partnership_end_date") {
+                if (obj.attributeType.shortName === "partnership_end_date") {
                     self.isEndDateExists = true;
                     obj.attributeValue = self.state.partnership_end_date;
                 }
 
                 // School - end_partnership_reason
-                if(obj.attributeType.shortName === "end_partnership_reason") {
+                if (obj.attributeType.shortName === "end_partnership_reason") {
                     self.isEndReasonExists = true;
                     obj.attributeValue = self.state.end_partnership_reason;
                 }
 
             })
 
-            if(!this.isEndDateExists) {
+            if (!this.isEndDateExists) {
                 var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
                 var attributeObject = new Object(); //top level obj
                 attributeObject.attributeType = {};
@@ -347,7 +348,7 @@ class SchoolClosing extends React.Component {
                 fetchedAttributes.push(attributeObject);
             }
 
-            if(!this.isEndReasonExists) {
+            if (!this.isEndReasonExists) {
                 var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
                 var attributeObject = new Object(); //top level obj
                 attributeObject.attributeType = {};
@@ -360,59 +361,59 @@ class SchoolClosing extends React.Component {
                 attributeObject.attributeValue = this.state.end_partnership_reason; // attributeValue obj
                 fetchedAttributes.push(attributeObject);
             }
-            
+
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             console.log(this.fetchedLocation);
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            
+
             delete this.fetchedLocation.createdBy;
-            if(this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
+            if (this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
                 delete this.fetchedLocation.parentLocation.createdBy;
             }
-            
+
             updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit school closing form. \
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm();
+                        }
+                        else if (String(responseData).includes("Error")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit school closing form. \
                         " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
         }
 
     }
 
-    handleValidation(){
+    handleValidation() {
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
@@ -424,22 +425,22 @@ class SchoolClosing extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = errorText;   
-                } 
+                    this.errors[fields[j]] = errorText;
+                }
             }
         }
 
@@ -453,17 +454,17 @@ class SchoolClosing extends React.Component {
 
         var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemented", "school_tier", "end_partnership_reason"];
 
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
 
             // for array object
-            if(typeof this.state[stateName] === 'object') {
+            if (typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
+            if (typeof this.state[stateName] != 'object') {
+                this.state[stateName] = '';
             }
         }
 
@@ -499,43 +500,43 @@ class SchoolClosing extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="schoolDetail" onSubmit={this.handleSubmit}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>School Closing</b>
-                                            </CardHeader>
+                                <Form id="schoolDetail" onSubmit={this.handleSubmit}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>School Closing</b>
+                                                </CardHeader>
 
-                                        </Card>
-                                    </Col>
+                                            </Card>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                    <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br />
-                                                
+                                                    <br />
+
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
-                                                                
+
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >Select School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
-                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required/>
+                                                                            <Label for="school_id" >Select School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -556,7 +557,7 @@ class SchoolClosing extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended</Label>
+                                                                            <Label for="partnership_end_date" >Date partnership with Aahung ended <span className="required">*</span></Label>
                                                                             <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => { this.inputChange(e, "partnership_end_date") }} max={moment().format("YYYY-MM-DD")} required />
                                                                         </FormGroup>
                                                                     </Col>
@@ -565,7 +566,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
+                                                                            <Label for="partnership_years">Number of years of partnership <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
                                                                             <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers" disabled required></Input>
                                                                         </FormGroup>
                                                                     </Col>
@@ -611,7 +612,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup >
-                                                                            <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
+                                                                            <Label for="end_partnership_reason" >Reason for end of partnership <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
                                                                             <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" />
                                                                         </FormGroup>
                                                                     </Col>
@@ -621,66 +622,43 @@ class SchoolClosing extends React.Component {
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-                                                
-
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
-
-                                            <CardHeader>
-
-                                                <Row>
-                                                <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
-                                                    </Col>
-                                                </Row>
 
 
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
-                                        </MDBModal>
-                                </MDBContainer>
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
 
+                                                <CardHeader>
+
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                        </Col>
+                                                    </Row>
+
+
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
 

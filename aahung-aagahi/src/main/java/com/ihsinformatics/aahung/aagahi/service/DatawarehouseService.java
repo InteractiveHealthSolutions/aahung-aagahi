@@ -201,7 +201,7 @@ public class DatawarehouseService  {
 	}
 	postPart.append("'' as blank ");
 	postPart.append("from form_data ");
-	postPart.append("where 1=1 ");
+	postPart.append("where 1=1 and voided=0 ");
 	postPart.append("and form_type_id=");
 	postPart.append(formType.getFormTypeId());
 	StringBuilder prePart = new StringBuilder("insert into ");
@@ -285,8 +285,9 @@ public class DatawarehouseService  {
 	// Prepare a table from schema
 	try {
 	    String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-	    queue.add("drop table if exists " + tableName);
+	    //queue.add("drop table if exists " + tableName);
 	    queue.add(generateCreateTableQuery(formType, tableName));
+	    queue.add("truncate table " + tableName);
 	    queue.add(generateUpdateTableQuery(formType, tableName));
 	} catch (Exception e) {
 	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());

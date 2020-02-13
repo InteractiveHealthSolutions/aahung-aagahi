@@ -3,7 +3,9 @@ package com.ihsinformatics.aahung.model.results;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AttributeType {
+import java.io.Serializable;
+
+public class AttributeType implements Serializable {
 
     @SerializedName("attributeTypeId")
     @Expose
@@ -17,6 +19,13 @@ public class AttributeType {
     @SerializedName("dataType")
     @Expose
     private String dataType;
+
+    public AttributeType(Integer attributeTypeId, String attributeName, String shortName, String dataType) {
+        this.attributeTypeId = attributeTypeId;
+        this.attributeName = attributeName;
+        this.shortName = shortName;
+        this.dataType = dataType;
+    }
 
     public Integer getAttributeTypeId() {
         return attributeTypeId;

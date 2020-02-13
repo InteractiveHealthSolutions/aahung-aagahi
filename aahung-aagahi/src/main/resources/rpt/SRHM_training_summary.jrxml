@@ -47,15 +47,21 @@ where
 
 find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city})
 group by t.uuid
-having date(`training_date`) between date($P{start_date}) and date($P{end_date})]]>
+having date(`training_date`) between date($P{start_date}) and date($P{end_date}) order by training_date]]>
 	</queryString>
 	<field name="training_date" class="java.sql.Timestamp"/>
-	<field name="institution_name" class="java.lang.String"/>
+	<field name="institution_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="training_type" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="topic_covered" class="java.lang.String"/>
-	<field name="topic_covered_other" class="java.lang.String"/>
+	<field name="topic_covered" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered_other" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="participant_total" class="java.lang.Long"/>
 	<field name="pre_test_score_avg" class="java.lang.String"/>
 	<field name="post_test_score_avg" class="java.lang.String"/>

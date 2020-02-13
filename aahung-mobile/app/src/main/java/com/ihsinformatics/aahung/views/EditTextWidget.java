@@ -17,6 +17,7 @@ import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
+import com.ihsinformatics.aahung.model.MultiSumService;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONArray;
@@ -50,16 +51,21 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     private int inputType;
     private int length;
     private int minimumValue;
-    private boolean isMandatory;
-    private boolean isSingleLine = true;
     private InputFilter inputFilter;
     private String key;
     private BaseAttribute attribute;
     private WidgetEdittextBinding binding;
-    private WidgetContract.TextChangeListener textChangeListener;
-    private WidgetIDListener widgetIDListener;
+
     private List<WidgetEdittextBinding> participantFieldList = new ArrayList<>();
     private Map<Integer, String> participantCounts = new HashMap<>();
+    private DateWidget dateWidget;
+
+    private boolean isMandatory;
+    private boolean isSingleLine = true;
+    private boolean isYearsValidationEnabled;
+    private WidgetContract.SumListener sumListener;
+    private WidgetContract.TextChangeListener textChangeListener;
+    private WidgetIDListener widgetIDListener;
 
 
     private EditTextWidget(Builder builder) {
@@ -152,6 +158,14 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                 if (!(value >= startRange && value <= endRange)) {
                     isValid = false;
                     binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+                } else if (isYearsValidationEnabled && dateWidget.getAge() != null) {
+                    if (value >= dateWidget.getAge()) {
+                        binding.hint.setError("years can't be more than date of birth");
+                        isValid = false;
+                    } else {
+                        binding.hint.setError(null);
+                    }
+
                 } else {
                     binding.hint.setError(null);
                 }
@@ -169,7 +183,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                 } else
                     binding.hint.setError(null);
 
-            } else if (binding.editText.getText().toString().length() < this.minimumValue) {
+            } else if (binding.editText.getText().toString().trim().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
             } else {
@@ -195,7 +209,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                     if (!binding.editText.getText().toString().matches(EMAIL_REGEX)) {
                         isValid = false;
                         binding.hint.setError("Please enter valid email address");
-                    }else {
+                    } else {
                         binding.hint.setError(null);
                     }
 
@@ -239,6 +253,10 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
         if (widgetIDListener != null) {
             widgetIDListener.onWidgetChange(data, (key != null) ? key : attribute.getAttributeName());
+        }
+
+        if (sumListener != null) {
+            sumListener.onValueChanged(this, isEmpty(data) ? 0 : Integer.valueOf(data));
         }
 
         if (isParticipantFieldsEnabled) {
@@ -313,6 +331,10 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     public void setText(String value) {
         binding.editText.setText(value);
         onDataChanged(value);
+    }
+
+    public void setSumListener(WidgetContract.SumListener sumListener) {
+        this.sumListener = sumListener;
     }
 
 
@@ -413,8 +435,13 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
             return new EditTextWidget(this);
         }
+    }
 
 
+    public EditTextWidget enableYearsValidation(DateWidget dateWidget) {
+        this.dateWidget = dateWidget;
+        isYearsValidationEnabled = true;
+        return this;
     }
 
     @Override
@@ -430,5 +457,9 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     @Override
     public boolean isViewOnly() {
         return false;
+    }
+
+    public void disableWidget() {
+        binding.hint.setEnabled(false);
     }
 }

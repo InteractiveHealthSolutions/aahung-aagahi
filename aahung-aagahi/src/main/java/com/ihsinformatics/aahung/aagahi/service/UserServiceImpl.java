@@ -12,21 +12,30 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -643,6 +652,17 @@ public class UserServiceImpl extends BaseService implements UserService {
     @CheckPrivilege(privilege = "Edit User")
     public User updateUser(User obj) throws HibernateException {
 	obj = (User) setUpdateAuditAttributes(obj);
+	
+	if(obj.getUserId() != null){
+		if(obj.getUserId().equals(obj.getUpdatedBy().getUserId()))
+			obj.setUpdatedBy(null);
+		
+		if(obj.getVoidedBy() != null){
+			if(obj.getUserId().equals(obj.getVoidedBy().getUserId()))
+				obj.setVoidedBy(null);
+		}
+	}
+	
 	return userRepository.save(obj);
     }
 
@@ -672,5 +692,67 @@ public class UserServiceImpl extends BaseService implements UserService {
     public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
 	obj = (UserAttributeType) setUpdateAuditAttributes(obj);
 	return userAttributeTypeRepository.save(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidUser(com.
+     * ihsinformatics.aahung.aagahi.model.User)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void User")
+    @Transactional
+    public void voidUser(User obj) throws HibernateException {
+	obj = (User) setSoftDeleteAuditAttributes(obj);
+	obj.setIsVoided(Boolean.TRUE);
+	
+	for (UserAttribute attribute : obj.getAttributes()) {
+		if(Boolean.FALSE.equals(attribute.getIsVoided())){
+			attribute.setIsVoided(Boolean.TRUE);
+			attribute.setVoidedBy(obj.getVoidedBy());
+			attribute.setDateVoided(obj.getDateVoided());
+			attribute.setReasonVoided(obj.getReasonVoided() + " (User voided)");
+			userAttributeRepository.softDelete(attribute);
+		}
+	}
+	
+	userRepository.softDelete(obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidUser(com.
+     * ihsinformatics.aahung.aagahi.model.User)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Void User")
+    @Transactional
+    public User unvoidUser(User obj) throws HibernateException, ValidationException, IOException {
+	if (obj.getIsVoided()) {
+	    obj.setIsVoided(Boolean.FALSE);
+	    if (obj.getReasonVoided() == null) {
+		obj.setReasonVoided("");
+	    }
+	    String voidedReason = obj.getReasonVoided();
+	    obj.setReasonVoided(obj.getReasonVoided() + "(Unvoided on "
+		    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+	    
+	    for (UserAttribute attribute : obj.getAttributes()) {
+			if(Boolean.TRUE.equals(attribute.getIsVoided()) && attribute.getReasonVoided().equals(voidedReason + " (User voided)")){
+				attribute.setIsVoided(Boolean.FALSE);
+				if (attribute.getReasonVoided() == null) {
+					attribute.setReasonVoided("");
+				 }
+				attribute.setReasonVoided(attribute.getReasonVoided() + "(User unvoided on "
+					    + DateTimeUtil.toSqlDateTimeString(new Date()) + ")");
+				updateUserAttribute(attribute);
+			}
+		}
+	    
+	    return updateUser(obj);
+	}
+	return obj;
     }
 }

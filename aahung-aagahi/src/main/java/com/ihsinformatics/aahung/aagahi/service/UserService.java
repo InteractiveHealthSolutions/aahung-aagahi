@@ -12,12 +12,17 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
@@ -385,4 +390,24 @@ public interface UserService {
      * @throws HibernateException
      */
     UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException;
+    
+    /**
+     * Void {@link User} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void voidUser(User obj) throws HibernateException, ValidationException, IOException;
+    
+    /**
+     * Restore the voided {@link User} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    User unvoidUser(User obj) throws HibernateException, ValidationException, IOException;
 }

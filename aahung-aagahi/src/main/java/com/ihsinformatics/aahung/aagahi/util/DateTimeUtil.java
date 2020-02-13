@@ -130,6 +130,7 @@ public class DateTimeUtil {
     }
 
     public static String toString(Date date, String format) {
+    
 	if (date == null) {
 	    return null;
 	}

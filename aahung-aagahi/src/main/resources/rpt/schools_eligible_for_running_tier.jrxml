@@ -46,10 +46,11 @@ if(if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct
 FROM `aagahi`.`school_detail` sd
 
 
-left join _lse_primary_monitoring_new as pmn1 on sd.location_id=pmn1.location_id and pmn1.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn1.location_id order by date_created desc limit 0,1)
-left join _lse_secondary_monitoring_new as smn1 on sd.location_id=smn1.location_id and smn1.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn1.location_id order by date_created desc limit 0,1)
-left join _lse_primary_monitoring_new as pmn2 on sd.location_id=pmn2.location_id and pmn2.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn2.location_id order by date_created desc limit 1,1)
-left join _lse_secondary_monitoring_new as smn2 on sd.location_id=smn2.location_id and smn2.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn2.location_id order by date_created desc limit 1,1)
+left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id and pmn1.school_tier='school_tier_new' and pmn1.date_created=(select date_created from _lse_primary_monitoring where location_id=pmn1.location_id and school_tier='school_tier_new' order by date_created desc limit 0,1)
+left join _lse_secondary_monitoring as smn1 on sd.location_id=smn1.location_id and smn1.school_tier='school_tier_new' and smn1.date_created=(select date_created from _lse_secondary_monitoring where location_id=smn1.location_id and school_tier='school_tier_new' order by date_created desc limit 0,1)
+left join _lse_primary_monitoring as pmn2 on sd.location_id=pmn2.location_id and pmn2.school_tier='school_tier_new' and pmn2.date_created=(select date_created from _lse_primary_monitoring where location_id=pmn2.location_id and school_tier='school_tier_new' order by date_created desc limit 1,1)
+left join _lse_secondary_monitoring as smn2 on sd.location_id=smn2.location_id and smn2.school_tier='school_tier_new' and smn2.date_created=(select date_created from _lse_secondary_monitoring where location_id=smn2.location_id and school_tier='school_tier_new' order by date_created desc limit 1,1)
+
 
 left join _lse_mt_eligibility_criteria_assessment as meca on meca.location_id=sd.location_id
 
@@ -83,9 +84,9 @@ group by sd.location_id;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="date_created2" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct2" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct2" class="java.lang.Double"/>
 	<field name="date_created1" class="java.sql.Timestamp"/>
-	<field name="monitoring_score_pct1" class="java.math.BigDecimal"/>
+	<field name="monitoring_score_pct1" class="java.lang.Double"/>
 	<field name="eligible" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>

@@ -22,6 +22,7 @@
             android:src="@drawable/ic_settings" />
 
         <ImageView
+            android:id="@+id/sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -90,6 +91,7 @@
                 android:button="@drawable/custom_checkbox"
                 android:layout_height="wrap_content"
                 android:text="Remember me"
+                android:textSize="@dimen/text_size_heading"
                 android:padding="@dimen/padding_large"
                 />
         </LinearLayout>
@@ -110,15 +112,6 @@
             android:textStyle="bold" />
 
 
-<!--
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/login_button"
-            android:layout_margin="@dimen/padding_extreme_large"
-            android:gravity="center"
-            android:text="Forget Password ?" />
--->
 
         <LinearLayout
 

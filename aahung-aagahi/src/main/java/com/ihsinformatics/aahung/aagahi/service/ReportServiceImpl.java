@@ -19,7 +19,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +35,9 @@ import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,18 +217,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join definition as d on d.definition_id = ft.form_group ");
 	makeDirectory();
 	String fileName = "formtypes.csv";
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
     
     @MeasureProcessingTime
@@ -234,18 +228,7 @@ public class ReportServiceImpl extends BaseService {
 			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM location_attribute_type;");
 	makeDirectory();
 	String fileName = "locationAttributeTypes.csv";
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
     
     
@@ -260,18 +243,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left join users as c on c.user_id = la.created_by ");
 	makeDirectory();
 	String fileName = "locationAttributes.csv";
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
     
     @MeasureProcessingTime
@@ -282,18 +254,7 @@ public class ReportServiceImpl extends BaseService {
 			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM person_attribute_type;");
 	makeDirectory();
 	String fileName = "personAttributeTypes.csv";
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
     
     @MeasureProcessingTime
@@ -307,18 +268,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left join users as c on c.user_id = pa.created_by ");
 	String fileName = "personAttributes.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -330,18 +280,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id order by definition_id ");
 	String fileName = "definitions.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-		Connection conn =  dataSource.getConnection();) {
-	    ResultSet data = getResultSet(query.toString(), conn); 
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	} 
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -353,18 +292,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join users as c on c.user_id = d.created_by ");
 	String fileName = "donors.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-			    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -375,19 +303,7 @@ public class ReportServiceImpl extends BaseService {
 		"select e.element_id, e.uuid, e.element_name, e.description, e.short_name, e.datatype, e.validation_regex, e.date_created, e.retired from element as e ");
 	String fileName = "elements.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn); 
-		csvWriter.writeAll(data, true);	
-		dataSource.getConnection().close();
-		data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -401,18 +317,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left outer join location as l on l.location_id = f.location_id ");
 	String fileName = "formdata-" + formTypeName + ".csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -426,18 +331,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join users as c on c.user_id = l.created_by ");
 	String fileName = "locations.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -450,18 +344,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left join users as c on c.user_id = p.created_by ");
 	String fileName = "projects.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
     
     @MeasureProcessingTime
@@ -475,18 +358,7 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left join users as c on c.user_id = p.created_by ");
 	String fileName = "participants.csv";
 	makeDirectory();
-	String filePath = getDataDirectory() + "dumps//" + fileName;
-	PrintWriter writer = new PrintWriter(filePath);
-	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
-	    csvWriter.writeAll(data, true);
-	    data.close();
-	} catch (SQLException | IOException e) {
-	    LOG.error(e.getMessage());
-	}
-	return filePath;
+	return writeToFile(fileName,query.toString());
     }
 
     @MeasureProcessingTime
@@ -536,16 +408,14 @@ public class ReportServiceImpl extends BaseService {
      * @throws SQLException
      */
     public ResultSet getResultSet(String query, Connection conn) throws SQLException {
-		
-    	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
-    		RowSetFactory factory = RowSetProvider.newFactory();
-    		CachedRowSet crs = factory.createCachedRowSet();
-    		crs.populate(resultSet);
-    		return crs;
-    	}
-    	
+	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+	    RowSetFactory factory = RowSetProvider.newFactory();
+	    CachedRowSet crs = factory.createCachedRowSet();
+	    crs.populate(resultSet);
+	    return crs;
+	}
     }
-
+    
     /**
      * Returns data from given query as a List of String arrays
      * 
@@ -598,6 +468,62 @@ public class ReportServiceImpl extends BaseService {
 	resultSet.close();
 	return data;
     }
+    
+    /**
+     * Returns data from given query as a {@link JSONArray} of {@link JSONObject}
+     * 
+     * @param query
+     * @return
+     * @throws SQLException
+     */
+    public JSONArray getTableDataAsJson(String query) throws SQLException, JSONException {
+	JSONArray json = new JSONArray();
+	try(Connection conn =  dataSource.getConnection();){
+	ResultSet resultSet = getResultSet(query, conn);
+	ResultSetMetaData metadata = resultSet.getMetaData();
+	while (resultSet.next()) {
+	    int numColumns = metadata.getColumnCount();
+	    JSONObject obj = new JSONObject();
+	    for (int i = 1; i < numColumns + 1; i++) {
+		String columnName = metadata.getColumnName(i);
+		String displayName = metadata.getColumnLabel(i);
+		switch (metadata.getColumnType(i)) {
+		case Types.ARRAY:
+		    obj.put(displayName, resultSet.getArray(columnName));
+		    break;
+		case Types.BIGINT:
+		case Types.INTEGER:
+		case Types.SMALLINT:
+		case Types.TINYINT:
+		    obj.put(displayName, resultSet.getInt(columnName));
+		    break;
+		case Types.BOOLEAN:
+		    obj.put(displayName, resultSet.getBoolean(columnName));
+		    break;
+		case Types.DATE:
+		case Types.TIMESTAMP:
+		    obj.put(displayName, resultSet.getDate(columnName));
+		    break;
+		case Types.DOUBLE:
+		case Types.FLOAT:
+		    obj.put(displayName, resultSet.getDouble(columnName));
+		    break;
+		case Types.NVARCHAR:
+		case Types.VARCHAR:
+		    obj.put(displayName, resultSet.getString(i));
+		    break;
+		case Types.BLOB:
+		    obj.put(displayName, resultSet.getBlob(columnName));
+		    break;
+		default:
+		    obj.put(displayName, resultSet.getString(columnName));
+		}
+	    }
+	    json.put(obj);
+	}
+	}
+	return json;
+    }
 
     /**
      * Writes the results from given query into the filePath
@@ -638,5 +564,20 @@ public class ReportServiceImpl extends BaseService {
      */
     public void setDataDirectory(String dataDirectory) {
 	this.dataDirectory = dataDirectory;
+    }
+    
+    public String writeToFile(String fileName, String query) throws FileNotFoundException{
+    	String filePath = getDataDirectory() + "dumps//" + fileName;
+    	PrintWriter writer = new PrintWriter(filePath);
+    	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+    			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+    			Connection conn =  dataSource.getConnection();) {
+    		    ResultSet data = getResultSet(query, conn);
+    	    csvWriter.writeAll(data, true);
+    	    data.close();
+    	} catch (SQLException | IOException e) {
+    	    LOG.error(e.getMessage());
+    	}
+    	return filePath;
     }
 }

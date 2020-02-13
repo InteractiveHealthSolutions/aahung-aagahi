@@ -204,7 +204,9 @@ public class FormUI implements ButtonListener {
                                     DateWidget dateWidget = (DateWidget) widget;
                                     person.put(Keys.ESTIMATED_DATE, dateWidget.isAgeEnabled());
                                 }
-                                person.put(data.getParam(), data.getValue());
+
+                                if (data.getValue() != null && !data.getValue().toString().equals(""))
+                                    person.put(data.getParam(), data.getValue());
                             }
                         }
                     } catch (JSONException e) {
@@ -281,8 +283,10 @@ public class FormUI implements ButtonListener {
                                     if (data.getValue() != null)
                                         attributes.put(data.getValue());
                                 }
-                            } else
-                                jsonObject.put(data.getParam(), data.getValue());
+                            } else {
+                                if (data.getValue() != null && !data.getValue().toString().equals(""))
+                                    jsonObject.put(data.getParam(), data.getValue());
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -449,6 +453,7 @@ public class FormUI implements ButtonListener {
             ButtonWidget buttonWidget = new ButtonWidget(context, formUI);
             baseLayout.addView(buttonWidget.getView());
             formUI.setButtonWidget(buttonWidget);
+            formListener.onFormLoaded();
         }
 
         public void resetForm() {
@@ -467,6 +472,8 @@ public class FormUI implements ButtonListener {
         public void onCompleted(JSONObject json, String endpoint, String uuid, ButtonWidget buttonWidget);
 
         public void onSaved();
+
+        public void onFormLoaded();
     }
 
 }

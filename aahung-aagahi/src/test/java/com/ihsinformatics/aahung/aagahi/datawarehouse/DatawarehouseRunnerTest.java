@@ -160,7 +160,7 @@ public class DatawarehouseRunnerTest extends BaseTestData {
 	assertTrue(dw.getSqlDataType(houseElement).toLowerCase().startsWith("varchar"));
 	assertTrue(dw.getSqlDataType(captainElement).toLowerCase().startsWith("varchar"));
 	assertTrue(dw.getSqlDataType(numberElement).toLowerCase().startsWith("int"));
-	assertTrue(dw.getSqlDataType(heightElement).toLowerCase().startsWith("decimal"));
+	assertTrue(dw.getSqlDataType(heightElement).toLowerCase().startsWith("float"));
 	assertTrue(dw.getSqlDataType(genderElement).toLowerCase().startsWith("char"));
 	assertTrue(dw.getSqlDataType(dateJoinedElement).toLowerCase().startsWith("date"));
 	assertTrue(dw.getSqlDataType(titlesElement).toLowerCase().startsWith("text"));

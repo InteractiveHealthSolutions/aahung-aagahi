@@ -2,10 +2,8 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-18 13:45:06
+ * @Last Modified time: 2020-02-06 13:43:00
  */
-
-
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -21,16 +19,18 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import React, { Fragment } from "react";
+import { MDBIcon } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { saveDonor } from "../service/PostService";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { BrowserRouter as Router } from 'react-router-dom';
+import { getDonorByRegexValue } from '../service/GetService';
+import { saveDonor, updateDonor } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { UserService } from '../service/UserService';
 
 class DonorRegistration extends React.Component {
 
@@ -59,7 +59,8 @@ class DonorRegistration extends React.Component {
         this.editMode = false;
         this.jsonData = {};
         this.formRef = React.createRef();
-
+        this.editMode = false;
+        this.fetchedDonor = {};
     }
 
     componentDidMount() {
@@ -76,24 +77,48 @@ class DonorRegistration extends React.Component {
      */
     loadData = async () => {
 
-        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+        this.setState({
+            loading: true,
+            loadingMsg: 'Fetching Data...'
+        })
 
         try {
 
-            if(this.editMode) {
-                // fill donor form for editing
+            if (this.editMode) {
+                this.fetchedDonor = await getDonorByRegexValue(String(this.props.location.state.donorId), true);
+                if (this.fetchedDonor !== null) {
+                    this.setState({
+                        donor_name: this.fetchedDonor.donorName,
+                        donor_id: this.fetchedDonor.shortName
+                    })
+                }
+                else {
+                    throw new Error("Unable to get donor details (this may be a voided record). Please see error logs for more details.");
+                }
             }
+
+            this.setState({
+                loading: false
+            })
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({
+                loading: false,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
-
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
     cancelCheck = () => {
         this.resetForm();
@@ -106,10 +131,9 @@ class DonorRegistration extends React.Component {
             [name]: e
         });
 
-        if(name === "donor_id") {
-            
+        if (name === "donor_id") {
             this.setState({
-                donor_name : e.shortName
+                donor_name: e.shortName
             })
         }
     };
@@ -119,96 +143,138 @@ class DonorRegistration extends React.Component {
 
         this.setState({
             [name]: e.target.value
-        });     
-        
-        if(name === "donor_name" && (e.target.value != null && e.target.value != '')) {
-            var name = e.target.value;
-            var shortName = name.match(/\b(\w)/g);
-            if(shortName != null) {
-                shortName = shortName.join('').toUpperCase();
-                console.log(shortName);    
+        });
+
+        if (!this.editMode) {
+            if (name === "donor_name" && (e.target.value != null && e.target.value != '')) {
+                var name = e.target.value;
+                var shortName = name.match(/\b(\w)/g);
+                if (shortName != null) {
+                    shortName = shortName.join('').toUpperCase();
+                    console.log(shortName);
+                    this.setState({
+                        donor_id: shortName
+                    })
+                }
+            }
+            else {
                 this.setState({
-                    donor_id : shortName
+                    donor_id: ''
                 })
             }
-        }
-        else {
-            this.setState({
-                donor_id : ''
-            })
         }
     }
 
     callModal = () => {
-        this.setState({ modal : !this.state.modal });
+        this.setState({ modal: !this.state.modal });
     }
 
     handleSubmit = event => {
 
         event.preventDefault();
-        this.setState({ 
-            // form_disabled: true,
-            loading : true
+        this.setState({
+            loading: true,
+            loadingMsg: "Saving trees..."
         })
+        if (this.editMode) {
 
-        const data = new FormData(event.target);
-        console.log(data);
-        var jsonData = {};
-        jsonData['donorName'] =  data.get('donor_name');
-        jsonData['shortName'] =  data.get('donor_id');
-        
-        console.log(jsonData);
-        saveDonor(jsonData)
-        .then(
-            responseData => {
-                console.log(responseData);
-                if(!(String(responseData).includes("Error"))) {
-                    
-                  this.setState({ 
-                      loading: false,
-                      modalHeading : 'Success!',
-                      okButtonStyle : { display: 'none' },
-                      modalText : 'Data saved successfully.',
-                      modal: !this.state.modal
-                     });
+            this.fetchedDonor.donorName = this.state.donor_name;
+            this.fetchedDonor.shortName = this.state.donor_id;
+            delete this.fetchedDonor.createdBy;
+            delete this.fetchedDonor.updatedBy;
 
-                     this.resetForm();
-                }
-                else if(String(responseData).includes("406")) {
-                    
-                    var submitMsg = '';
-                    submitMsg = "Data already exists. \
+            updateDonor(this.fetchedDonor, this.fetchedDonor.uuid)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if (String(responseData).includes("Error")) {
+                            var submitMsg = '';
+                            submitMsg = "Unable to update Donor details. \
+                            " + String(responseData);
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+        }
+        else {
+
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = {};
+            jsonData['donorName'] = data.get('donor_name');
+            jsonData['shortName'] = data.get('donor_id');
+            console.log(jsonData);
+
+            saveDonor(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm();
+                        }
+                        else if (String(responseData).includes("406")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Data already exists. \
                         " + String(responseData);
 
-                    this.setState({ 
-                        loading: false,
-                        modalHeading : 'Fail!',
-                        okButtonStyle : { display: 'none' },
-                        modalText : submitMsg,
-                        modal: !this.state.modal
-                    });
-                }
-                else if(String(responseData).includes("Error")) {
-                    
-                    var submitMsg = '';
-                    submitMsg = "Unable to submit donor. \
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                        else if (String(responseData).includes("Error")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit donor. \
                         " + String(responseData);
 
-                    this.setState({ 
-                        loading: false,
-                        modalHeading : 'Fail!',
-                        okButtonStyle : { display: 'none' },
-                        modalText : submitMsg,
-                        modal: !this.state.modal
-                    });
-                }
-              }
-          );
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+        }
     }
 
     toggle = () => {
         this.setState({
-          modal: !this.state.modal
+            modal: !this.state.modal
         });
     }
 
@@ -217,32 +283,37 @@ class DonorRegistration extends React.Component {
      */
     resetForm = () => {
 
-        this.setState( {
+        this.setState({
             donor_name: '',
             donor_id: ''
         })
     }
-    
+
     render() {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         // for edit mode
         var formNavVisible = false;
-        if(this.props.location.state !== undefined) {
-            formNavVisible = this.props.location.state.edit ? true : false ;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
         }
+        // if the user does not have edit rights
+        var buttonDisabled = false; 
+        if(this.editMode) {
+            buttonDisabled = UserService.hasAccess('Edit Donor') ? false : true;
+        }
 
         return (
-            
+
             <div id="formDiv">
                 <Router>
                     <header>
-                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
-                    </header>        
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                    </header>
                 </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -254,121 +325,85 @@ class DonorRegistration extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="donorForm" onSubmit={this.handleSubmit} className='form'  innerRef={this.formRef}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Donor Registration</b>
-                                            </CardHeader>
+                                <Form id="donorForm" onSubmit={this.handleSubmit} className='form' innerRef={this.formRef}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>Donor Registration</b>
+                                                </CardHeader>
 
-                                        </Card>
-                                    </Col>
+                                            </Card>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br/>
-                                                
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
-                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" pattern="^[A-Za-z. ]+" placeholder="Enter donor name (no special characters)"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                          
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="donor_id" >Donor ID</Label> 
-                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="50" placeholder="Donor ID"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                    <br />
 
-                                                            </Row>
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
+                                                                            <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => { this.inputChange(e, "donor_name") }} maxLength="200" pattern="^[A-Za-z. ]+" placeholder="Enter donor name (no special characters)" required />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                        </TabPane>
-                                                    </TabContent>
+                                                                    <Col md="6" >
+                                                                        <FormGroup >
+                                                                            <Label for="donor_id" >Donor ID</Label>
+                                                                            <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => { this.inputChange(e, "donor_id") }} maxLength="50" placeholder="Donor ID" required disabled={this.editMode} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
-                                                
-
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
-
-                                            <CardHeader>
-
-                                                <Row>
-                                                    <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
-                                                    </Col>
-                                                </Row>
-
-
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
-
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
-                                        </MDBModal>
-                                </MDBContainer>
-                            
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisabled}>Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisabled}>Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                        </Col>
+                                                    </Row>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>

@@ -139,6 +139,11 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     }
 
     @Override
+    public void onFormLoaded() {
+        onFormFragmentInteractionListener.onFormLoaded();
+    }
+
+    @Override
     public void showToast(String message) {
         if (getContext() != null)
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -146,8 +151,14 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void dismissLoading() {
-        if (loading.isVisible())
-            loading.dismiss();
+        if (loading.isVisible()) {
+            try {
+                loading.dismiss();
+            } catch (IllegalStateException ignored) {
+                ignored.printStackTrace();
+            }
+
+        }
     }
 
     @Override
@@ -163,6 +174,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     public interface OnFormFragmentInteractionListener extends Serializable {
         void onFormDestroy();
+        void onFormLoaded();
     }
 
 

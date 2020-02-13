@@ -38,8 +38,10 @@ public class Participant extends BaseItem implements BaseResult {
     @Ignore
     private HashMap<String, String> mapper = new HashMap<>();
 
-    //private Integer locationId;
-
+    @Ignore
+    @SerializedName("isVoided")
+    @Expose
+    private boolean isVoided;
 
     @SerializedName("location")
     @Expose
@@ -101,6 +103,10 @@ public class Participant extends BaseItem implements BaseResult {
         return identifier;
     }
 
+    public void setVoided(boolean voided) {
+        isVoided = voided;
+    }
+
     @Override
     public String getUUID() {
         return uuid;
@@ -140,5 +146,10 @@ public class Participant extends BaseItem implements BaseResult {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public boolean isVoided() {
+        return isVoided;
     }
 }

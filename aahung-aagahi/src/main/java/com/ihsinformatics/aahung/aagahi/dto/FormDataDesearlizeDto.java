@@ -284,16 +284,8 @@ public class FormDataDesearlizeDto {
        		 		else {
        		 			
        		 		dmapObj.setDataType(element.getShortName());	
-       		 			
-       		 		HashMap hashMap = new HashMap();
-      				Iterator<String> keys = jObj.keys();
-
-	  				while(keys.hasNext()) {
-	  				   String key = keys.next();
-	  				   hashMap.put(key, jObj.get(key));
-	  				 }
-       		 			
-	  				returnJsonArray.put(hashMap.toString());
+     
+	  				returnJsonArray.put(jObj.toString());
        		 	   }
        		 		
        		 		

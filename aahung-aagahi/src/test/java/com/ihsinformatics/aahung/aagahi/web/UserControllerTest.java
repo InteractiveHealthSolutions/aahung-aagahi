@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -156,11 +157,10 @@ public class UserControllerTest extends BaseTestData {
     @Test
     public void shouldDeleteUser() throws Exception {
 	when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
-	doNothing().when(userService).deleteUser(dumbledore);
-	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
-	actions.andExpect(status().isNoContent());
+	doNothing().when(userService).voidUser(dumbledore);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}?reasonVoided=Test123", dumbledore.getUuid()));
 	verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
-	verify(userService, times(1)).deleteUser(dumbledore);
+	verify(userService, times(1)).voidUser(dumbledore);
 	verifyNoMoreInteractions(userService);
     }
 
@@ -485,5 +485,21 @@ public class UserControllerTest extends BaseTestData {
 	actions.andExpect(status().isOk());
 	verify(userService, times(1)).getUserAttributeTypeByUuid(any(String.class));
 	verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.UserController#unvoidUser(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUnvoidUser() throws Exception {
+	when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
+	when(userService.unvoidUser(any(User.class))).thenReturn(dumbledore);
+	ResultActions actions = mockMvc.perform(patch(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
+	verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
+	verify(userService, times(1)).unvoidUser(dumbledore);
+	verifyNoMoreInteractions(userService);
     }
 }

@@ -26,14 +26,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
@@ -66,16 +69,37 @@ public class ProjectController extends BaseController {
 	}
     }
 
-    @ApiOperation(value = "Delete Project")
+    @ApiOperation(value = "Void Project")
     @DeleteMapping("/project/{uuid}")
-    public ResponseEntity<?> deleteProject(@PathVariable String uuid) {
+    public ResponseEntity<?> voidProject(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
 	LOG.info("Request to delete project: {}", uuid);
 	try {
-	    service.deleteProject(service.getProjectByUuid(uuid));
+		Project project = uuid.matches(RegexUtil.UUID) ? service.getProjectByUuid(uuid)
+				: service.getProjectById(Integer.parseInt(uuid));
+		if(project == null)
+			return noEntityFoundResponse(uuid);
+		project.setReasonVoided(reasonVoided);
+	    service.voidProject(project);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
+    }
+    
+    @ApiOperation(value = "Restore Project")
+    @PatchMapping("/project/{uuid}")
+    public ResponseEntity<?> unvoidProject(@PathVariable String uuid) {
+	LOG.info("Request to restore project: {}", uuid);
+	try {
+		Project project = uuid.matches(RegexUtil.UUID) ? service.getProjectByUuid(uuid)
+				: service.getProjectById(Integer.parseInt(uuid));
+		if(project == null)
+			return noEntityFoundResponse(uuid);
+	    Project obj = service.unvoidProject(project);
+		return ResponseEntity.ok().body(obj);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
+	}
     }
 
     @ApiOperation(value = "Get Project By UUID")

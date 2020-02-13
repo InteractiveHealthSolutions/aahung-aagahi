@@ -15,11 +15,13 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -36,4 +38,8 @@ public interface LocationRepository extends CustomLocationRepository, JpaReposit
     Location findByShortName(String shortName);
 
     Location findByUuid(String uuid);
+    
+    @Query("UPDATE Location d set d.isVoided = true WHERE d = :location")
+    @Modifying
+    void softDelete(@Param("location") Location locaion);
 }

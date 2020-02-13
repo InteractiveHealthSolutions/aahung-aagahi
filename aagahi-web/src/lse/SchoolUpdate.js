@@ -29,25 +29,25 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionId, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue, getLocationByRegexValue, getLocationsByCategory } from '../service/GetService';
+import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationsByCategory, getProjectByRegexValue } from '../service/GetService';
 import { updateLocation } from "../service/PostService";
 import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
 const programsImplemented = [  /* value represents short names */
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
+    { label: 'CSA', value: 'csa' },
+    { label: 'Gender', value: 'gender' },
+    { label: 'LSBE', value: 'lsbe' },
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (
     <div style={{ display: "flex" }}>
-      <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
-        {donorName}
-      </div>
+        <div>{label} |</div>
+        <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
+            {donorName}
+        </div>
     </div>
-  );
+);
 
 class SchoolUpdate extends React.Component {
 
@@ -90,10 +90,10 @@ class SchoolUpdate extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.isTierNew = true;
         this.isTierRunning = false;
-        this.isTierExit= false;
+        this.isTierExit = false;
         this.locationObj = {};
         // this.requiredFields = ["school_id"]; //rest of the required fields are checked automatically by 'required' tag
-        this.requiredFields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "school_sex", "program_implemented", "program_implemented", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
+        this.requiredFields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "school_sex", "program_implemented", "program_implemented", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
         this.errors = {};
 
         this.selectedProjects = [];
@@ -114,7 +114,7 @@ class SchoolUpdate extends React.Component {
      */
     loadData = async () => {
         try {
-            
+
             let schools = await getLocationsByCategory(schoolDefinitionUuid);
             console.log(schools);
 
@@ -126,10 +126,10 @@ class SchoolUpdate extends React.Component {
 
             // projects
             let projectList = await getAllProjects();
-            
-            if(projectList != null && projectList.length > 0) {
+
+            if (projectList != null && projectList.length > 0) {
                 this.setState({
-                    projectsList : projectList
+                    projectsList: projectList
                 })
             }
         }
@@ -156,7 +156,7 @@ class SchoolUpdate extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-        
+
         this.setState({
             [name]: e.target.value
         });
@@ -178,17 +178,17 @@ class SchoolUpdate extends React.Component {
         });
 
         if (name === "school_tier") {
-            if(e.target.value === "school_tier_new") {
+            if (e.target.value === "school_tier_new") {
                 this.isTierNew = true;
                 this.isTierRunning = false;
                 this.isTierExit = false;
             }
-            else if(e.target.value === "school_tier_running") {
-                this.isTierNew = false ;
+            else if (e.target.value === "school_tier_running") {
+                this.isTierNew = false;
                 this.isTierRunning = true;
                 this.isTierExit = false;
             }
-            else if(e.target.value === "school_tier_exit") {
+            else if (e.target.value === "school_tier_exit") {
                 this.isTierNew = false;
                 this.isTierRunning = false;
                 this.isTierExit = true;
@@ -207,7 +207,7 @@ class SchoolUpdate extends React.Component {
     valueChangeMulti(e, name) {
         console.log(" =========== printing e =========== ")
         console.log(e);
-        
+
         this.setState({
             [name]: e
         });
@@ -228,7 +228,7 @@ class SchoolUpdate extends React.Component {
                 this.setState({
                     school_name: e.locationName
                 })
-                
+
                 // let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.fetchedLocation = await getLocationByRegexValue(e.uuid);
                 this.setState({
@@ -255,7 +255,7 @@ class SchoolUpdate extends React.Component {
             if (attrTypeName === "partnership_years") {
                 attributeValue = obj.attributeValue;
             }
-            
+
             if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
                 attributeValue = obj.attributeValue;
             }
@@ -266,23 +266,23 @@ class SchoolUpdate extends React.Component {
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 let attrValue = definition.shortName;
                 attributeValue = attrValue;
-                if(attrTypeName === "school_tier") {
+                if (attrTypeName === "school_tier") {
                     // alert(attributeValue);
                     document.getElementById(attrTypeName).value = attributeValue;
                     self.setState({
                         school_tier: attributeValue
-                    })                    
-                    if(attributeValue === "school_tier_new") {
+                    })
+                    if (attributeValue === "school_tier_new") {
                         self.isTierNew = true;
                         self.isTierRunning = false;
                         self.isTierExit = false;
                     }
-                    else if(attributeValue === "school_tier_running") {
+                    else if (attributeValue === "school_tier_running") {
                         self.isTierNew = false;
                         self.isTierRunning = true;
                         self.isTierExit = false;
                     }
-                    else if(attributeValue === "school_tier_exit") {
+                    else if (attributeValue === "school_tier_exit") {
                         self.isTierNew = false;
                         self.isTierRunning = false;
                         self.isTierExit = true;
@@ -307,28 +307,23 @@ class SchoolUpdate extends React.Component {
                         attrValueObj.forEach(async function (obj) {
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
-                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName})
+                            arr.push({ label: definitionArr[0].definitionName, value: definitionArr[0].shortName })
                         })
                     }
 
                     if ('projectId' in attrValueObj[0]) {
-                        
+
                         attrValueObj.forEach(async function (obj) {
-                            
+
                             // definitionArr contains only one item because filter will return only one definition
-                            let projectObj = await getProjectByRegexValue(obj.projectId);
+                            let projectObj = await getProjectByRegexValue(obj.projectId, false);
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
-                            arr.push({ id : projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName : projectObj.donor === undefined ? "" : projectObj.donor.donorName})
+                            arr.push({ id: projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName: projectObj.donor === undefined ? "" : projectObj.donor.donorName })
                         })
                     }
-                    
-                    // if (attrTypeName === "program_implemented") {
-                    //     self.setState({
-                    //         [attrTypeName]: arr
-                    //     })
-                    // }
-                    if(attrTypeName === "projects") {
-                        
+
+                    if (attrTypeName === "projects") {
+
                         console.log(arr);
                         // self.setState({
                         //     [attrTypeName]: arr
@@ -340,7 +335,7 @@ class SchoolUpdate extends React.Component {
                             projects: arr
                         })
 
-                        self.selectedProjects = arr; 
+                        self.selectedProjects = arr;
 
                         console.log("project state changed");
                         console.log(self.state.projects);
@@ -361,41 +356,41 @@ class SchoolUpdate extends React.Component {
 
         })
 
-        
+
     }
 
     handleSubmit = async event => {
         let self = this;
         event.preventDefault();
-        if(this.handleValidation()) {
-            this.setState({ 
-                loading : true
+        if (this.handleValidation()) {
+            this.setState({
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
-            
+
             var fetchedAttributes = this.fetchedLocation.attributes;
             fetchedAttributes.forEach(async function (obj) {
 
                 delete obj.createdBy;
-
                 // Type of program(s) implemented in school - program_implemented
-                if(obj.attributeType.shortName === "program_implemented") {
+                if (obj.attributeType.shortName === "program_implemented") {
 
                     let attrValueObject = [];
-                    for(let i=0; i< self.state.program_implemented.length; i++ ) {
+                    for (let i = 0; i < self.state.program_implemented.length; i++) {
                         let definitionObj = {};
                         definitionObj.definitionId = await getDefinitionId("program_implemented", self.state.program_implemented[i].value);
                         attrValueObject.push(definitionObj);
                     }
-            
+
                     obj.attributeValue = JSON.stringify(attrValueObject);
                 }
-                
+
                 // Associated Projects - projects
-                if(obj.attributeType.shortName === "projects") {
+                if (obj.attributeType.shortName === "projects") {
                     let multiAttrValueObject = [];
 
-                    if(self.state.projects.length > 0) {
-                        for(let i=0; i< self.state.projects.length; i++ ) {
+                    if (self.state.projects.length > 0) {
+                        for (let i = 0; i < self.state.projects.length; i++) {
                             let projectObj = {};
                             projectObj.projectId = self.state.projects[i].id;
                             multiAttrValueObject.push(projectObj);
@@ -406,46 +401,46 @@ class SchoolUpdate extends React.Component {
                 }
 
                 // School Tier - school_tier
-                if(obj.attributeType.shortName === "school_tier") {
+                if (obj.attributeType.shortName === "school_tier") {
                     obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
                     delete obj.createdBy;
                 }
 
                 // New Schools Category - school_category_new
-                if(self.isTierNew) {
-                    if(obj.attributeType.shortName === "school_category_new") {
+                if (self.isTierNew) {
+                    if (obj.attributeType.shortName === "school_category_new") {
                         obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
                     }
                 }
 
                 // Running Schools Category - school_category_running
-                if(self.isTierRunning) {
-                    if(obj.attributeType.shortName === "school_category_running") {
+                if (self.isTierRunning) {
+                    if (obj.attributeType.shortName === "school_category_running") {
                         obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_new);
                     }
                 }
 
                 // Exit Schools Category - school_category_exit
-                if(self.isTierExit) {
-                    if(obj.attributeType.shortName === "school_category_exit") {
+                if (self.isTierExit) {
+                    if (obj.attributeType.shortName === "school_category_exit") {
                         obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_new);
                     }
                 }
 
                 // Approximate number of students - student_count
-                if(obj.attributeType.shortName === "student_count") {
+                if (obj.attributeType.shortName === "student_count") {
                     obj.attributeValue = self.state.student_count;
                 }
 
             })
 
             this.fetchedLocation.attributes = fetchedAttributes;
-            this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+            this.fetchedLocation.primaryContactPerson = this.state.point_person_name;
             this.fetchedLocation.primaryContact = this.state.point_person_contact;
             this.fetchedLocation.email = this.state.point_person_email;
 
             delete this.fetchedLocation.createdBy;
-            if(this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
+            if (this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
                 delete this.fetchedLocation.parentLocation.createdBy;
             }
 
@@ -454,48 +449,48 @@ class SchoolUpdate extends React.Component {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
             updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to update school details. \
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm();
+                        }
+                        else if (String(responseData).includes("Error")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Unable to update school details. \
                         " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
         }
 
     }
 
-    handleValidation(){
+    handleValidation() {
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
@@ -507,22 +502,22 @@ class SchoolUpdate extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = errorText;   
-                } 
+                    this.errors[fields[j]] = errorText;
+                }
             }
         }
 
@@ -534,21 +529,21 @@ class SchoolUpdate extends React.Component {
      */
     resetForm = () => {
 
-        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "program_implemented", "school_sex", "projects", "school_level", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
+        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "program_implemented", "school_sex", "projects", "school_level", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
 
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
 
             // var el = document.getElementById(stateName).value = '';
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object') {
+            if (typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
+            if (typeof this.state[stateName] != 'object') {
+                this.state[stateName] = '';
             }
         }
 
@@ -590,43 +585,43 @@ class SchoolUpdate extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="schoolDetail" onSubmit={this.handleSubmit}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>School Update Form</b>
-                                            </CardHeader>
+                                <Form id="schoolDetail" onSubmit={this.handleSubmit}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>School Update Form</b>
+                                                </CardHeader>
 
-                                        </Card>
-                                    </Col>
+                                            </Card>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                    <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br />
-                                                
+                                                    <br />
+
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
-                                                                
+
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_id" >Select School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
-                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required/>
+                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -653,7 +648,7 @@ class SchoolUpdate extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
-                                                                <Row> 
+                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
@@ -686,7 +681,7 @@ class SchoolUpdate extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="projects" >Associated Projects</Label> <span class="errorMessage">{this.state.errors["projects"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} isMulti required/>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} isMulti required />
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -736,95 +731,97 @@ class SchoolUpdate extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="point_person_name" >Name of point of contact for school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                            <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
+                                                                            <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => { this.inputChange(e, "point_person_name") }} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="point_person_contact" >Phone number for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                            <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
+                                                                            <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => { this.inputChange(e, "point_person_contact") }} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="point_person_email" >Email address for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                            <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+                                                                            <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => { this.inputChange(e, "point_person_email") }} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                            <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => {this.inputChange(e, "student_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count in numbers"></Input>
+                                                                            <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                 </Row>
 
+                                                                {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                                <div style={{ height: '250px' }}><span>   </span></div>
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-                                                
-
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
-
-                                            <CardHeader>
-
-                                                <Row>
-                                                <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
-                                                    </Col>
-                                                </Row>
 
 
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
+
+                                                <CardHeader>
+
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            {/* <div className="btn-actions-pane-left"> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
+                                                            {/* </div> */}
+                                                        </Col>
+                                                    </Row>
+
+
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    {/* </div> */}
+                                    {/* </div> */}
+                                    <CustomModal
+                                        modal={this.modal}
+                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
+                                        ModalHeader="Leave Page Confrimation!"
+                                    ></CustomModal>
+
+                                    <MDBContainer>
+                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                            <MDBModalBody>
+                                                {this.state.modalText}
+                                            </MDBModalBody>
+                                            <MDBModalFooter>
+                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
+                                            </MDBModalFooter>
                                         </MDBModal>
-                                </MDBContainer>
+                                    </MDBContainer>
 
                                 </Form>
                             </Container>

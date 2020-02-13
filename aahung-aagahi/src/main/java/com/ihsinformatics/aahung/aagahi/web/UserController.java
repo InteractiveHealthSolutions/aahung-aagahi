@@ -27,15 +27,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.dto.UserDto;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
@@ -141,16 +144,38 @@ public class UserController extends BaseController {
 	return ResponseEntity.noContent().build();
     }
 
-    @ApiOperation(value = "Delete a User")
+    @ApiOperation(value = "Void User")
     @DeleteMapping("/user/{uuid}")
-    public ResponseEntity<?> deleteUser(@PathVariable String uuid) {
-	LOG.info("Request to delete user: {}", uuid);
+    public ResponseEntity<?> voidUser(@PathVariable String uuid, @RequestParam("reasonVoided")String reasonVoided) {
+	LOG.info("Request to delete User: {}", uuid);
 	try {
-	    service.deleteUser(service.getUserByUuid(uuid));
+		User user = uuid.matches(RegexUtil.UUID) ? service.getUserByUuid(uuid)
+				: service.getUserById(Integer.parseInt(uuid));
+		if(user == null)
+			return noEntityFoundResponse(uuid);
+		user.setReasonVoided(reasonVoided);
+	    service.voidUser(user);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	return ResponseEntity.noContent().build();
+	return ResponseEntity.ok().body("SUCCESS");
+    }
+    
+    @ApiOperation(value = "Restore User")
+    @PatchMapping("/user/{uuid}")
+    public ResponseEntity<?> unvoidUser(@PathVariable String uuid) {
+	LOG.info("Request to restore user: {}", uuid);
+	try {
+		User user = uuid.matches(RegexUtil.UUID) ? service.getUserByUuid(uuid)
+				: service.getUserById(Integer.parseInt(uuid));
+		if(user == null)
+			return noEntityFoundResponse(uuid);
+	    User obj = service.unvoidUser(user);
+	    return ResponseEntity.ok().body(obj);
+
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
+	}
     }
 
     @ApiOperation(value = "Delete a UserAttribute")
@@ -409,7 +434,7 @@ public class UserController extends BaseController {
 	
 	if(obj.getPasswordHash() == null)
 		obj.setPasswordHash(found.getPasswordHash());
-	
+		
 	LOG.info("Request to update user: {}", obj);
 	return ResponseEntity.ok().body(service.updateUser(obj));
     }

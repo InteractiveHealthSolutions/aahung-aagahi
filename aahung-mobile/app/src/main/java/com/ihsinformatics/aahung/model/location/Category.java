@@ -8,11 +8,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 @Entity(tableName = "category")
-public class Category {
+public class Category implements Serializable {
     @SerializedName("uuid")
     @Expose
     private String uuid;
