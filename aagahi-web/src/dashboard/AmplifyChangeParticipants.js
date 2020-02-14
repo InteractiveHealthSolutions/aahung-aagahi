@@ -66,9 +66,8 @@ class AmplifyChangeParticipant extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/amplifychangeparticipantdata/teachers?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
-                    // data: [{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-02"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-08"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-14"},{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-17"},{"total":4,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-17"},{"total":5,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-18"},{"total":4,"gender":"Male","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-18"},{"total":1,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-20"},{"total":1,"gender":"Other","state_province":"Unknown","education_level":"College","form_date":"2019-12-21"},{"total":1,"gender":"Male","state_province":"Unknown","education_level":"College","form_date":"2019-12-25"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-27"},{"total":7,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2019-12-30"},{"total":4,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-06"},{"total":2,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-07"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-13"},{"total":1,"gender":"Female","state_province":"Unknown","education_level":"Undergraduate","form_date":"2020-01-27"}]
                     data: resultSet
                 })
             }
@@ -131,11 +130,10 @@ class AmplifyChangeParticipant extends React.Component {
 
 function filterData(data, educationLevel) {
     var sums = [];
+    var maleArray = [];
+    var femaleArray = [];
+    var otherArray = [];
     if (educationLevel === "College") {
-        
-        var maleArray = [];
-        var femaleArray = [];
-        var otherArray = [];
         if (data !== null && data != undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "College" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "College" && element.gender === "Female");
@@ -151,9 +149,6 @@ function filterData(data, educationLevel) {
     }
     else if(educationLevel === "Undergraduate") {
 
-        var maleArray = [];
-        var femaleArray = [];
-        var otherArray = [];
         if (data !== null && data !== undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "Undergraduate" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "Undergraduate" && element.gender === "Female");
@@ -168,10 +163,6 @@ function filterData(data, educationLevel) {
         return sums;
     }
     else if(educationLevel === "Post-graduate") {
-        
-        var maleArray = [];
-        var femaleArray = [];
-        var otherArray = [];
         if (data !== null && data !== undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "Post-graduate" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "Post-graduate" && element.gender === "Female");

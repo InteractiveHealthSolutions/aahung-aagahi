@@ -185,7 +185,7 @@ class StepDownTraining extends React.Component {
                     })
 
                     let self = this;
-                    this.fetchedForm.data.map(function (element, i) {
+                    this.fetchedForm.data.map(function (element) {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
                             
@@ -253,28 +253,28 @@ class StepDownTraining extends React.Component {
             if (getObject('health', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectHealth: true });
             }
-            if (getObject('health', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('health', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectHealth: false });
             }
 
             if (getObject('gender', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectGender: true });
             }
-            if (getObject('gender', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('gender', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectGender: false });
             }
 
             if (getObject('csa', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectCsa: true });
             }
-            if (getObject('csa', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('csa', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectCsa: false });
             }
 
             if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectImpl: true });
             }
-            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectImpl: false });
             }
 
@@ -285,49 +285,49 @@ class StepDownTraining extends React.Component {
             if (getObject('vcat', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectVcat: true });
             }
-            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectVcat: false });
             }
 
             if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectHuman: true });
             }
-            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectHuman: false });
             }
 
             if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectGender: true });
             }
-            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectGender: false });
             }
 
             if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectSexual: true });
             }
-            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectSexual: false });
             }
 
             if (getObject('violence', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectViolence: true });
             }
-            if (getObject('violence', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('violence', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectViolence: false });
             }
 
             if (getObject('puberty', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectPuberty: true });
             }
-            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectPuberty: false });
             }
 
             if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectImpl: true });
             }
-            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectImpl: false });
             }
         }
@@ -627,7 +627,6 @@ class StepDownTraining extends React.Component {
     autopopulateFields(locationAttributes) {
         let self = this;
         let attributeValue = '';
-        let count = 0;
         locationAttributes.forEach(async function (obj) {
             let attrTypeName = obj.attributeType.shortName;
             if (attrTypeName === "partnership_years")
@@ -643,7 +642,6 @@ class StepDownTraining extends React.Component {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
-                let attrValue = definition.shortname;
                 attributeValue = definition.definitionName;
             }
 
@@ -658,14 +656,10 @@ class StepDownTraining extends React.Component {
                         definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
                     }
                     attrValueObj.forEach(async function (obj) {
-                        count++;
                         if ('definitionId' in obj) {
 
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                            // if (count != attrValueObj.length) {
-                            //     multiSelectString = multiSelectString.concat(", ");
-                            // }
                             multiSelectString = multiSelectString.concat(" ");
                             multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                             if (attrTypeName === "program_implemented")
@@ -683,7 +677,6 @@ class StepDownTraining extends React.Component {
         })
     }
 
-
     handleSubmit = async event => {
         event.preventDefault();
         if (this.handleValidation()) {
@@ -693,7 +686,6 @@ class StepDownTraining extends React.Component {
                 loadingMsg: "Saving trees..."
             })
 
-            const data = new FormData(event.target);
             var jsonData = new Object();
             jsonData.formParticipants = [];
             jsonData.formDate = this.state.date_start;
@@ -740,12 +732,12 @@ class StepDownTraining extends React.Component {
                         continue;
                     }
 
-                    if (fields[i] == "district") {
+                    if (fields[i] === "district") {
                         dataObj.district = this.state.district.label;
                         continue;
                     }
 
-                    if (fields[i] == "province") {
+                    if (fields[i] === "province") {
                         dataObj.province = this.state.province.name;
                         continue;
                     }
@@ -819,7 +811,7 @@ class StepDownTraining extends React.Component {
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
-                        else if (this.lsbeDependantFields.filter(f => f == fields[i]).length == 0) {
+                        else if (this.lsbeDependantFields.filter(f => f == fields[i]).length === 0) {
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
@@ -1097,7 +1089,6 @@ class StepDownTraining extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
         const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
         const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
 

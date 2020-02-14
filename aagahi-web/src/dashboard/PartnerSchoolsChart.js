@@ -88,7 +88,6 @@ class PartnerSchoolsChart extends React.Component {
         const primaryToolTipRender = ({ point }) => (`Primary - ${point.value}`);
         const secondaryToolTipRender = ({ point }) => (`Secondary - ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
-        const labelContent = (e) => (e.category);
         let provinces = getUniqueValues(this.state.data, 'state_province');
         let primary = [
             { name: 'New', data: filterData(this.state.data, 'Primary', 'New') },
@@ -159,13 +158,13 @@ function filterData(data, level, tier) {
     var provinces = getUniqueValues(data, 'state_province');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
-        var filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
+        filtered = data.filter(element => element.school_level === level && element.school_tier === tier);
     }
     var sums = [];
     provinces.forEach(province => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].state_province == province) {
+            if (filtered[i].state_province === province) {
                 sum += parseInt(filtered[i].total);
             }
         }

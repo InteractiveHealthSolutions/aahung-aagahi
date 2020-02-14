@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-13 12:52:37
+ * @Last Modified time: 2020-02-14 11:05:55
  */
 
 
@@ -501,7 +501,7 @@ class SocialMediaDetail extends React.Component {
                     console.log("platformScoresData >>>>>>>>>>");
                     console.log(platformScoresData.value);
                     console.log(platformScoresData.value.length);
-                    platformScoresData.value.map(function (element, i) {
+                    platformScoresData.value.map(function (element) {
                         console.log("printing platform details");
                         console.log(element);
                         console.log(JSON.parse(element));
@@ -610,7 +610,7 @@ class SocialMediaDetail extends React.Component {
             if (getObject('facebook', postPlatformValues, 'value') != -1) {
                 this.isFacebook = true;
             }
-            if (getObject('facebook', postPlatformValues, 'value') == -1) {
+            if (getObject('facebook', postPlatformValues, 'value') === -1) {
 
                 this.isFacebook = false;
             }
@@ -618,21 +618,21 @@ class SocialMediaDetail extends React.Component {
             if (getObject('twitter', postPlatformValues, 'value') != -1) {
                 this.isTwitter = true;
             }
-            if (getObject('twitter', postPlatformValues, 'value') == -1) {
+            if (getObject('twitter', postPlatformValues, 'value') === -1) {
                 this.isTwitter = false;
             }
 
             if (getObject('instagram', postPlatformValues, 'value') != -1) {
                 this.isInstagram = true;
             }
-            if (getObject('instagram', postPlatformValues, 'value') == -1) {
+            if (getObject('instagram', postPlatformValues, 'value') === -1) {
                 this.isInstagram = false;
             }
 
             if (getObject('web_portal', postPlatformValues, 'value') != -1) {
                 this.isWebPortal = true;
             }
-            if (getObject('web_portal', postPlatformValues, 'value') == -1) {
+            if (getObject('web_portal', postPlatformValues, 'value') === -1) {
                 this.isWebPortal = false;
             }
 
@@ -640,7 +640,7 @@ class SocialMediaDetail extends React.Component {
                 this.isOther = true;
                 this.isPostPlatformOther = true;
             }
-            if (getObject('other', postPlatformValues, 'value') == -1) {
+            if (getObject('other', postPlatformValues, 'value') === -1) {
                 this.isOther = false;
                 this.isPostPlatformOther = false;
             }
@@ -652,7 +652,7 @@ class SocialMediaDetail extends React.Component {
                 this.isPostTopicOther = true;
 
             }
-            if (getObject('other', topicsValues, 'value') == -1) {
+            if (getObject('other', topicsValues, 'value') === -1) {
                 this.isPostTopicOther = false;
             }
         }
@@ -727,7 +727,7 @@ class SocialMediaDetail extends React.Component {
             if (getObject('facebook', e, 'value') != -1) {
                 this.isFacebook = true;
             }
-            if (getObject('facebook', e, 'value') == -1) {
+            if (getObject('facebook', e, 'value') === -1) {
 
                 this.isFacebook = false;
             }
@@ -735,21 +735,21 @@ class SocialMediaDetail extends React.Component {
             if (getObject('twitter', e, 'value') != -1) {
                 this.isTwitter = true;
             }
-            if (getObject('twitter', e, 'value') == -1) {
+            if (getObject('twitter', e, 'value') === -1) {
                 this.isTwitter = false;
             }
 
             if (getObject('instagram', e, 'value') != -1) {
                 this.isInstagram = true;
             }
-            if (getObject('instagram', e, 'value') == -1) {
+            if (getObject('instagram', e, 'value') === -1) {
                 this.isInstagram = false;
             }
 
             if (getObject('web_portal', e, 'value') != -1) {
                 this.isWebPortal = true;
             }
-            if (getObject('web_portal', e, 'value') == -1) {
+            if (getObject('web_portal', e, 'value') === -1) {
                 this.isWebPortal = false;
             }
 
@@ -757,7 +757,7 @@ class SocialMediaDetail extends React.Component {
                 this.isOther = true;
                 this.isPostPlatformOther = true;
             }
-            if (getObject('other', e, 'value') == -1) {
+            if (getObject('other', e, 'value') === -1) {
                 this.isOther = false;
                 this.isPostPlatformOther = false;
             }
@@ -768,7 +768,7 @@ class SocialMediaDetail extends React.Component {
                 this.isPostTopicOther = true;
 
             }
-            if (getObject('other', e, 'value') == -1) {
+            if (getObject('other', e, 'value') === -1) {
                 this.isPostTopicOther = false;
             }
         }
@@ -780,11 +780,9 @@ class SocialMediaDetail extends React.Component {
 
     // for autocomplete single select
     handleChange(e, name) {
-
         this.setState({
             [name]: e
         });
-
     };
 
     handleSubmit = async event => {
@@ -1090,11 +1088,6 @@ class SocialMediaDetail extends React.Component {
 
 
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
 
         const postOtherStyle = this.isPostOther ? {} : { display: 'none' };
         const postTopicOtherStyle = this.isPostTopicOther ? {} : { display: 'none' };

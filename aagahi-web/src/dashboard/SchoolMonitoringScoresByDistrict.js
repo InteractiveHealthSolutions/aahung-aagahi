@@ -64,7 +64,7 @@ class SchoolMonitoringScoresByDistrict extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/schoolmonitoringdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -130,7 +130,7 @@ function filterData(data, level) {
     var districts = getUniqueValues(data, 'city_village');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
-        var filtered = data.filter(element => element.school_level === level);
+        filtered = data.filter(element => element.school_level === level);
     }
     var averages = [];
     districts.forEach(district => {

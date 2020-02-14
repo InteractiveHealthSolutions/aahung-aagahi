@@ -65,11 +65,9 @@ class AmplifyChangeParticipantsStudent extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/amplifychangeparticipantdata/students?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
-                    
-                    // data: resultSet
                 })
             }
         }
@@ -129,10 +127,10 @@ class AmplifyChangeParticipantsStudent extends React.Component {
 
 function filterData(data, educationLevel) {
     var sums = [];
+    var maleArray = [];
+    var femaleArray = [];
+    var otherArray = [];
     if (educationLevel === "Medical") {
-        var maleArray = [];
-        var femaleArray = [];
-        var otherArray = [];
         if (data !== null && data !== undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "Medical" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "Medical" && element.gender === "Female");
@@ -147,10 +145,6 @@ function filterData(data, educationLevel) {
         return sums;
     }
     else if(educationLevel === "Nursing") {
-
-        var maleArray = [];
-        var femaleArray = [];
-        var otherArray = [];
         if (data !== null && data !== undefined && data.length > 0) {
             maleArray = data.filter(element => element.education_level === "Nursing" && element.gender === "Male");
             femaleArray = data.filter(element => element.education_level === "Nursing" && element.gender === "Female");
