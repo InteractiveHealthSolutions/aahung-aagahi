@@ -183,7 +183,7 @@ export const getDistrictsByProvince = function (provinceId) {
 export const getDistrictsByMultipleProvinces = function (provincesArray) {
   var districtsArray = [];
   provincesArray.forEach(function (province) {
-    if (districtsArray.length == 0) {
+    if (districtsArray.length === 0) {
       districtsArray = location.districts.filter(district => district.provinceId === province.id);
     }
     else {

@@ -10,11 +10,11 @@
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
-// Contributors: Owais Hussain
+// Contributors: Owais Hussain, Tahira Niazi
 
 /**
- * @author Owais Hussain
- * @email owais.hussain@ihsinformatics.com
+ * @author Owais Hussain, Tahira Niazi
+ * @email owais.hussain@ihsinformatics.com, tahira.niazi@ihsinformatics.com
  * @create date 2019-12-18
  * @desc [description]
  */
@@ -139,7 +139,7 @@ function filterData(data, screenType) {
     provinces.forEach(province => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].city_village == province) {
+            if (filtered[i].city_village === province) {
                 sum += parseInt(filtered[i].total);
             }
         }

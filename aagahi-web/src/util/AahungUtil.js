@@ -184,23 +184,23 @@ export const getIndicatorCode = function (indicator) {
             break;
 
         case "never": // coding is 5
-            var indicatorCode = 5;
+            indicatorCode = 5;
             break;
 
         case "rarely":
-            var indicatorCode = 5;
+            indicatorCode = 5;
             break;
 
         case "occasionally":
-            var indicatorCode = 5;
+            indicatorCode = 5;
             break;
 
         case "frequently":
-            var indicatorCode = 5;
+            indicatorCode = 5;
             break;
 
         case "always":
-            var indicatorCode = 5;
+            indicatorCode = 5;
             break;
     }
 

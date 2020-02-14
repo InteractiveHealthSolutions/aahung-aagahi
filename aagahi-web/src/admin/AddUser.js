@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2020-02-11 10:06:41
+ * @Last Modified time: 2020-02-14 10:09:19
  */
 
 
@@ -149,7 +149,7 @@ class AddUser extends React.Component {
             hasData: false
         })
 
-        if(e.target.checked == true) {
+        if(e.target.checked === true) {
             this.disablePassword = false;
         }
         else {
@@ -207,7 +207,7 @@ class AddUser extends React.Component {
                     for(let i=0; i < this.rolesArray.length; i++ ) {
                         var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
                         var roleCheckbox = document.getElementById(roleName);
-                        if(roleCheckbox.checked == true) {
+                        if(roleCheckbox.checked === true) {
                             
                             let roleObj = {};
                             roleObj.roleId = this.rolesArray[i].id;
@@ -264,7 +264,7 @@ class AddUser extends React.Component {
                     for(let i=0; i < this.rolesArray.length; i++ ) {
                         var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
                         var roleCheckbox = document.getElementById(roleName);
-                        if(roleCheckbox.checked == true) {
+                        if(roleCheckbox.checked === true) {
                             
                             let roleObj = {};
                             roleObj.roleId = this.rolesArray[i].id;
@@ -368,7 +368,7 @@ class AddUser extends React.Component {
         for(let i=0; i < this.rolesArray.length; i++ ) {
             var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
             var roleCheckbox = document.getElementById(roleName);
-            if(roleCheckbox.checked == true) {
+            if(roleCheckbox.checked === true) {
                 isAnyRoleChecked = true;
             }
         }
@@ -377,10 +377,6 @@ class AddUser extends React.Component {
             isOk = false;
             this.errors["roles"] = "Please select roles!";
         }
-
-        // if(this.editMode && this.roleCount == 0) {
-            
-        // }
 
         if(!this.editMode || (this.editMode && !this.disablePassword)) {
             var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;

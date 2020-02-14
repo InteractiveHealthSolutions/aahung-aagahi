@@ -66,34 +66,6 @@ const formatOptionLabel = ({ value, label, locationName }) => (
     </div>
 );
 
-const participantGenderOptions = [
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
 class AmplifyChangeTrainingDetails extends React.Component {
 
     modal = false;
