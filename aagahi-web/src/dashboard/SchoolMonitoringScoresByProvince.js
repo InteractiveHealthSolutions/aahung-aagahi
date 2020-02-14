@@ -64,7 +64,7 @@ class SchoolMonitoringScoresByProvince extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate + "&state_province=" + this.state.provincesString + "&city_village=" + this.state.citiesString;
             var resourceUrl = serverAddress + "/report/schoolmonitoringdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if (resultSet != null && resultSet !== undefined) {
+            if (resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -131,13 +131,13 @@ function filterData(data, level) {
     var provinces = getUniqueValues(data, 'state_province');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
-        var filtered = data.filter(element => element.school_level === level);
+        filtered = data.filter(element => element.school_level === level);
     }
     var averages = [];
     provinces.forEach(province => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].state_province == province) {
+            if (filtered[i].state_province === province) {
                 sum += parseFloat(filtered[i].percentage);
             }
         }

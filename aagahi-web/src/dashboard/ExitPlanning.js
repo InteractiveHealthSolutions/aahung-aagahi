@@ -81,17 +81,8 @@ class ExitPlanning extends React.Component {
             { category: 'Both', value: filterData(this.state.data, 'both') },
             { category: 'Neither', value: filterData(this.state.data, 'neither') }
         ];
-        const seriesVisible = this.state.seriesVisible;
 
         const colors = ['#DC143C', '#FFA500', '#32CD32', '#008080'];
-
-        const crosshair = {
-            visible: true,
-            tooltip: {
-                visible: true,
-                format: '##'
-            }
-        }
 
         return (
             <Chart seriesColors={colors} style={{ height: 340 }} pannable={{ lock: 'y' }} zoomable={{ mousewheel: { lock: 'y' } }} >

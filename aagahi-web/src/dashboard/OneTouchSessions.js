@@ -65,7 +65,7 @@ class OneTouchSessions extends React.Component {
             var params = "from=" + this.state.startDate + "&to=" + this.state.endDate;
             var resourceUrl = serverAddress + "/report/onetouchdata?" + params;
             var resultSet = await getGraphData(resourceUrl);
-            if(resultSet != null && resultSet !== undefined) {
+            if(resultSet != null && resultSet != undefined) {
                 this.setState({
                     data: resultSet
                 })
@@ -192,7 +192,7 @@ function filterData(data, parType) {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
             
-            if (filtered[i].session_topic == sessionTopic) {
+            if (filtered[i].session_topic === sessionTopic) {
                 sum += parseInt(filtered[i].total);
             }
         }

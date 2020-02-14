@@ -185,12 +185,12 @@ class StepDownTraining extends React.Component {
                     })
 
                     let self = this;
-                    this.fetchedForm.data.map(function (element, i) {
+                    this.fetchedForm.data.map(function (element) {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
-                            
+
                             var radios = document.getElementsByName(element.key.shortName);
-                            for (let i = 0; i < radios.length; i++) { 
+                            for (let i = 0; i < radios.length; i++) {
                                 // Edits are painful!!
                                 // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
                                 if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
@@ -253,28 +253,28 @@ class StepDownTraining extends React.Component {
             if (getObject('health', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectHealth: true });
             }
-            if (getObject('health', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('health', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectHealth: false });
             }
 
             if (getObject('gender', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectGender: true });
             }
-            if (getObject('gender', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('gender', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectGender: false });
             }
 
             if (getObject('csa', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectCsa: true });
             }
-            if (getObject('csa', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('csa', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectCsa: false });
             }
 
             if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') != -1) {
                 this.setState({ isCsaSubjectImpl: true });
             }
-            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') == -1) {
+            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') === -1) {
                 this.setState({ isCsaSubjectImpl: false });
             }
 
@@ -285,49 +285,49 @@ class StepDownTraining extends React.Component {
             if (getObject('vcat', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectVcat: true });
             }
-            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectVcat: false });
             }
 
             if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectHuman: true });
             }
-            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectHuman: false });
             }
 
             if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectGender: true });
             }
-            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectGender: false });
             }
 
             if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectSexual: true });
             }
-            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectSexual: false });
             }
 
             if (getObject('violence', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectViolence: true });
             }
-            if (getObject('violence', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('violence', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectViolence: false });
             }
 
             if (getObject('puberty', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectPuberty: true });
             }
-            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectPuberty: false });
             }
 
             if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') != -1) {
                 this.setState({ isLsbeSubjectImpl: true });
             }
-            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') == -1) {
+            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') === -1) {
                 this.setState({ isLsbeSubjectImpl: false });
             }
         }
@@ -627,7 +627,6 @@ class StepDownTraining extends React.Component {
     autopopulateFields(locationAttributes) {
         let self = this;
         let attributeValue = '';
-        let count = 0;
         locationAttributes.forEach(async function (obj) {
             let attrTypeName = obj.attributeType.shortName;
             if (attrTypeName === "partnership_years")
@@ -643,7 +642,6 @@ class StepDownTraining extends React.Component {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
-                let attrValue = definition.shortname;
                 attributeValue = definition.definitionName;
             }
 
@@ -683,7 +681,6 @@ class StepDownTraining extends React.Component {
         })
     }
 
-
     handleSubmit = async event => {
         event.preventDefault();
         if (this.handleValidation()) {
@@ -693,7 +690,6 @@ class StepDownTraining extends React.Component {
                 loadingMsg: "Saving trees..."
             })
 
-            const data = new FormData(event.target);
             var jsonData = new Object();
             jsonData.formParticipants = [];
             jsonData.formDate = this.state.date_start;
@@ -740,12 +736,12 @@ class StepDownTraining extends React.Component {
                         continue;
                     }
 
-                    if (fields[i] == "district") {
+                    if (fields[i] === "district") {
                         dataObj.district = this.state.district.label;
                         continue;
                     }
 
-                    if (fields[i] == "province") {
+                    if (fields[i] === "province") {
                         dataObj.province = this.state.province.name;
                         continue;
                     }
@@ -819,7 +815,7 @@ class StepDownTraining extends React.Component {
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
-                        else if (this.lsbeDependantFields.filter(f => f == fields[i]).length == 0) {
+                        else if (this.lsbeDependantFields.filter(f => f == fields[i]).length === 0) {
                             if (element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
@@ -1097,7 +1093,6 @@ class StepDownTraining extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
         const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
         const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
 
@@ -1116,9 +1111,6 @@ class StepDownTraining extends React.Component {
         const lsbePubertyStyle = this.state.isLsbeSubjectPuberty ? {} : { display: 'none' };
         const lsbeImplStyle = this.state.isLsbeSubjectImpl ? {} : { display: 'none' };
 
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
-        const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
         const agree = "Agree";
@@ -1134,8 +1126,8 @@ class StepDownTraining extends React.Component {
             formNavVisible = false;
         }
         // if the user does not have edit rights
-        var buttonDisabled = false; 
-        if(this.editMode) {
+        var buttonDisabled = false;
+        if (this.editMode) {
             buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
@@ -3448,7 +3440,7 @@ class StepDownTraining extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
+                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
                                 </Form>
                             </Container>
                         </div>

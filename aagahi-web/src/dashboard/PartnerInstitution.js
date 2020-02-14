@@ -191,7 +191,7 @@ function filterData(data, dataType, location) {
         provinces.forEach(province => {
             var sumMedical = 0;
             for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
+                if (filtered[i].state_province === province) {
                     sumMedical += parseInt(filtered[i].total_medical);
                 }
             }
@@ -203,7 +203,7 @@ function filterData(data, dataType, location) {
         provinces.forEach(province => {
             var sumNursing = 0;
             for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
+                if (filtered[i].state_province === province) {
                     sumNursing += parseInt(filtered[i].total_nursing);
                 }
             }
@@ -214,7 +214,7 @@ function filterData(data, dataType, location) {
         provinces.forEach(province => {
             var sumMidwifery = 0;
             for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
+                if (filtered[i].state_province === province) {
                     sumMidwifery += parseInt(filtered[i].total_midwifery);
                 }
             }
@@ -225,7 +225,7 @@ function filterData(data, dataType, location) {
         provinces.forEach(province => {
             var sumOther = 0;
             for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].state_province == province) {
+                if (filtered[i].state_province === province) {
                     sumOther += parseInt(filtered[i].total_other);
                 }
             }

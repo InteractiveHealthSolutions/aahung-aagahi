@@ -156,7 +156,7 @@ function filterData(data, gender) {
     participantTypes.forEach(participanttype => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].participant_type == participanttype) {
+            if (filtered[i].participant_type === participanttype) {
                 sum += parseInt(filtered[i].total);
             }
         }
