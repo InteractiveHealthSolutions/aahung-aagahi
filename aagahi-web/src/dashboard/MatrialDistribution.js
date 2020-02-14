@@ -136,13 +136,12 @@ class MaterialDistribution extends React.Component {
 function filterData(data, materialType) {
     // For each tier, attach tier as name and data as the sums for each province
     var locations = getUniqueValues(data, 'distribution_location');
-    var filtered;
     var sums = [];
 
     locations.forEach(location => {
         var sum = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].distribution_location == location) {
+            if (data[i].distribution_location === location) {
                 sum += parseInt(data[i][materialType]);
             }
         }
@@ -150,47 +149,6 @@ function filterData(data, materialType) {
     });
 
     return sums;
-
-    // if (materialType === 'pamphlet_count') {
-    //     locations.forEach(location => {
-    //         var pamphletSum = 0;
-    //         for (var i = 0; i < data.length; i++) {
-    //             if (data[i].distribution_location == location) {
-    //                 pamphletSum += data[i].pamphlet_count;
-    //             }
-    //         }
-    //         sums.push(pamphletSum);
-    //     });
-
-    //     return sums;
-
-    // } else if (materialType === 'booklet_count') {
-
-    //     locations.forEach(location => {
-    //         var bookletSum = 0;
-    //         for (var i = 0; i < data.length; i++) {
-    //             if (data[i].distribution_location == location) {
-    //                 bookletSum += parseInt(data[i].booklet_count);
-    //             }
-    //         }
-    //         sums.push(bookletSum);
-    //     });
-
-    //     return sums;
-
-    // } else {
-    //     locations.forEach(location => {
-    //         var notebookSum = 0;
-    //         for (var i = 0; i < data.length; i++) {
-    //             if (data[i].distribution_location == location) {
-    //                 notebookSum += parseInt(data[i].aahung_notebooks_count);
-    //             }
-    //         }
-    //         sums.push(notebookSum);
-    //     });
-
-    //     return sums;
-    // }
 }
 
 export default MaterialDistribution;

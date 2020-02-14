@@ -76,9 +76,6 @@ class PartnerSchoolsByYearChart extends React.Component {
         const primaryToolTipRender = ({ point }) => (`${point.series.name}: ${point.value}`);
         const seriesVisible = this.state.seriesVisible;
         let years = getUniqueValues(this.state.data, 'fiscal_year');
-        let min = Math.min(...years);
-        let max = Math.max(...years);
-        
         let primary = [
             { name: 'Primary', data: filterData(this.state.data, 'Primary')},
             { name: 'Secondary', data: filterData(this.state.data, 'Secondary')}
@@ -132,7 +129,6 @@ class PartnerSchoolsByYearChart extends React.Component {
 }
 
 function filterData(data, level) {
-    // For each tier, attach tier as name and data as the sums for each province
     var years = getUniqueValues(data, 'fiscal_year');
     var filtered = [];
     if (data !== null && data !== undefined && data.length > 0) {
@@ -142,15 +138,13 @@ function filterData(data, level) {
     years.forEach(year => {
         var sum = 0;
         for (var i = 0; i < filtered.length; i++) {
-            if (filtered[i].fiscal_year == year) {
+            if (filtered[i].fiscal_year === year) {
                 sum += parseInt(filtered[i].total);
             }
         }
         sums.push(sum);
     });
 
-    console.log("printing sums array ==========================================")
-    console.log(sums);
     return sums;
 }
 

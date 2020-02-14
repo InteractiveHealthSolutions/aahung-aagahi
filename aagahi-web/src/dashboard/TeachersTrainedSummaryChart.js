@@ -158,7 +158,7 @@ function filterData(data, level, tier) {
         programs.forEach(program => {
             var sum = 0;
             for (var i = 0; i < filtered.length; i++) {
-                if (filtered[i].program == program) {
+                if (filtered[i].program === program) {
                     sum += parseInt(filtered[i].total);
                 }
             }
