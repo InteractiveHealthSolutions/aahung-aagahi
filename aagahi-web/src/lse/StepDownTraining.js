@@ -188,9 +188,9 @@ class StepDownTraining extends React.Component {
                     this.fetchedForm.data.map(function (element) {
                         var dataType = (element.dataType).toLowerCase();
                         if (dataType === 'int') {
-
+                            
                             var radios = document.getElementsByName(element.key.shortName);
-                            for (let i = 0; i < radios.length; i++) {
+                            for (let i = 0; i < radios.length; i++) { 
                                 // Edits are painful!!
                                 // check type should be "radio", otherwise there will many fields with datatype 'int' but widget would be numeric input box 
                                 if (radios[i].type === "radio" && parseInt(radios[i].value) === parseInt(String(element.value))) {
@@ -656,14 +656,10 @@ class StepDownTraining extends React.Component {
                         definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
                     }
                     attrValueObj.forEach(async function (obj) {
-                        count++;
                         if ('definitionId' in obj) {
 
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                            // if (count != attrValueObj.length) {
-                            //     multiSelectString = multiSelectString.concat(", ");
-                            // }
                             multiSelectString = multiSelectString.concat(" ");
                             multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                             if (attrTypeName === "program_implemented")
@@ -1111,6 +1107,9 @@ class StepDownTraining extends React.Component {
         const lsbePubertyStyle = this.state.isLsbeSubjectPuberty ? {} : { display: 'none' };
         const lsbeImplStyle = this.state.isLsbeSubjectImpl ? {} : { display: 'none' };
 
+        // for view mode
+        const setDisable = this.state.viewMode ? "disabled" : "";
+        const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
         const agree = "Agree";
@@ -1126,8 +1125,8 @@ class StepDownTraining extends React.Component {
             formNavVisible = false;
         }
         // if the user does not have edit rights
-        var buttonDisabled = false;
-        if (this.editMode) {
+        var buttonDisabled = false; 
+        if(this.editMode) {
             buttonDisabled = UserService.hasAccess('Edit FormData') ? false : true;
         }
 
@@ -3440,7 +3439,7 @@ class StepDownTraining extends React.Component {
                                             </Card>
                                         </Col>
                                     </Row>
-                                    <CustomModal modal={this.state.modal} modalHeading={this.state.modalHeading} modalText={this.state.modalText} toggle={this.toggle} />
+                                    <CustomModal modal = {this.state.modal} modalHeading= {this.state.modalHeading} modalText= {this.state.modalText} toggle = {this.toggle} />
                                 </Form>
                             </Container>
                         </div>
